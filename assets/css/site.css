@@ -1685,11 +1685,17 @@ button { font: inherit; }
    Holds either the placeholder below or Tiffany's actual photograph, at the
    SAME ratio, so dropping the real image in cannot change the page's layout.
 
-   4/5, not 4/3. A photograph of one person is a portrait; a landscape frame
-   either crops her head to a letterboxed sliver or forces the image to a
-   shape it was not taken in. The frame follows the subject. */
+   3/4, matching the source image's own 1086x1448 exactly, so the frame shows
+   ALL of the photograph and object-fit has nothing left to crop.
+
+   It was 4/5 first, which is the conventional portrait ratio — and that was
+   the mistake. A 4/5 frame is WIDER than a 3:4 source relative to its height,
+   so it could only be filled by cutting the photograph down, and no amount of
+   re-cropping inside it ever looked "zoomed out" because the subject kept
+   filling the frame. The frame's shape was the constraint, not the crop.
+   Match the source and the composition survives intact. */
 .ms-portrait,
-.ms-photo-slot { aspect-ratio: 4 / 5; }
+.ms-photo-slot { aspect-ratio: 3 / 4; }
 
 .ms-portrait {
   position: relative;
@@ -1706,9 +1712,10 @@ button { font: inherit; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Faces sit above centre in most portraits, so a centred crop tends to cut
-     the top of the head. Bias the crop upward. */
-  object-position: 50% 32%;
+  /* Centred. The frame and the asset share a ratio now, so there is nothing
+     to crop and nothing to bias — this only matters if a future image comes in
+     at a different shape, where centring is the safer default. */
+  object-position: 50% 50%;
   display: block;
 }
 
