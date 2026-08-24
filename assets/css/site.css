@@ -1685,17 +1685,22 @@ button { font: inherit; }
    Holds either the placeholder below or Tiffany's actual photograph, at the
    SAME ratio, so dropping the real image in cannot change the page's layout.
 
-   3/4, matching the source image's own 1086x1448 exactly, so the frame shows
-   ALL of the photograph and object-fit has nothing left to crop.
+   835/1448, matching the delivered asset exactly, so object-fit has nothing
+   left to crop.
 
-   It was 4/5 first, which is the conventional portrait ratio — and that was
-   the mistake. A 4/5 frame is WIDER than a 3:4 source relative to its height,
-   so it could only be filled by cutting the photograph down, and no amount of
-   re-cropping inside it ever looked "zoomed out" because the subject kept
-   filling the frame. The frame's shape was the constraint, not the crop.
-   Match the source and the composition survives intact. */
+   Why that ratio and not the source's own 3/4: the generated source carries a
+   third forearm across its lower right, and that region is also where the
+   towel cart sits. They overlap, so the widest frame that excludes the
+   artefact is a vertical cut at x=835 — which takes the cart with it. The
+   ratio is therefore dictated by the defect, not by taste.
+
+   Do NOT patch such a region with delogo. That was tried: it interpolates
+   from the surrounding pixels and, over an area this large and this
+   structured, produces a hard-edged rectangular smear that reads as
+   censorship. It looked passable at review scale and obvious at full size,
+   which is the trap — judge a repair at the size it will be seen. */
 .ms-portrait,
-.ms-photo-slot { aspect-ratio: 3 / 4; }
+.ms-photo-slot { aspect-ratio: 835 / 1448; }
 
 .ms-portrait {
   position: relative;
