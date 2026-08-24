@@ -257,12 +257,25 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
    giving them one adds ~90px of footer for nothing. */
 .ms-footer__col li:not(:has(a)) { padding-block: var(--ms-space-2); }
 
-/* The phone row is an icon plus a link; the row is the flex container, so the
-   anchor inside it should not also try to be full width. */
-.ms-footer__icon-row { display: flex; align-items: center; }
-.ms-footer__icon-row a { width: auto; }
+/* The phone and email rows are an icon plus a link; the row is the flex
+   container, so the anchor inside it must not also try to be full width.
 
-.ms-footer__icon-row { gap: var(--ms-space-2); }
+   Qualified with .ms-footer__col, and that is load-bearing. As a bare
+   `.ms-footer__icon-row` (0,1,0) this lost to `.ms-footer__col li` (0,1,1)
+   above it no matter what order the rules sat in, so the row computed as
+   `display: block` and the icon fell onto its own line with the phone number
+   stranded underneath it. Same story one line down: `.ms-footer__icon-row a`
+   (0,1,1) lost `width` to `.ms-footer__col li a` (0,1,2).
+
+   Specificity, not source order — the third time this stylesheet has been
+   caught by a single-class override sitting under a two-class rule. */
+.ms-footer__col li.ms-footer__icon-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ms-space-2);
+}
+
+.ms-footer__col li.ms-footer__icon-row a { width: auto; }
 
 .ms-footer__bottom { margin-top: var(--ms-space-5); padding-top: var(--ms-space-4); }
 
@@ -303,3 +316,138 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
 /* Any standalone call-to-action button gets the full thumb column. */
 .ms-prose__action .ms-btn,
 .ms-404__actions .ms-btn { width: 100%; justify-content: center; }
+
+/* ==========================================================================
+   Second pass — the three things the first pass left behind.
+
+   Measured on the live site after pass one: index 3390px, services 4754px
+   (7.2 screens, the clear outlier), and one tap target still under 44px.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. The hero put its own price widget below the fold.
+
+   Measured at 390px: heading 159, lead 173, stat 73, then the photograph 165,
+   and only then the quote card. The card — the one thing on this page that
+   answers "what will it cost", and the reason the page exists — started at
+   roughly 658px on a 664px viewport. It was, precisely, one pixel of it.
+
+   Reordering costs nothing and moves it up by the height of the photograph
+   plus a gap. The photograph is warmth; the card is the product. On a screen
+   this size the product goes first and the warmth follows it.
+
+   order on flex children only, so the DOM order is untouched: a screen reader
+   and a crawler still read heading, lead, stat, photo, form in the authored
+   sequence, and only the visual order changes.
+   -------------------------------------------------------------------------- */
+.ms-hero__visual { display: flex; flex-direction: column; }
+.ms-hero__visual .ms-quote-start { order: 1; }
+.ms-hero__visual .ms-hero__media { order: 2; }
+
+/* 44px of headline is three lines of "Your home, squeaky clean." before the
+   sentence explaining it. Two lines reads as a headline; three reads as a
+   paragraph set in display type. */
+.ms-hero__heading { font-size: clamp(2.125rem, 8vw, 2.5rem); }
+
+.ms-hero__copy { display: flex; flex-direction: column; }
+.ms-hero__lead { font-size: var(--ms-text-base); }
+
+/* --------------------------------------------------------------------------
+   2. The tap target that survived pass one.
+
+   "See add-ons and travel fees" measured 181x19 — an inline link, so WCAG
+   2.5.8's inline exemption technically covers it, but it sits alone at the end
+   of a pill where it reads as a button rather than as a word in a sentence.
+   When a link looks like a control it should be sized like one, whatever the
+   exemption permits.
+   -------------------------------------------------------------------------- */
+.ms-services__note a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: var(--ms-space-2);
+}
+
+/* --------------------------------------------------------------------------
+   3. services.html — 4754px, 7.2 screens, the longest page on the site.
+
+   It is long because it is a list of 47 things, and that list is the entire
+   reason anyone opens this page. Cutting it would be cutting the content, so
+   this does the two things that are actually available: make the page
+   navigable, and stop it wasting height it does not need.
+
+   The jump row is the navigability half — four anchors that already existed,
+   surfaced at the top. Horizontal scroll rather than wrapping, so the row is
+   one line at any width and cannot push the first panel further down the page
+   than it already is.
+   -------------------------------------------------------------------------- */
+.ms-jump {
+  display: block;
+  position: sticky;
+  /* Sits directly under the fixed nav pill, so it stays reachable while the
+     visitor is deep in the fourth service and wants the second. */
+  top: calc(5.25rem + var(--ms-safe-top));
+  z-index: 5;
+  padding-block: var(--ms-space-2);
+  background: var(--ms-color-surface-base);
+}
+
+/* The four chips total about 460px against 350px of usable width, so the row
+   genuinely has to scroll — and a chip clipped flat at the edge reads as a
+   broken layout rather than as "there is more this way". The fade says
+   scrollable without spending height on a scrollbar or an arrow.
+
+   The mask sits on the WRAPPER, never on the scrolling <ul> itself: a mask on
+   the scroller travels with its content and the fade would slide away the
+   moment the row moved. */
+.ms-jump > .ms-container {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent 100%);
+  mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent 100%);
+}
+
+.ms-jump ul {
+  display: flex;
+  gap: var(--ms-space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  /* Momentum scrolling without a visible bar eating 12px of a 390px row. */
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ms-jump ul::-webkit-scrollbar { display: none; }
+
+.ms-jump a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: var(--ms-space-4);
+  white-space: nowrap;
+  border-radius: var(--ms-radius-pill);
+  background: var(--ms-color-surface);
+  box-shadow: var(--ms-shadow-raised-sm);
+  font-size: var(--ms-text-xs);
+  font-weight: 700;
+  color: var(--ms-color-blue-dark);
+  text-decoration: none;
+}
+
+/* Density half. 47 rows at 33px each is 1550px of the page; at 28px it is
+   1320px. Nothing is removed — the lines simply stop carrying desktop
+   leading, which was tuned for a two-column list on a wide panel. */
+.ms-check-list { gap: var(--ms-space-1); }
+
+.ms-check-list li {
+  gap: var(--ms-space-2);
+  line-height: var(--ms-leading-snug);
+}
+
+.ms-service-panel { padding: var(--ms-space-5) var(--ms-space-4); }
+.ms-service-panel__lead { font-size: var(--ms-text-sm); }
+.ms-service-list { gap: var(--ms-space-4); }
+
+/* The decorative banner is aria-hidden and carries no information. At 16:9 it
+   still reads as a photograph of a real bathroom while giving back ~80px. */
+.ms-photo-banner { aspect-ratio: 16 / 9; }

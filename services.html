@@ -72,6 +72,26 @@
       </div>
     </section>
 
+    <!-- Phone-only shortcut row. This page is a reference list of 47 tick
+         items across four services; at 390px that is roughly six screens, and
+         a visitor who came for one service had to scroll past the other three
+         to find it. The anchors already existed (the home page's "What's
+         included" links point at exactly these ids) — this just surfaces them
+         at the top for anyone who arrived from the nav instead.
+
+         Hidden on desktop, where all four panels are visible at a glance and a
+         jump row would be noise. -->
+    <nav class="ms-jump" aria-label="Jump to a service">
+      <div class="ms-container">
+        <ul>
+          <li><a href="#regular-heading">Regular</a></li>
+          <li><a href="#deep-heading">Deep</a></li>
+          <li><a href="#moveinout-heading">Move-in / out</a></li>
+          <li><a href="#postreno-heading">Post-reno</a></li>
+        </ul>
+      </div>
+    </nav>
+
     <section class="ms-section ms-section--tight" aria-hidden="true">
       <div class="ms-container">
         <div class="ms-photo-banner">

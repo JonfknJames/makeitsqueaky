@@ -1421,7 +1421,17 @@ button { font: inherit; }
    2rem, and 6rem of empty background between a page title and its first
    line of content is exactly the "huge gap between sections" the client
    has flagged twice. */
-.ms-page-head + .ms-section { padding-top: 0; }
+/* Two selectors, because services.html now carries a phone-only .ms-jump row
+   between the head and the first section. The + combinator matches ADJACENT
+   siblings, so inserting anything between them silently un-matched this rule
+   and handed that page back its 4rem — 64px of empty background on desktop,
+   where the jump row is display:none and therefore invisible as a cause.
+
+   A `.ms-page-head ~ .ms-section` would have been shorter and wrong: the
+   general sibling combinator would zero the top padding of EVERY section on
+   the page, not just the first. */
+.ms-page-head + .ms-section,
+.ms-page-head + .ms-jump + .ms-section { padding-top: 0; }
 /* 52rem, not 42rem: at 42rem (672px) "Four ways to get it squeaky clean"
    wrapped onto a second line with one word on it, which reads as a broken
    heading rather than a deliberate two-liner. The LEAD keeps the tighter
@@ -2433,3 +2443,8 @@ html.ms-motion [data-ms-reveal].is-revealed {
 /* .ms-prose is a flex column, so a full-width <p> stretches its button to the
    column width. The button sizes to its label instead. */
 .ms-prose__action { align-self: flex-start; }
+
+/* Phone-only service shortcut row (services.html). Desktop shows all four
+   panels in a scannable column and does not need a jump index; mobile.css
+   turns this on below 768px. */
+.ms-jump { display: none; }
