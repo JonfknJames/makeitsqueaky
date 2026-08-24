@@ -1681,13 +1681,43 @@ button { font: inherit; }
   line-height: var(--ms-leading-snug);
 }
 
-/* Photo slot (about.html) — an obviously-marked empty placeholder, never a
-   stock photo of a stranger standing in for Tiffany. */
+/* Portrait frame (about.html).
+   Holds either the placeholder below or Tiffany's actual photograph, at the
+   SAME ratio, so dropping the real image in cannot change the page's layout.
+
+   4/5, not 4/3. A photograph of one person is a portrait; a landscape frame
+   either crops her head to a letterboxed sliver or forces the image to a
+   shape it was not taken in. The frame follows the subject. */
+.ms-portrait,
+.ms-photo-slot { aspect-ratio: 4 / 5; }
+
+.ms-portrait {
+  position: relative;
+  border-radius: var(--ms-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--ms-shadow-raised-md);
+}
+
+/* cover inside a fixed ratio: the only thing that ever happens to the source
+   is CROPPING. Never scale both axes to fit a box — that distorts a face.
+   :not(.ms-duck-badge) so this descendant rule does not also stretch the
+   corner duck to fill the frame. */
+.ms-portrait img:not(.ms-duck-badge) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Faces sit above centre in most portraits, so a centred crop tends to cut
+     the top of the head. Bias the crop upward. */
+  object-position: 50% 32%;
+  display: block;
+}
+
+/* Placeholder — an obviously-marked empty slot, never a stock photo of a
+   stranger standing in for Tiffany. */
 .ms-photo-slot {
   border: 2px dashed var(--ms-color-border-strong);
   border-radius: var(--ms-radius-lg);
   background: var(--ms-color-surface-base);
-  aspect-ratio: 4 / 3;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2304,3 +2334,19 @@ html.ms-motion [data-ms-reveal].is-revealed {
 }
 
 .ms-cta-band .ms-btn { margin-top: var(--ms-space-2); }
+
+/* Two classes replacing three inline style attributes.
+
+   A strict Content-Security-Policy without 'unsafe-inline' in style-src blocks
+   style ATTRIBUTES, so every remaining inline style had to become a class
+   before the policy could be tightened. That is the useful side-effect of a
+   CSP: it makes the stylesheet the only place style can come from, which is
+   where it should have been anyway.
+
+   (contact.html's third one was hand-rolling a visually-hidden block that
+   .ms-visually-hidden already provides, so it needed no new class at all.) */
+.ms-section-heading--start { text-align: left; }
+
+/* .ms-prose is a flex column, so a full-width <p> stretches its button to the
+   column width. The button sizes to its label instead. */
+.ms-prose__action { align-self: flex-start; }

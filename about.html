@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>About — Make it Squeaky</title>
   <meta name="description" content="Over a decade of professional cleaning experience, serving the City of Toronto. Regular, deep, move-in/move-out, and post-renovation cleaning.">
   <link rel="canonical" href="https://makeitsqueaky.com/about.html">
@@ -73,7 +75,7 @@
       <div class="ms-container">
         <div class="ms-info-grid">
           <div class="ms-prose">
-            <h2 id="about-heading" class="ms-section-heading" style="text-align:left;">Hi, I'm Tiffany</h2>
+            <h2 id="about-heading" class="ms-section-heading ms-section-heading--start">Hi, I'm Tiffany</h2>
             <p>
               I'm the owner of Make it Squeaky. With over <span data-years-since="2014">12</span> years of professional cleaning
               experience, I've built my career around providing reliable, detailed, high-quality
@@ -101,7 +103,7 @@
               <span class="ms-stat__label">Years of professional cleaning experience</span>
             </div>
 
-            <p><a class="ms-btn ms-btn--accent" href="services.html" style="align-self:flex-start;">See our services</a></p>
+            <p class="ms-prose__action"><a class="ms-btn ms-btn--accent" href="services.html">See our services</a></p>
           </div>
 
           <div class="ms-photo-slot" role="img" aria-label="Photo of Tiffany not yet available">
