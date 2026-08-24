@@ -1577,30 +1577,68 @@ button { font: inherit; }
 }
 
 
-/* Compact rate cards (pricing.html) — reuses .ms-card__num / __price /
-   __desc verbatim (those classes are standalone, not scoped to .ms-card). */
-.ms-rate-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--ms-space-5);
-}
+/* Rates band (pricing.html) — ONE panel divided into four, not four cards.
 
-@media (min-width: 40em) {
-  .ms-rate-grid { grid-template-columns: 1fr 1fr; }
-}
+   Four separate cards carried four separate shadows around four mostly-empty
+   boxes, and made a claim that is not true of the content: that these are four
+   independent offers. They are one price list with four variants. A divided
+   panel says exactly that, and removes three of the four shadows, which was
+   most of the visual noise in the band.
 
-@media (min-width: 64em) {
-  .ms-rate-grid { grid-template-columns: repeat(4, 1fr); }
-}
-
-.ms-rate-card {
+   Reuses .ms-card__price / __price-amt / __price-unit verbatim — the same
+   money component as the service tiles and the quote form's radios. */
+.ms-rates {
   background: var(--ms-color-surface);
   border-radius: var(--ms-radius-lg);
   box-shadow: var(--ms-shadow-raised-md);
+  display: grid;
+  grid-template-columns: 1fr;
+  overflow: hidden;
+}
+
+.ms-rates__item {
   padding: var(--ms-space-5);
   display: flex;
   flex-direction: column;
-  gap: var(--ms-space-2);
+  gap: var(--ms-space-1);
+}
+
+/* Hairlines BETWEEN items only. Drawn on the leading edge of every item after
+   the first, so the panel never carries an outer rule that would fight its own
+   rounded corner. The axis flips with the layout below. */
+.ms-rates__item + .ms-rates__item { border-top: 1px solid var(--ms-color-border); }
+
+.ms-rates__name {
+  font-size: var(--ms-text-md);
+  font-weight: 800;
+  color: var(--ms-color-ink);
+  margin: 0;
+}
+
+.ms-rates__desc {
+  font-size: var(--ms-text-sm);
+  color: var(--ms-color-ink-soft);
+  line-height: var(--ms-leading-snug);
+  margin: 0;
+}
+
+@media (min-width: 40em) {
+  .ms-rates { grid-template-columns: 1fr 1fr; }
+  /* Two-up: the rule between columns is vertical, and rows 3-4 need a
+     horizontal rule above them that the +-selector alone cannot express. */
+  .ms-rates__item + .ms-rates__item { border-top: 0; }
+  .ms-rates__item:nth-child(even) { border-left: 1px solid var(--ms-color-border); }
+  .ms-rates__item:nth-child(n + 3) { border-top: 1px solid var(--ms-color-border); }
+}
+
+@media (min-width: 64em) {
+  .ms-rates { grid-template-columns: repeat(4, 1fr); }
+  .ms-rates__item:nth-child(n + 3) { border-top: 0; }
+  .ms-rates__item + .ms-rates__item { border-left: 1px solid var(--ms-color-border); }
+  /* Equal-height columns need the tallest name to reserve its space, or the
+     descriptions sit at four different heights. "Move-In / Move-Out Cleaning"
+     is the only one that wraps at this width. */
+  .ms-rates__name { min-height: calc(var(--ms-text-md) * var(--ms-leading-tight) * 2); }
 }
 
 /* Add-on / rate table, wrapped so the radius clips cleanly. */
@@ -2121,8 +2159,12 @@ html.ms-motion [data-ms-reveal].is-revealed {
    whole property, so the tilt vanished the moment a card was hovered, which
    is exactly when it should have been tilting.
    -------------------------------------------------------------------------- */
-.ms-service-tile,
-.ms-rate-card {
+/* Service tiles only. The pricing page's rates used to tilt too, back when
+   they were four discrete cards; they are one divided panel now, and tilting
+   a single 1200px surface swings its corners far enough to read as the whole
+   page wobbling, while tilting individual columns of one panel is incoherent.
+   A page people read numbers on is the wrong place for it either way. */
+.ms-service-tile {
   --ms-tilt-x: 0deg;
   --ms-tilt-y: 0deg;
   --ms-lift: 0px;
@@ -2138,8 +2180,7 @@ html.ms-motion [data-ms-reveal].is-revealed {
    with nothing to straighten it. */
 @media (hover: hover) and (pointer: fine) {
   .ms-service-tile:hover,
-  .ms-service-tile:focus-visible,
-  .ms-rate-card:hover {
+  .ms-service-tile:focus-visible {
     --ms-lift: -4px;
   }
 }
@@ -2148,13 +2189,11 @@ html.ms-motion [data-ms-reveal].is-revealed {
    easing — a 400ms transition on a value that updates every frame reads as
    lag, not smoothness. The class comes off on pointerleave, so the return to
    flat IS eased. */
-.ms-service-tile.is-tilting,
-.ms-rate-card.is-tilting {
+.ms-service-tile.is-tilting {
   transition: box-shadow var(--ms-duration-base) var(--ms-ease);
 }
 
-.ms-service-tile:not(.is-tilting),
-.ms-rate-card:not(.is-tilting) {
+.ms-service-tile:not(.is-tilting) {
   transition:
     transform var(--ms-duration-tilt) var(--ms-ease),
     box-shadow var(--ms-duration-base) var(--ms-ease);
@@ -2200,7 +2239,6 @@ html.ms-motion [data-ms-reveal].is-revealed {
   }
 
   .ms-service-tile,
-  .ms-rate-card,
   .ms-hero__photo,
   .ms-duck-badge,
   .ms-quote-start { transform: none; }
@@ -2227,80 +2265,113 @@ html.ms-motion [data-ms-reveal].is-revealed {
    eyebrows inside the panel, so the page reads title, then group, then row,
    instead of three things all shouting at the same volume.
    ========================================================================== */
-.ms-sheet {
+/* TWO panels, side by side — replacing one eleven-row full-width ledger.
+
+   The ledger's real defect was measure, not styling. An eleven-row list given
+   the full 1200px container put "Inside oven" roughly 850px from "$50", so the
+   eye had to cross an empty white gap to join a label to its price. Every
+   other complaint about that block followed from the same cause: it was tall
+   because nothing sat beside anything, and its footnotes left a ragged empty
+   half because 58ch of prose cannot fill 900px.
+
+   Splitting also makes a distinction the eyebrows were only asserting: add-ons
+   are a menu the customer picks from, while the minimum, travel and tax are
+   arithmetic applied to them. Those are different kinds of fact and now look
+   it. Row measure drops to about 420px and the section's height roughly
+   halves, because six rows sit beside five instead of after them. */
+.ms-price-cols {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ms-space-5);
+  align-items: start;
+}
+
+@media (min-width: 56em) {
+  .ms-price-cols { grid-template-columns: 1fr 1fr; gap: var(--ms-space-6); }
+}
+
+.ms-pricecard {
   background: var(--ms-color-surface);
   border-radius: var(--ms-radius-lg);
   box-shadow: var(--ms-shadow-raised-sm);
   overflow: hidden;
 }
 
-/* The table already carries .ms-table, so rows, padding, tabular figures and
-   the right-aligned amount column all come from there unchanged — this is one
-   table vocabulary across the pricing page, the quote summary and the add-on
-   list, not a third one. */
-.ms-sheet__table { width: 100%; }
-
-/* Group label. Small, uppercase, tracked — the same eyebrow treatment as
-   .ms-footer h2 and .ms-stat__label, so it reads as a label rather than as a
-   heading that lost its size. */
-/* tr.ms-sheet__group th, not .ms-sheet__group th.
-   The amount column is right-aligned by `.ms-table th:last-child` (0,2,1), and
-   a colspan=2 group label IS the last child of its row — so it inherited the
-   money alignment and both group labels rendered flush right, reading as
-   captions for the column rather than as labels for the group. A single-class
-   selector (0,1,1) loses that fight no matter where it sits in the file;
-   adding the element qualifier (0,2,2) settles it on specificity rather than
-   on source order, which is the thing that keeps breaking in this stylesheet. */
-.ms-sheet__table tr.ms-sheet__group th {
+/* A real h2, sized like a label.
+   The section used to carry a centred 44px heading that competed with the page
+   title for the eye and won often enough to make the page feel like it started
+   twice. These panel titles ARE the section's headings — they keep the
+   document outline intact (h1 -> h2 -> rows) without a second display-scale
+   heading on the page. */
+.ms-pricecard__title {
+  margin: 0;
   background: var(--ms-color-surface-base);
+  border-bottom: 1px solid var(--ms-color-border);
+  padding: var(--ms-space-4) var(--ms-space-5);
   font-size: var(--ms-text-xs);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--ms-color-ink);
-  text-align: left;
-  padding: var(--ms-space-4) var(--ms-space-5);
-  border-bottom: 1px solid var(--ms-color-border);
 }
 
 /* The qualifier rides along at sentence case and lower contrast, so the label
    can say what the group IS and what it costs the reader to care about,
    without a second line or a second type size. */
-.ms-sheet__table tr.ms-sheet__group th span {
+.ms-pricecard__title span {
   text-transform: none;
   letter-spacing: 0;
   font-weight: 600;
   color: var(--ms-color-ink-faint);
 }
-.ms-sheet__table tr.ms-sheet__group th span::before { content: '\00a0\00a0·\00a0\00a0'; }
+.ms-pricecard__title span::before { content: '\00a0\00a0·\00a0\00a0'; }
 
-/* A second tbody starts a new group; the border above it separates the two
-   without a rule that would collide with the group label's own. */
-.ms-sheet__table tbody + tbody tr.ms-sheet__group th { border-top: 1px solid var(--ms-color-border); }
+.ms-pricecard .ms-table { width: 100%; }
 
-/* Footnotes live INSIDE the panel, at the panel's width.
-   As standalone .ms-note boxes these capped at 58ch under a 100%-wide table,
-   which is what produced the ragged half-empty rows. Inside the sheet they
-   are plainly footnotes to the rows above, and the reading measure is held by
-   the paragraph rather than by a box that then fails to fill its row. */
-.ms-sheet__notes {
-  background: var(--ms-color-surface-base);
-  border-top: 1px solid var(--ms-color-border);
-  padding: var(--ms-space-5);
-  display: flex;
-  flex-direction: column;
-  gap: var(--ms-space-3);
+/* At phone width the panel is about 350px, and .ms-table's 24px side padding
+   took 48px of that before either column got any. With the amount column
+   holding a nowrap phrase, the label was left roughly 140px and "Inside
+   cabinets and drawers" broke across three lines. Tighter gutters here only —
+   the wide tables elsewhere keep the roomier setting. */
+@media (max-width: 30em) {
+  .ms-pricecard .ms-table th,
+  .ms-pricecard .ms-table td { padding: var(--ms-space-3) var(--ms-space-4); }
+  .ms-pricecard__title { padding: var(--ms-space-3) var(--ms-space-4); }
 }
 
-.ms-sheet__notes p {
+/* Three short notes as three columns.
+
+   They are peers — what "from" means, what cannot be priced from a form, and
+   what happens to small jobs — so three equal columns is an honest use of the
+   width rather than one narrow paragraph column leaving half the row empty.
+   Quieter than the rows above them: these are footnotes, and should read as
+   available rather than as demanding. */
+.ms-footnotes {
+  margin-top: var(--ms-space-6);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ms-space-4);
+}
+
+@media (min-width: 56em) {
+  .ms-footnotes { grid-template-columns: repeat(3, 1fr); gap: var(--ms-space-6); }
+}
+
+.ms-footnotes p {
   margin: 0;
   font-size: var(--ms-text-sm);
   line-height: var(--ms-leading-snug);
   color: var(--ms-color-ink-soft);
-  max-width: 68ch;
+  /* A gold hairline instead of a box. Three bordered callouts here would put
+     the page back to counting boxes; a rule carries the same "these belong
+     together as a set" signal at a fraction of the weight, and puts the one
+     accent colour somewhere other than a button. */
+  border-top: 2px solid var(--ms-color-gold);
+  padding-top: var(--ms-space-3);
 }
 
-.ms-sheet__notes strong { color: var(--ms-color-ink); }
+.ms-footnotes strong { color: var(--ms-color-ink); display: block; }
+
 
 /* ==========================================================================
    Closing call to action.

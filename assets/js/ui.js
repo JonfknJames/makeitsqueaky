@@ -221,7 +221,10 @@
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
 
   if (finePointer.matches) {
-    for (const card of document.querySelectorAll('.ms-service-tile, .ms-rate-card')) {
+    // Service tiles only — the pricing page's rates are one divided panel now,
+    // not four cards, and a single wide surface tilting reads as the page
+    // wobbling rather than as a card responding.
+    for (const card of document.querySelectorAll('.ms-service-tile')) {
       const apply = throttled((x, y) => {
         card.style.setProperty('--ms-tilt-y', (x * MAX_TILT_DEG).toFixed(2) + 'deg');
         // Negated: pointer below centre should tip the card's FAR edge up, the

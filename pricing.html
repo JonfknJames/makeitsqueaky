@@ -85,26 +85,26 @@
              grouped them. The heading is restored to the outline without
              putting a second large title back on the page. -->
         <h2 id="rates-heading" class="ms-visually-hidden">Per-square-foot rates</h2>
-        <div class="ms-rate-grid">
-          <div class="ms-rate-card">
+        <div class="ms-rates">
+          <div class="ms-rates__item">
             <p class="ms-card__price"><span class="ms-card__price-amt">$0.25</span><span class="ms-card__price-unit">/ sq ft</span></p>
-            <h3 class="ms-card__title">Regular Cleaning</h3>
-            <p class="ms-card__desc">Half-day service. Weekly, biweekly, or monthly upkeep.</p>
+            <h3 class="ms-rates__name">Regular Cleaning</h3>
+            <p class="ms-rates__desc">Half-day. Weekly, biweekly or monthly upkeep.</p>
           </div>
-          <div class="ms-rate-card">
+          <div class="ms-rates__item">
             <p class="ms-card__price"><span class="ms-card__price-amt">$0.40</span><span class="ms-card__price-unit">/ sq ft</span></p>
-            <h3 class="ms-card__title">Deep Cleaning</h3>
-            <p class="ms-card__desc">Full-day service. A top-to-bottom reset.</p>
+            <h3 class="ms-rates__name">Deep Cleaning</h3>
+            <p class="ms-rates__desc">Full day. A top-to-bottom reset.</p>
           </div>
-          <div class="ms-rate-card">
+          <div class="ms-rates__item">
             <p class="ms-card__price"><span class="ms-card__price-amt">$0.65</span><span class="ms-card__price-unit">/ sq ft</span></p>
-            <h3 class="ms-card__title">Move-In / Move-Out Cleaning</h3>
-            <p class="ms-card__desc">Full-day service. Ready for the next set of keys.</p>
+            <h3 class="ms-rates__name">Move-In / Move-Out Cleaning</h3>
+            <p class="ms-rates__desc">Full day. Ready for the next set of keys.</p>
           </div>
-          <div class="ms-rate-card">
+          <div class="ms-rates__item">
             <p class="ms-card__price"><span class="ms-card__price-amt">$0.75</span><span class="ms-card__price-unit">/ sq ft</span></p>
-            <h3 class="ms-card__title">Post-Renovation Cleaning</h3>
-            <p class="ms-card__desc">Full-day service. Fine dust and debris cleared out.</p>
+            <h3 class="ms-rates__name">Post-Renovation Cleaning</h3>
+            <p class="ms-rates__desc">Full day. Fine dust and debris cleared out.</p>
           </div>
         </div>
       </div>
@@ -121,46 +121,52 @@
          inside the panel rather than headings above it, every amount aligns
          down a single column, and each group's footnote sits inside the panel
          it belongs to, so nothing is left dangling. -->
-    <section class="ms-section" aria-labelledby="sheet-heading">
+    <!-- Two panels, not one ledger. The eleven-row table this replaces put a
+         label roughly 850px from its own price, because an eleven-row list was
+         given the full container to sit in. Six rows beside five at ~420px
+         each fixes the measure and halves the height at once.
+
+         The split also states something the group eyebrows were only
+         asserting: add-ons are chosen, the minimum and travel are not. -->
+    <section class="ms-section" aria-label="Add-ons, minimum, travel and tax">
       <div class="ms-container">
-        <div class="ms-section__head">
-          <h2 id="sheet-heading" class="ms-section-heading">What else can appear</h2>
-          <p class="ms-section-lead">Everything beyond the per-square-foot rate, in one place. Nothing here is added without you choosing it — except travel, which follows from your postal code.</p>
+        <div class="ms-price-cols">
+          <div class="ms-pricecard">
+            <h2 class="ms-pricecard__title">Add-ons <span>you choose these</span></h2>
+            <table class="ms-table">
+              <caption class="ms-visually-hidden">Optional add-on prices</caption>
+              <tbody>
+                <tr><td>Inside oven</td><td>$50</td></tr>
+                <tr><td>Inside refrigerator</td><td>$50</td></tr>
+                <tr><td>Interior windows</td><td>$10 each</td></tr>
+                <tr><td>Inside cabinets and drawers</td><td>From $75</td></tr>
+                <tr><td>Wall washing</td><td>From $75</td></tr>
+                <tr><td>Inside kitchen appliances</td><td>From $25 each</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="ms-pricecard">
+            <!-- Non-breaking space stops "you" orphaning onto its own line at
+                 phone width, where this title wraps. -->
+            <h2 class="ms-pricecard__title">Minimum, travel &amp; tax <span>worked out for&nbsp;you</span></h2>
+            <table class="ms-table">
+              <caption class="ms-visually-hidden">Amounts applied automatically</caption>
+              <tbody>
+                <tr><td>Minimum job</td><td>$180</td></tr>
+                <tr><td>Travel — City of Toronto</td><td>No fee</td></tr>
+                <tr><td>Travel — inner GTA</td><td>$35</td></tr>
+                <tr><td>Travel — outer GTA</td><td>$60</td></tr>
+                <tr><td>Tax</td><td>None</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div class="ms-sheet">
-          <table class="ms-table ms-sheet__table">
-            <caption class="ms-visually-hidden">Add-on prices, and the minimum, travel and tax that can appear on a quote</caption>
-            <tbody>
-              <tr class="ms-sheet__group">
-                <th colspan="2" scope="colgroup">Add-ons <span>you can tick any of these</span></th>
-              </tr>
-              <tr><td>Inside oven</td><td>$50</td></tr>
-              <tr><td>Inside refrigerator</td><td>$50</td></tr>
-              <tr><td>Interior windows</td><td>$10 per window</td></tr>
-              <tr><td>Inside cabinets and drawers</td><td>From $75</td></tr>
-              <tr><td>Wall washing</td><td>From $75</td></tr>
-              <tr><td>Inside kitchen appliances</td><td>From $25 per appliance</td></tr>
-            </tbody>
-            <tbody>
-              <tr class="ms-sheet__group">
-                <th colspan="2" scope="colgroup">Minimum, travel &amp; tax <span>worked out for you</span></th>
-              </tr>
-              <tr><td>Minimum job</td><td>$180</td></tr>
-              <tr><td>Travel — City of Toronto</td><td>No fee</td></tr>
-              <tr><td>Travel — inner GTA</td><td>$35</td></tr>
-              <tr><td>Travel — outer GTA</td><td>$60</td></tr>
-              <tr><td>Tax</td><td>None</td></tr>
-            </tbody>
-          </table>
-
-          <!-- Inside the panel, at the panel's own width. As separate boxes
-               below it these were the single ugliest thing on the page. -->
-          <div class="ms-sheet__notes">
-            <p><strong>"From" is a starting price, not a cap.</strong> The calculator includes those items at that figure so you still get a number, and Tiffany confirms the final amount after a look. Nothing is charged until you both agree.</p>
-            <p><strong>Quoted individually:</strong> heavy grime or excessive buildup, heavy pet hair, and heavy construction residue vary too much job-to-job for even a starting price.</p>
-            <p><strong>Small jobs</strong> are floored at the minimum rather than billed at the raw per-square-foot rate, and no tax is added. A booked job holds a full day of Tiffany's time, so the <a href="policies.html">deposit and cancellation terms</a> are worth a read first.</p>
-          </div>
+        <div class="ms-footnotes">
+          <p><strong>"From" is a starting price</strong> Those three items are quoted at that figure so you still get a number, and Tiffany confirms the final amount after a look. Nothing is charged until you both agree.</p>
+          <p><strong>Quoted individually</strong> Heavy grime, heavy pet hair and construction residue vary too much job-to-job for even a starting price.</p>
+          <p><strong>Small jobs</strong> Floored at the minimum rather than billed at the raw rate. A booked job holds a full day, so the <a href="policies.html">deposit and cancellation terms</a> are worth a read first.</p>
         </div>
       </div>
     </section>
