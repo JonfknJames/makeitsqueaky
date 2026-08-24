@@ -1685,22 +1685,22 @@ button { font: inherit; }
    Holds either the placeholder below or Tiffany's actual photograph, at the
    SAME ratio, so dropping the real image in cannot change the page's layout.
 
-   835/1448, matching the delivered asset exactly, so object-fit has nothing
-   left to crop.
+   3/4, matching the source's own 1086x1448, so the frame shows the whole
+   photograph and object-fit has nothing left to crop.
 
-   Why that ratio and not the source's own 3/4: the generated source carries a
-   third forearm across its lower right, and that region is also where the
-   towel cart sits. They overlap, so the widest frame that excludes the
-   artefact is a vertical cut at x=835 — which takes the cart with it. The
-   ratio is therefore dictated by the defect, not by taste.
+   The source is used as delivered, by decision: cropping past the generated
+   third forearm in its lower right also removed the towel cart (they share
+   that corner), and patching over it with delogo produced a hard-edged smear
+   that read as censorship. Both fixes cost more than the flaw. If the source
+   is ever regenerated without the extra limb, nothing here needs to change.
 
-   Do NOT patch such a region with delogo. That was tried: it interpolates
-   from the surrounding pixels and, over an area this large and this
-   structured, produces a hard-edged rectangular smear that reads as
-   censorship. It looked passable at review scale and obvious at full size,
-   which is the trap — judge a repair at the size it will be seen. */
+   Note for anyone tempted by delogo on a region this size: it interpolates
+   inward from a region's borders, so across a quarter of the frame's width —
+   over a cart rail and folded towels — it can only average into a blur. And
+   it looked acceptable on a downscaled contact sheet while being obvious at
+   full size, which is the trap. Judge a repair at the size it will be seen. */
 .ms-portrait,
-.ms-photo-slot { aspect-ratio: 835 / 1448; }
+.ms-photo-slot { aspect-ratio: 3 / 4; }
 
 .ms-portrait {
   position: relative;
