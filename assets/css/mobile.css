@@ -1,0 +1,305 @@
+/* ==========================================================================
+   mobile.css — the phone build.
+
+   Loaded ONLY at 767px and below, via a media-qualified <link> in each page's
+   head. Desktop never parses a line of this file's rules, and this file never
+   imports, extends or patches site.css — it re-declares what the phone needs
+   from scratch. That separation is the point: mobile decisions live here, in
+   one place, and cannot leak upward into the desktop layout.
+
+   WHY THIS AND NOT A SEPARATE /m/ TREE
+
+   The usual pattern for a dedicated mobile build is a parallel directory of
+   HTML plus a UA redirect. It is the wrong trade for this site specifically:
+   every page hard-codes prices, and tests/copy-rules.test.js exists precisely
+   because "a rate edit leaves hardcoded strings stating the OLD number while
+   the calculator quotes the new one". Duplicating eight pages would double
+   that drift surface for the one class of bug that actually costs money here.
+   A static host also has no server-side UA detection, so the redirect would be
+   a JavaScript round trip in front of every mobile page load — a real Core Web
+   Vitals cost incurred in the name of mobile performance.
+
+   One HTML source, one price, one canonical URL. The mobile DESIGN is separate;
+   the mobile CONTENT is not duplicated.
+
+   WHAT WAS ACTUALLY WRONG, MEASURED AT 390px BEFORE ANY OF THIS
+
+     index      4382px   6.6 screens      hero 1415px, services 2012px
+     services   5103px   7.7 screens
+     quote      3958px   6.0 screens
+     about      3005px   4.5 screens
+     footer      859px   on every page
+     13 tap targets under 44px, 12 text elements under 14px
+
+   The site was not "responsive" so much as vertically stacked: a four-column
+   desktop grid became four full-height cards, and a four-column footer became
+   four stacked lists. Nothing was broken; everything was simply desktop
+   density delivered to a phone.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Type and rhythm, retuned for the device.
+
+   Same scale, different footing. 13px is a legible caption on a monitor at
+   60cm and a squint at arm's length on a phone, so the two smallest steps come
+   up. Section rhythm comes DOWN: 64px of air between sections is generous on a
+   1440px canvas and is a third of a phone screen spent on nothing.
+   -------------------------------------------------------------------------- */
+:root {
+  --ms-text-xs: 0.875rem;    /* 13 -> 14px  */
+  --ms-text-sm: 0.9375rem;   /* 15px, unchanged — already fine */
+  --ms-text-lg: 1.25rem;     /* 22 -> 20px  */
+  --ms-text-xl: 1.5rem;      /* 28 -> 24px  */
+
+  --ms-rhythm-section: var(--ms-space-7);   /* 64 -> 48px between sections */
+  --ms-rhythm-related: var(--ms-space-5);   /* 32 -> 24px head to content  */
+
+  /* Safe-area insets, so notches and home indicators are addressable by name
+     rather than repeated inline. Zero on anything that has none. */
+  --ms-safe-top: env(safe-area-inset-top, 0px);
+  --ms-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* --------------------------------------------------------------------------
+   Touch behaviour.
+   -------------------------------------------------------------------------- */
+
+/* Removes the ~300ms click delay browsers keep for double-tap-to-zoom, without
+   disabling zoom itself (which would be a WCAG 1.4.4 failure). */
+a, button, label, select, input, summary, [role="button"] {
+  touch-action: manipulation;
+}
+
+/* The grey flash on tap is an Android Chrome default that fires on the whole
+   tile, including the parts of a card that are not the link. The focus and
+   active states below carry the feedback instead. */
+a, button { -webkit-tap-highlight-color: transparent; }
+
+/* --------------------------------------------------------------------------
+   The fixed nav pill, and the space reserved for it.
+
+   body's padding-top has to clear the pill, and on a notched phone the pill
+   itself has to clear the status bar. Both numbers move together or the first
+   heading on every page ends up underneath something.
+   -------------------------------------------------------------------------- */
+body { padding-top: calc(6rem + var(--ms-safe-top)); }
+
+.ms-header { top: calc(var(--ms-space-3) + var(--ms-safe-top)); }
+
+[id] { scroll-margin-top: calc(6rem + var(--ms-safe-top) + var(--ms-rhythm-tight)); }
+
+/* The header's compact CTA label was 12px — the smallest text on the site, on
+   its most important control. */
+.ms-header__cta {
+  font-size: var(--ms-text-xs);
+  min-height: 44px;
+  padding-inline: var(--ms-space-4);
+}
+
+.ms-nav__summary { min-height: 44px; min-width: 44px; }
+
+/* Both were a couple of pixels under: the logo lockup at 40px and the skip
+   link at 42px. Neither is a rounding error to a thumb. */
+.ms-logo { min-height: 44px; }
+.ms-skip-link { min-height: 44px; display: flex; align-items: center; }
+
+/* --------------------------------------------------------------------------
+   Hero — 1415px was two and a bit screens before a single service was named.
+   -------------------------------------------------------------------------- */
+.ms-hero { padding-block: var(--ms-space-4) var(--ms-space-6); }
+
+.ms-hero__inner {
+  padding: var(--ms-space-5);
+  gap: var(--ms-space-5);
+}
+
+/* 4:3 costs about 290px of a 664px viewport. 16:9 keeps the room legible as a
+   room and gives 110px of it back to the thing the page is actually for. */
+.ms-hero__media { aspect-ratio: 16 / 9; }
+
+.ms-hero__visual { gap: var(--ms-space-5); }
+
+.ms-hero__stat { margin-top: var(--ms-space-5); }
+
+/* --------------------------------------------------------------------------
+   Service tiles — 2012px, four cards deep, on the page a visitor lands on.
+
+   Each tile carried its full four-item tick list, which is right on a desktop
+   grid where all four sit side by side and the lists read as a comparison. In
+   a single column they are simply four screens of small print between the
+   visitor and the next thing.
+
+   The ticks are hidden here, not deleted: they stay in the DOM (so they are
+   still indexed and still available to a screen reader following the page in
+   order), and "What's included" — a link that was already there, already
+   promising exactly this — carries the visitor to the same list in full on
+   services.html. That is progressive disclosure using a route that already
+   existed, not content thrown away.
+   -------------------------------------------------------------------------- */
+.ms-service-tile__list { display: none; }
+
+.ms-service-tile {
+  padding: var(--ms-space-4) var(--ms-space-5);
+  gap: var(--ms-space-1);
+}
+
+.ms-service-tile__more {
+  padding-top: var(--ms-space-3);
+  min-height: 44px;
+  align-items: center;
+}
+
+.ms-service-grid { gap: var(--ms-space-3); }
+
+.ms-services { padding-block: var(--ms-space-5) var(--ms-rhythm-section); }
+
+/* The tile title reserves two lines on desktop so four columns align. In one
+   column there is nothing to align to, and the reserve is just a gap under
+   every single-line title. */
+.ms-service-tile .ms-card__title { min-height: 0; }
+
+/* --------------------------------------------------------------------------
+   The pill note under the tiles, and any inline link that was text-sized.
+   -------------------------------------------------------------------------- */
+.ms-services__note {
+  padding: var(--ms-space-4) var(--ms-space-5);
+  border-radius: var(--ms-radius-lg);
+  line-height: var(--ms-leading-normal);
+}
+
+/* --------------------------------------------------------------------------
+   Sections and headings.
+   -------------------------------------------------------------------------- */
+.ms-section { padding-block: var(--ms-rhythm-section); }
+.ms-section__head { margin-bottom: var(--ms-rhythm-related); }
+.ms-page-head { padding-block: var(--ms-space-6) var(--ms-space-5); }
+
+/* --------------------------------------------------------------------------
+   Forms — the quote page is the product, and it is used on a phone.
+   -------------------------------------------------------------------------- */
+
+/* 16px is the threshold below which iOS Safari zooms the viewport on focus and
+   leaves it zoomed. The tokens already land on 16px; this states it as a floor
+   so a future type-scale change cannot quietly cross it. */
+.ms-field input,
+.ms-field select,
+.ms-field textarea { font-size: max(16px, var(--ms-text-base)); min-height: 48px; }
+
+/* The two add-on quantity spinners carry their own styling rather than
+   .ms-field's, so the 16px floor above missed them entirely: both shipped at
+   15px and 42px tall. On the one page where a customer types numbers, that
+   meant tapping the window count zoomed iOS Safari in and left it zoomed. */
+.ms-addon-row__count-label input {
+  font-size: max(16px, var(--ms-text-base));
+  min-height: 44px;
+  min-width: 4.5rem;
+}
+
+.ms-option { min-height: 56px; padding: var(--ms-space-4); }
+.ms-option--compact { min-height: 48px; }
+.ms-addon-row { min-height: 56px; }
+.ms-toggle { min-height: 44px; align-items: center; }
+
+.ms-quote-form { gap: var(--ms-space-5); }
+.ms-quote-step { padding: var(--ms-space-5); }
+
+/* Full-width buttons: a phone has one thumb column, and a centred pill with
+   dead space either side of it is a smaller target for no reason. */
+.ms-quote-cta .ms-btn { flex: 1 1 100%; }
+
+/* --------------------------------------------------------------------------
+   Footer — 859px on every page, or one and a third screens of links.
+
+   The four columns stacked into four full-width lists, each with its own
+   heading, inside 128px of vertical padding. Two-up puts the three link
+   columns into two rows instead of three, the padding comes down, and every
+   link becomes a real 44px target rather than a 24px line of text — which is
+   where most of this page's failing tap targets were.
+   -------------------------------------------------------------------------- */
+.ms-footer {
+  padding-block: var(--ms-space-6);
+  padding-bottom: calc(var(--ms-space-6) + var(--ms-safe-bottom));
+}
+
+.ms-footer__grid {
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ms-space-5) var(--ms-space-4);
+  text-align: left;
+}
+
+/* The brand block keeps the full width — a tagline squeezed into half a phone
+   screen wraps to five lines. */
+.ms-footer__col--brand { grid-column: 1 / -1; text-align: center; }
+
+.ms-footer__col { text-align: left; }
+.ms-footer h2 { margin-bottom: var(--ms-space-1); }
+.ms-footer ul { align-items: stretch; gap: 0; }
+
+/* Contact spans the full width. In a half column "City of Toronto — all M
+   postal codes" and "Inner & outer GTA for a travel fee" each broke over two
+   lines, and it was the odd column out on its own row anyway, leaving the
+   other half of that row empty. */
+.ms-footer__grid > .ms-footer__col:last-child { grid-column: 1 / -1; }
+
+/* The ANCHOR is the target, and it fills its row. Sizing the <li> instead
+   leaves a 44px row containing a link only as wide as its own text — which is
+   how "Deep" ended up a 36px-wide tap target inside a correctly-sized row. */
+.ms-footer__col li { display: block; line-height: var(--ms-leading-snug); }
+
+.ms-footer__col li a {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+}
+
+/* Rows that are plain facts rather than links need no target height, and
+   giving them one adds ~90px of footer for nothing. */
+.ms-footer__col li:not(:has(a)) { padding-block: var(--ms-space-2); }
+
+/* The phone row is an icon plus a link; the row is the flex container, so the
+   anchor inside it should not also try to be full width. */
+.ms-footer__icon-row { display: flex; align-items: center; }
+.ms-footer__icon-row a { width: auto; }
+
+.ms-footer__icon-row { gap: var(--ms-space-2); }
+
+.ms-footer__bottom { margin-top: var(--ms-space-5); padding-top: var(--ms-space-4); }
+
+/* --------------------------------------------------------------------------
+   Services page — the longest on the site at 7.4 screens.
+
+   Its tick lists STAY. This is the page the home page's "What's included"
+   links point at, so hiding the detail here would send a visitor round a loop
+   to nothing. What comes out is the packaging: 32px between panels and 24px
+   of padding inside each, four times over, is most of a screen spent on air
+   around content the visitor came for.
+   -------------------------------------------------------------------------- */
+.ms-service-list { gap: var(--ms-space-4); }
+
+.ms-service-panel {
+  padding: var(--ms-space-4) var(--ms-space-5);
+  gap: var(--ms-space-3);
+}
+
+.ms-check-list { gap: var(--ms-space-1) var(--ms-space-4); }
+.ms-check-list li { line-height: var(--ms-leading-snug); padding-block: 2px; }
+
+/* --------------------------------------------------------------------------
+   Pricing page.
+   -------------------------------------------------------------------------- */
+.ms-footnotes { margin-top: var(--ms-space-5); gap: var(--ms-space-4); }
+.ms-cta-band { padding: var(--ms-space-6) var(--ms-space-5); }
+.ms-cta-band__duck { width: 3.5rem; height: 3.5rem; }
+.ms-cta-band .ms-btn { width: 100%; }
+
+/* --------------------------------------------------------------------------
+   Prose and info layouts.
+   -------------------------------------------------------------------------- */
+.ms-prose p { font-size: var(--ms-text-base); }
+.ms-info-grid { gap: var(--ms-space-5); }
+.ms-contact-list__item { padding: var(--ms-space-4); }
+
+/* Any standalone call-to-action button gets the full thumb column. */
+.ms-prose__action .ms-btn,
+.ms-404__actions .ms-btn { width: 100%; justify-content: center; }
