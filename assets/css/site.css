@@ -1,0 +1,2218 @@
+/* ==========================================================================
+   Make it Squeaky — design tokens + site shell (header, hero, carousel, footer)
+   Zero dependencies. Plain CSS custom properties, prefixed --ms-.
+
+   Structure/interaction ported from callrabbit-website/callrabbit-v2.html
+   (tactile-raised/sunken lighting model, floating pill nav, hero-as-raised-
+   panel, 3D card carousel, horizontal-scroll-mask) — colour taken from
+   NONE of it. Palette below is sampled from Tiffany's own brand artwork,
+   see .superpowers/sdd/2026-08-07-make-it-squeaky-phase-1/DESIGN-DIRECTION.md.
+   ========================================================================== */
+
+/* -------------------------------------------------------------------------
+   Nunito — vendored, not linked.
+
+   Self-hosted from assets/fonts/. Nothing here contacts fonts.googleapis.com
+   or fonts.gstatic.com at runtime: no request to Google means no IP address,
+   no Referer and no user-agent handed to a third party on every page view,
+   and the site keeps its zero-external-requests property (it still works
+   offline). One file covers the whole weight axis because Nunito ships as a
+   variable font — 39KB for 200 through 1000, against roughly 4x that for
+   four static cuts.
+
+   Latin subset ONLY. Google serves about nine subsets per family; for an
+   English-language Toronto site the Cyrillic, Greek and Vietnamese cuts are
+   bytes the visitor downloads and never renders a glyph from. The
+   unicode-range below is Google's own latin range, kept verbatim so that
+   anything outside it falls back to system-ui rather than rendering tofu.
+   ------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 200 1000;
+  /* swap, not block: text is readable in the fallback immediately and
+     re-renders when the font lands. A cleaner's phone number should never be
+     invisible because a font is slow. */
+  font-display: swap;
+  src: url('../fonts/nunito-latin-var.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* -------------------------------------------------------------------------
+   Tokens
+   ------------------------------------------------------------------------- */
+:root {
+  /* Color — sampled from assets/img/duck@2x.webp and the wordmark source.
+     Gold is the ONLY accent (one click-colour, not two competing ones).
+     Blue is structural/typographic, never a second CTA colour. */
+  --ms-color-gold: #FFCC56;         /* duck body — the one accent, background only */
+  --ms-color-gold-hover: #F0BB3A;   /* pressed/hover gold, still 6.45:1 vs ink */
+  --ms-color-gold-tint: #FFF3D6;    /* faint gold wash for badges/number chips */
+  --ms-color-gold-ink: #16323F;     /* text ON gold — never white on gold */
+
+  --ms-color-blue: #3C6F92;         /* wordmark blue — 5.41:1 on white */
+  --ms-color-blue-dark: #2A5170;    /* 8.37:1 on white — link/heading hover */
+  --ms-color-cyan: #8FD8F5;         /* wordmark cyan — DECORATIVE ONLY, 1.58:1, never text */
+  --ms-color-bubble: #8AADB3;       /* duck's bubble — decorative only */
+
+  --ms-color-surface: #FFFFFF;      /* cards, nav pill, hero panel */
+  --ms-color-surface-base: #F2F7FA; /* page background */
+
+  --ms-color-ink: #16323F;          /* body text — 13.44:1 on white */
+  --ms-color-ink-soft: #46626F;     /* secondary text — 6.49:1 on white */
+  /* Was #7C97A3, which measured 3.08:1 on white — a WCAG AA failure, and it
+     was carrying the "/ sq ft" beside every rate on three pages, the quote
+     form's reassurance line, and the photo placeholder. The old comment
+     called it "decorative-adjacent, not body copy" while all five of its
+     uses were text, so the value was wrong for the role rather than the role
+     being wrong. Darkened until it clears AA on BOTH surfaces it actually
+     lands on: 5.31:1 on white, 4.92:1 on the page background. */
+  --ms-color-ink-faint: #566F7C;    /* tertiary/meta text — AA on white and on surface-base */
+
+  --ms-color-border: #E1EAEF;
+  --ms-color-border-strong: #C9D9E1;
+
+  /* Footer / dark surface — Ink itself doubles as the dark surface, so the
+     footer's dark tone matches the body-text ink exactly rather than being
+     a fourth unrelated colour. Wordmark image is NEVER placed here (residual
+     halo, light-surfaces-only) — duck mark + live text instead. */
+  --ms-color-footer-bg: #16323F;
+  --ms-color-footer-ink: #FFFFFF;       /* 13.44:1 on footer-bg */
+  --ms-color-footer-ink-soft: #D9E6EC;  /* 10.55:1 on footer-bg */
+  --ms-color-footer-border: #2A4C5C;
+
+  --ms-color-focus: var(--ms-color-blue-dark);
+
+  /* Type — rounded/humanist warmth, not Inter, not a serif. Graceful-
+     enhancement stack: if the visitor has a rounded system font installed
+     it's used, otherwise it falls straight through to system-ui. No font
+     files are fetched — nothing to vendor, nothing to leak to a CDN. */
+  /* One family for both roles. The design was always drawn against a rounded
+     humanist face — the old stack just hoped the visitor happened to have
+     one installed and fell through to system-ui (Segoe UI on Windows,
+     Roboto on Android) when they did not, which is why small copy looked
+     thin and generic on most machines. Nunito is vendored above, so every
+     visitor now gets the face the design assumes. */
+  --ms-font-display: 'Nunito', 'SF Pro Rounded', 'Segoe UI Rounded', system-ui,
+    -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ms-font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --ms-text-xs: 0.8125rem;   /* 13px */
+  --ms-text-sm: 0.9375rem;   /* 15px */
+  --ms-text-base: 1rem;      /* 16px */
+  --ms-text-md: 1.125rem;    /* 18px */
+  --ms-text-lg: 1.375rem;    /* 22px */
+  --ms-text-xl: 1.75rem;     /* 28px */
+  --ms-text-2xl: clamp(2.25rem, 1.95rem + 1.2vw, 2.75rem); /* section heading, 36–44px */
+  --ms-text-3xl: clamp(2.5rem, 2.05rem + 1.9vw, 3.5rem); /* section-scale headings, 40–56px */
+  --ms-text-4xl: clamp(2.75rem, 2.15rem + 3vw, 4.5rem); /* hero headline only — short copy needs to command the panel, 44–72px */
+
+  --ms-leading-tight: 1.15;
+  --ms-leading-snug: 1.35;
+  --ms-leading-normal: 1.6;
+
+  /* Spacing — 4px base scale */
+  --ms-space-1: 0.25rem;
+  --ms-space-2: 0.5rem;
+  --ms-space-3: 0.75rem;
+  --ms-space-4: 1rem;
+  --ms-space-5: 1.5rem;
+  --ms-space-6: 2rem;
+  --ms-space-7: 3rem;
+  --ms-space-8: 4rem;
+  --ms-space-9: 6rem;
+
+  /* Vertical rhythm — ONE scale, named by relationship instead of raw size,
+     so the site says on paper what it should say on screen: related things
+     sit closer together than unrelated things. Every value below is an
+     alias onto the --ms-space-* scale (no new numbers) — section rules
+     reference these names instead of picking a --ms-space-N ad hoc, so the
+     relationship is legible at the call site and audit-able in one place. */
+  --ms-rhythm-micro: var(--ms-space-2);   /* inside one component — icon to its label */
+  --ms-rhythm-tight: var(--ms-space-4);   /* directly related lines — heading to its lead */
+  --ms-rhythm-related: var(--ms-space-6); /* a section head to the content it introduces */
+  --ms-rhythm-open: var(--ms-space-6);    /* hero panel to the first section — still one "opening", not a new topic */
+  --ms-rhythm-section: var(--ms-space-8); /* one page section to the next — a genuinely new topic */
+
+  /* Radius */
+  --ms-radius-sm: 0.375rem;
+  --ms-radius-md: 0.75rem;
+  --ms-radius-lg: 1.25rem;
+  --ms-radius-xl: 1.75rem;
+  --ms-radius-pill: 999px;
+
+  /* Tactile lighting model — Call Rabbit's raised/sunken system, inverted
+     for a light palette: raised = white surface + soft blue-tinted drop
+     shadow + a bright inner top edge (simulates light catching the top of
+     a lifted card). Sunken = soft inset shadow into the page's base blue-grey. */
+  --ms-shadow-raised-sm: 0 12px 26px rgba(60, 111, 146, 0.18), 0 2px 6px rgba(22, 50, 63, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --ms-shadow-raised-md: 0 22px 44px rgba(60, 111, 146, 0.22), 0 4px 12px rgba(22, 50, 63, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --ms-shadow-raised-lg: 0 34px 70px rgba(60, 111, 146, 0.24), 0 6px 18px rgba(22, 50, 63, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --ms-shadow-sunken: inset 3px 3px 9px rgba(60, 111, 146, 0.2), inset -1px -1px 0 rgba(255, 255, 255, 0.75);
+
+  /* Motion — calm cubic-bezier, no bounce/overshoot */
+  --ms-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ms-duration-fast: 150ms;
+  --ms-duration-base: 220ms;
+
+  --ms-container-width: 75rem; /* 1200px */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ms-duration-fast: 0ms;
+    --ms-duration-base: 0ms;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Browser surfaces.
+
+   The parts nobody draws still carry the design. Text selection, the caret,
+   the scrollbar, underline offsets and the numerals in a price column all
+   ship with browser defaults that belong to no design system — a Windows
+   visitor was getting a stock #0078D7 selection highlight across a gold and
+   blue-grey page. Theming them is the cheapest signal that a page was built
+   rather than assembled, and it is the pass that gets skipped.
+   ------------------------------------------------------------------------- */
+
+/* Selection: gold tint with ink on top, not the OS blue. Two rules, not one
+   with a comma — a selector list containing an unsupported pseudo-element is
+   dropped whole by some engines, taking the supported half with it. */
+::selection { background: var(--ms-color-gold); color: var(--ms-color-gold-ink); }
+::-moz-selection { background: var(--ms-color-gold); color: var(--ms-color-gold-ink); }
+
+/* Tells the UA to render form controls, scrollbars and the caret against a
+   light palette. Without it a visitor in OS dark mode can get dark-chrome
+   select menus and spinners inside white cards. */
+:root { color-scheme: light; }
+
+html {
+  /* Standard property first, WebKit fallback below for older Safari. */
+  scrollbar-color: var(--ms-color-border-strong) var(--ms-color-surface-base);
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--ms-color-surface-base); }
+::-webkit-scrollbar-thumb {
+  background: var(--ms-color-border-strong);
+  border-radius: var(--ms-radius-pill);
+  /* Inset the thumb with a track-coloured border so it reads as a lozenge
+     rather than a full-bleed bar. */
+  border: 3px solid var(--ms-color-surface-base);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--ms-color-ink-faint); }
+
+/* The caret is brand-coloured everywhere text is entered. */
+input, textarea, select { caret-color: var(--ms-color-blue-dark); }
+
+/* Underlines sit off the baseline instead of striking through descenders. */
+a { text-underline-offset: 0.18em; text-decoration-thickness: 0.08em; }
+
+/* Prices and money columns align digit-over-digit. Nunito's default figures
+   are proportional, so "$0.25" and "$0.40" were sitting at different widths
+   in a four-card row and in the quote table. */
+.ms-card__price, .ms-table td, .ms-quote-total-row, .ms-addon-row__price, .ms-stat__num,
+.ms-quote-start__amount {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* Was added to contain the 3D carousel's deliberate horizontal bleed. That
+     carousel is gone (see assets/js/ui.js), so the comment that used to sit
+     here described a component the site no longer has.
+
+     Kept anyway, as a guard rather than a fix: measured across all eight
+     pages on both engines it now changes nothing (0px of horizontal overflow
+     with it, without it, and with overflow-x:clip), so it costs nothing and
+     still catches the next element that decides to be wider than the page.
+     If it ever needs to do real work again, prefer `clip` — `hidden` makes
+     the element a scroll container, which is how a page acquires a second
+     scrolling box and breaks position:sticky inside it. */
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  /* NOT overflow-x:hidden here (the html rule above already clips the
+     carousel bleed at the document level) — setting it on BOTH html and
+     body turns body into a second, non-viewport scroll container, and any
+     `position: sticky` descendant (the quote-page estimate card) computes
+     its stuck offset against that inner container instead of the real
+     viewport, so it silently never sticks. One clipping ancestor is enough;
+     two breaks sticky. */
+  font-family: var(--ms-font-body);
+  font-size: var(--ms-text-base);
+  line-height: var(--ms-leading-normal);
+  color: var(--ms-color-ink);
+  background-color: var(--ms-color-surface-base);
+  /* dot-grid texture — dark-on-light inversion of Call Rabbit's
+     rgba(255,255,255,.03) at 24px; kept very low opacity so it reads as
+     paper texture, never as clutter under the raised white surfaces. */
+  background-image: radial-gradient(circle, rgba(22, 50, 63, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+  /* Clears the fixed floating pill nav. The duck badge is the tallest thing
+     in that pill at every breakpoint from 40em up, so this offset has to
+     track the badge size, not a fixed guess — see the steps below, which
+     were derived as (top offset 12px + badge + 2x pill padding + a real
+     gap), not picked by eye. Get this wrong and the first heading on every
+     page slides under the nav. */
+  padding-top: 6rem;
+  /* Sticky footer. On a short page (404, contact) the document ended before
+     the viewport did, leaving a band of page background BELOW the dark
+     footer — which reads as the footer having floated loose rather than
+     ended the page. The only in-flow children of <body> are <main> and
+     <footer>: the skip link and the header are position:fixed, and <script>
+     is display:none, so none of them become flex items. box-sizing is
+     border-box globally (line 129), so min-height includes the padding-top
+     above rather than adding a scrollbar's worth of overflow to it. */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main { flex: 1 0 auto; }
+.ms-footer { flex: none; }
+
+img { max-width: 100%; display: block; }
+
+h1, h2, h3 {
+  font-family: var(--ms-font-display);
+  line-height: var(--ms-leading-tight);
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+p { margin: 0; }
+
+a { color: var(--ms-color-blue); }
+a:hover { color: var(--ms-color-blue-dark); }
+
+ul { margin: 0; padding: 0; list-style: none; }
+
+button { font: inherit; }
+
+:focus-visible {
+  outline: 3px solid var(--ms-color-focus);
+  outline-offset: 2px;
+  border-radius: var(--ms-radius-sm);
+}
+
+.ms-skip-link {
+  position: fixed;
+  left: var(--ms-space-3);
+  top: -3rem;
+  background: var(--ms-color-ink);
+  color: #fff;
+  padding: var(--ms-space-2) var(--ms-space-4);
+  border-radius: var(--ms-radius-sm);
+  z-index: 200;
+  transition: top var(--ms-duration-fast) var(--ms-ease);
+}
+.ms-skip-link:focus { top: var(--ms-space-3); }
+
+/* Available to assistive technology, invisible on screen. Used for the
+   debounced price announcement on the quote page. */
+.ms-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ms-container {
+  width: 100%;
+  max-width: var(--ms-container-width);
+  margin-inline: auto;
+  padding-inline: var(--ms-space-5);
+}
+
+.ms-section-heading {
+  font-size: var(--ms-text-2xl);
+  text-align: center;
+  color: var(--ms-color-ink);
+  margin-bottom: var(--ms-space-2);
+  /* Even line lengths instead of a long first line and one orphaned word.
+     Only the hero heading had this; every other heading was left to the
+     browser's greedy line-breaker. Degrades to normal wrapping where
+     unsupported, so there is nothing to guard. */
+  text-wrap: balance;
+}
+
+/* Weight 600, not 400. Nunito's regular is a light-feeling face at 18px and
+   the client's note was that this line reads weak — it is the sentence that
+   explains the section directly under a very heavy 800 heading, so at 400 it
+   was falling into the gap between "heading" and "body" instead of sitting
+   confidently between them. Ink-soft is kept: darkening it as well would
+   make it compete with the heading rather than support it. */
+.ms-section-lead {
+  text-align: center;
+  color: var(--ms-color-ink-soft);
+  max-width: 34rem;
+  margin-inline: auto;
+  font-size: var(--ms-text-md);
+  font-weight: 700;
+  line-height: var(--ms-leading-snug);
+}
+
+/* -------------------------------------------------------------------------
+   Buttons — gold is the ONLY accent/click colour on the whole site
+   ------------------------------------------------------------------------- */
+.ms-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ms-space-2);
+  font-family: var(--ms-font-body);
+  font-size: var(--ms-text-sm);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: var(--ms-radius-pill);
+  padding: var(--ms-space-3) var(--ms-space-5);
+  transition: background-color var(--ms-duration-base) var(--ms-ease),
+              box-shadow var(--ms-duration-base) var(--ms-ease),
+              transform var(--ms-duration-base) var(--ms-ease);
+  min-height: 44px;
+}
+
+.ms-btn--accent {
+  background: var(--ms-color-gold);
+  color: var(--ms-color-gold-ink); /* dark text on gold — WCAG AA, never white on gold */
+  box-shadow: 0 6px 16px rgba(255, 204, 86, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.ms-btn--accent:hover { background: var(--ms-color-gold-hover); transform: translateY(-1px); }
+.ms-btn--accent:active { transform: translateY(0); }
+
+.ms-btn--ghost {
+  background: transparent;
+  color: var(--ms-color-ink);
+  border-color: var(--ms-color-border-strong);
+}
+.ms-btn--ghost:hover { border-color: var(--ms-color-blue); color: var(--ms-color-blue-dark); }
+
+.ms-btn--block { width: 100%; }
+
+/* -------------------------------------------------------------------------
+   Header — floating pill nav (raised, not a flat full-width bar)
+   ------------------------------------------------------------------------- */
+.ms-header {
+  position: fixed;
+  top: var(--ms-space-3);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  padding-inline: var(--ms-space-3);
+  pointer-events: none; /* only the pill itself is interactive */
+}
+
+.ms-header__inner {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 68rem;
+  background: var(--ms-color-surface);
+  border-radius: var(--ms-radius-pill);
+  box-shadow: var(--ms-shadow-raised-sm);
+  display: grid;
+  /* minmax(0, 1fr) on the nav column — a bare `1fr` still carries the
+     grid default min-width:auto floor, and so did `auto` on the logo
+     column here before .ms-logo/.ms-logo__badge/.ms-logo__word picked up
+     flex: none below. Two different bugs, same family: an auto/1fr grid
+     track silently shrinks a child below its content's natural size
+     instead of visibly overflowing, and depending on what the child is
+     that reads as either a squished image or an overlapping sibling. */
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--ms-space-1);
+  padding: var(--ms-space-2) var(--ms-space-2);
+}
+
+@media (min-width: 22.5em) {
+  .ms-header__inner { gap: var(--ms-space-2); padding: var(--ms-space-2) var(--ms-space-3); }
+}
+
+@media (min-width: 48em) {
+  /* No jump at the old 26.5625em step on purpose — .ms-nav__summary-label
+     used to appear there (real "Menu" text next to the hamburger), which
+     together with a padding bump ate ~40px right when the wordmark also
+     wanted more room, and the two collided from ~425px clear through
+     ~600px. The label is icon-only now (aria-label carries "Menu" for
+     assistive tech) for the whole width range the hamburger is visible,
+     so chrome only grows once there's real headroom, at tablet. */
+  .ms-header__inner { gap: var(--ms-space-3); padding: var(--ms-space-2) var(--ms-space-4); }
+}
+
+/* Vertical padding drops to space-1 at desktop. The badge, not the padding,
+   sets the pill's height at this size, so 8px top and bottom was pure slack
+   around an already-large mark — the "less whitespace" half of the client's
+   note. Horizontal padding stays: that is the gap to the pill's rounded end,
+   which still needs to breathe. */
+@media (min-width: 64em) {
+  .ms-header__inner { gap: var(--ms-space-4); padding: var(--ms-space-1) var(--ms-space-4); }
+}
+
+.ms-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ms-space-1);
+  text-decoration: none;
+  border-radius: var(--ms-radius-md);
+  /* The grid column above sizes itself from this item's min-content
+     contribution. Flex children of THIS row (badge, wordmark) get
+     flex-shrink: 0 below so that contribution is always their real
+     rendered size — never zero, the way `img { max-width: 100% }` alone
+     would report it. That's what stops the grid from silently squeezing
+     the lockup instead of sizing the column to fit it: any remaining
+     shortfall shows up as a real, visible constraint to fix at a
+     breakpoint (the media queries below), not a silent non-uniform
+     squish on the wordmark or an overlap with the nav toggle. */
+  flex: none;
+}
+
+@media (min-width: 26.5625em) {
+  .ms-logo { gap: var(--ms-space-2); }
+}
+
+/* Circular overlay badge — client's ask: "use the rubber duck logo as a
+   circular overlay ... slightly overlapping the nav pill's edge". Its own
+   raised white surface + a thin gold-tint ring, sized independently of
+   the duck illustration's own (non-circular) artwork — object-fit:
+   contain keeps the duck proportional inside it (never stretched/cropped)
+   regardless of badge size. A small negative margin lets it bleed over
+   the pill's own rounded left edge rather than sitting inline as a plain
+   image, which is what frees the horizontal room the wordmark grows into
+   below (client has said twice the wordmark reads too small). */
+.ms-logo__badge {
+  position: relative;
+  flex: 0 0 auto;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--ms-color-surface);
+  box-shadow: 0 3px 8px rgba(22, 50, 63, 0.22), 0 0 0 3px var(--ms-color-gold-tint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-inline-start: -0.375rem;
+  z-index: 1;
+}
+
+/* 88%, up from 76%. The duck artwork used to sit in a 512px canvas of which
+   it occupied only 397x349 — 22.5% empty horizontally, 31.8% vertically —
+   and it was off-centre by 27px/15px into the bargain. Scaling 76% of THAT
+   meant the visible duck was about 59% of the badge diameter, which is why
+   it read small no matter how large the badge was made. The asset is now
+   cropped to its content and re-padded symmetrically, so this percentage
+   buys actual duck. Combined: ~35% more duck at the same badge size. */
+.ms-logo__mark {
+  width: 88%;
+  height: 88%;
+  object-fit: contain;
+  flex: none;
+}
+
+/* Sizing steps below were derived from the actual measured budget at each
+   breakpoint's narrowest width (header pill minus nav toggle minus CTA
+   button minus gaps/padding — see the responsive audit report), not
+   picked by eye, because a fixed-height image with width:auto plus this
+   header's grid columns is exactly the shape of bug that squished the
+   wordmark or overlapped the nav toggle in the first place (both fixed
+   above via flex: 0 0 auto). The floor at the narrowest phones (<360px)
+   is genuinely smaller than the previous 2rem/~127px step: a full "Start
+   your quote" CTA plus a 44px accessible tap target plus this lockup
+   cannot all fit in a 320px pill at that size without one of them
+   overlapping another — verified empirically, not assumed. Every wider
+   step grows past the prior 2.375rem/3.0625rem sizing, including well
+   past the previous ~194px desktop target, which is what "grows further"
+   refers to. */
+.ms-logo__word {
+  height: 1.125rem; /* ~71px wide, narrowest phones (<360px) */
+  width: auto;
+  flex: 0 0 auto;
+}
+
+/* Badge sizes below every step up from the previous pass. The budget that
+   pays for it is real, not optimism: the primary nav lost two items (the
+   phone number, which now lives under Contact in the footer, and "Get a
+   price", which pointed at the same funnel as the CTA button beside it).
+   At 64em that returns roughly 180px to the pill, against about 16px spent
+   on a larger duck. The wordmark is unchanged — the client asked for the
+   duck to be bigger, and growing both would just re-tighten the row. */
+/* Widths quoted below are the RENDERED wordmark width at that height, using
+   the cropped asset's 1152:272 ratio (4.235:1). The old asset was 1190:300
+   (3.967:1) with 9.3% of its height being transparent padding — so at any
+   given CSS height the letters themselves are now ~10% taller, before these
+   step increases are counted at all. */
+/* Phone steps rebuilt around the shorter CTA label. "Get a price" at 12px is
+   roughly 40px narrower than "Start your quote" was, and that width goes
+   straight into the wordmark — the element a visitor actually needs to read.
+   93px of wordmark was not a brand, it was a smudge. */
+@media (min-width: 22.5em) {
+  .ms-logo__badge { width: 2.5rem; height: 2.5rem; margin-inline-start: -0.5rem; }
+  .ms-logo__word { height: 1.75rem; } /* ~119px wide */
+}
+
+@media (min-width: 26.5625em) {
+  .ms-logo__badge { width: 3rem; height: 3rem; margin-inline-start: -0.5rem; }
+  .ms-logo__word { height: 2.25rem; } /* ~153px wide */
+}
+
+@media (min-width: 40em) {
+  .ms-logo__badge { width: 3.5rem; height: 3.5rem; margin-inline-start: -0.625rem; }
+  .ms-logo__word { height: 2.625rem; } /* ~178px wide */
+}
+
+@media (min-width: 48em) {
+  .ms-logo__badge { width: 4.125rem; height: 4.125rem; margin-inline-start: -0.75rem; }
+  .ms-logo__word { height: 2.875rem; } /* ~195px wide */
+}
+
+@media (min-width: 64em) {
+  /* Gap tightened from space-3 to space-2. The badge and the wordmark are one
+     lockup, not two adjacent logos — the client's note was that the mark
+     should be larger with LESS whitespace, and the space between the two
+     halves is the whitespace that was reading as slack. */
+  .ms-logo { gap: var(--ms-space-2); }
+  .ms-logo__badge { width: 5rem; height: 5rem; margin-inline-start: -1rem; }
+  .ms-logo__word { height: 3.75rem; } /* ~254px wide */
+}
+
+.ms-nav {
+  justify-self: center;
+  position: relative;
+}
+
+.ms-nav__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--ms-space-2);
+  cursor: pointer;
+  background: none;
+  border: 1px solid transparent;
+  padding: var(--ms-space-2);
+  border-radius: var(--ms-radius-pill);
+  font-size: var(--ms-text-sm);
+  font-weight: 700;
+  color: var(--ms-color-ink);
+  min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
+}
+.ms-nav__summary:hover { background: var(--ms-color-surface-base); }
+
+/* Icon-only hamburger for the whole width range it's visible (up to
+   64em, where .ms-nav__summary is replaced by the full inline list below).
+   The button already carries aria-label="Menu" for assistive tech, so
+   this loses no accessible information — it only removes the visible
+   "Menu" text this used to render at >=26.5625em, which combined with a
+   header padding bump at that same breakpoint to eat ~40px of the pill
+   right where the logo also needed room, colliding with it from ~425px
+   through ~600px (see the responsive audit report). Kept as a real
+   element (not deleted from markup) rather than display:none forever, in
+   case a future wider CTA/nav needs it back — just never triggered here. */
+.ms-nav__summary-label { display: none; }
+
+.ms-nav__list {
+  display: none;
+  flex-direction: column;
+  gap: var(--ms-space-1);
+}
+
+.ms-nav__list a {
+  display: block;
+  padding: var(--ms-space-3) var(--ms-space-3);
+  color: var(--ms-color-ink);
+  text-decoration: none;
+  font-size: var(--ms-text-sm);
+  font-weight: 700;
+  border-radius: var(--ms-radius-sm);
+}
+.ms-nav__list a:hover { color: var(--ms-color-blue-dark); background: var(--ms-color-surface-base); }
+
+@media (max-width: 63.9375em) {
+  .ms-nav__list.is-open {
+    display: flex;
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    margin-top: var(--ms-space-2);
+    background: var(--ms-color-surface);
+    border-radius: var(--ms-radius-md);
+    box-shadow: var(--ms-shadow-raised-md);
+    padding: var(--ms-space-2);
+    min-width: 12rem;
+  }
+}
+
+/* The nav gained a sixth item ("Get a price") when the quote page stopped
+   being unreachable. At the 64em floor that item and the phone number both
+   wrapped mid-label, so the gap starts tight and only opens up once the
+   header has the width to spend. nowrap is the actual guard: a wrapped
+   label is what makes the header look squished. */
+@media (min-width: 64em) {
+  .ms-nav__summary { display: none; }
+  .ms-nav__list { display: flex; flex-direction: row; gap: var(--ms-space-4); }
+  .ms-nav__list a { padding: var(--ms-space-1) 0; border-radius: 0; white-space: nowrap; }
+}
+
+@media (min-width: 80em) {
+  .ms-nav__list { gap: var(--ms-space-6); }
+}
+
+/* The CTA is a SECONDARY element in this row — the brand is primary — and it
+   was not behaving like one. At 375px "Start your quote" is 16 characters
+   that refuse to wrap, so the button took 35.6% of the pill, exactly the
+   share the whole brand lockup got, and the wordmark was squeezed to 93x22px
+   to pay for it. The button's width was the wordmark's missing width.
+   Below 48em it uses a shorter label and tighter metrics; the full wording
+   returns once the header has room for it. */
+.ms-header__cta {
+  justify-self: end;
+  white-space: nowrap;
+  padding-inline: var(--ms-space-3);
+  font-size: 0.75rem;
+}
+
+.ms-header__cta-full { display: none; }
+.ms-header__cta-short { display: inline; }
+
+@media (min-width: 48em) {
+  .ms-header__cta-full { display: inline; }
+  .ms-header__cta-short { display: none; }
+}
+
+/* Stays compact through the whole hamburger-nav range on purpose — it
+   used to grow (bigger font, more padding) right at 26.5625em, competing
+   with the logo for the same tight budget. It only grows once the header
+   has real headroom, at 64em, alongside the rest of the desktop-only
+   chrome (full inline nav list, wider gaps). */
+@media (min-width: 64em) {
+  .ms-header__cta { padding-inline: var(--ms-space-5); font-size: var(--ms-text-sm); }
+}
+
+/* 48em: badge 3.75rem (60px) + 2x8px pill padding + 12px top offset = 88px
+   of pill. 6.75rem (108px) leaves a 20px gap. */
+@media (min-width: 48em) {
+  body { padding-top: 6.75rem; }
+}
+
+/* 64em: badge 4.5rem (72px) + 2x8px + 12px = 100px of pill. 7.75rem (124px)
+   leaves 24px. The previous 6.5rem (104px) would have left 4px — the first
+   heading on every page effectively touching the nav's underside. */
+@media (min-width: 64em) {
+  body { padding-top: 7.75rem; }
+}
+
+/* Scroll-margin-top on every in-page anchor target — the pill nav is
+   `position: fixed`, so a plain #hash jump (or a heading arriving under it
+   during normal scrolling) lands flush behind it otherwise. Matches body's
+   own padding-top reservation above (same nav-clearance math) plus one
+   rhythm-tight step of breathing room so the heading doesn't sit flush
+   against the pill's underside once it clears it. */
+[id] { scroll-margin-top: calc(6rem + var(--ms-rhythm-tight)); }
+
+@media (min-width: 48em) {
+  [id] { scroll-margin-top: calc(6.75rem + var(--ms-rhythm-tight)); }
+}
+
+@media (min-width: 64em) {
+  [id] { scroll-margin-top: calc(7.75rem + var(--ms-rhythm-tight)); }
+}
+
+/* -------------------------------------------------------------------------
+   Hero — a large raised rounded panel, not a bare section
+   ------------------------------------------------------------------------- */
+.ms-hero {
+  /* Bottom padding trimmed from space-8 (64px) to space-7 (48px) — part of
+     tightening the empty gap before the services section (see
+     .ms-services below). */
+  padding-block: var(--ms-space-5) var(--ms-space-7);
+}
+
+.ms-hero__inner {
+  position: relative;
+  background: var(--ms-color-surface);
+  border-radius: var(--ms-radius-xl);
+  box-shadow: var(--ms-shadow-raised-lg);
+  overflow: hidden;
+  padding: var(--ms-space-5);
+  display: grid;
+  /* Explicit minmax(0, 1fr) — a bare implicit auto column (or `1fr` alone)
+     still carries a default min-width:auto floor equal to its content's
+     min-content size. The photo/quote-start column's min-content bottoms
+     out around 308px regardless of viewport, so below ~404px wide the
+     track refused to shrink and the overflow, being silently swallowed by
+     this element's own overflow:hidden, cropped the heading mid-word and
+     the photo/card flush against the right edge with zero padding instead
+     of visibly breaking. minmax(0, 1fr) lets the track shrink to whatever
+     space is actually available. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ms-space-6);
+}
+
+.ms-hero__glow {
+  position: absolute;
+  top: -6rem;
+  right: -6rem;
+  width: 20rem;
+  height: 20rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--ms-color-gold) 0%, transparent 70%);
+  filter: blur(70px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.ms-hero__copy { max-width: 42rem; position: relative; z-index: 1; }
+
+/* The copy column is naturally shorter than the photo column beside it, so
+   centring it left roughly 115px of empty white panel below the lead. This
+   fills that space with something that earns it rather than padding: the
+   one fact a first-time visitor actually weighs. Shares .ms-stat with
+   about.html — no new component, no new visual language.
+
+   It is a single stat, not a row of three. "1 set of hands" and "4 types of
+   clean" were restating things the page says better elsewhere — the lead
+   directly above already promises one person, and the four services are the
+   next section in full. Only the years are a fact the page cannot show.
+
+   About's stat row went the same way afterwards, which is why there is no
+   .ms-stat-row left in this file to inherit a grid from. */
+.ms-hero__stat { margin-top: var(--ms-space-6); }
+.ms-hero__stat .ms-stat__num { font-size: var(--ms-text-xl); }
+.ms-hero__stat .ms-stat__label { font-size: var(--ms-text-xs); }
+
+.ms-hero__heading {
+  font-size: var(--ms-text-4xl);
+  margin-bottom: var(--ms-space-4);
+  color: var(--ms-color-ink);
+}
+
+.ms-hero__lead {
+  font-size: var(--ms-text-md);
+  font-weight: 600;
+  color: var(--ms-color-ink-soft);
+  max-width: 38rem;
+}
+
+.ms-hero__visual {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-6);
+  position: relative;
+  z-index: 1;
+}
+
+.ms-hero__media {
+  position: relative;
+  border-radius: var(--ms-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--ms-shadow-raised-sm);
+  aspect-ratio: 4 / 3;
+}
+
+.ms-hero__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ms-quote-start {
+  background: var(--ms-color-surface);
+  border-radius: var(--ms-radius-lg);
+  box-shadow: var(--ms-shadow-raised-md);
+  padding: var(--ms-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-3);
+}
+
+.ms-quote-start__heading {
+  font-size: var(--ms-text-xl);
+  color: var(--ms-color-ink);
+}
+
+/* The price the card exists to produce.
+
+   Deliberately the SAME vocabulary as .ms-card__price on the service tiles and
+   the rate cards — display face, weight 800, blue-dark, with a small faint
+   unit beside it. Before this the site showed money three ways: big blue
+   numerals on cards, right-aligned cells in a table, and figures buried in
+   sentences inside note boxes. A visitor cannot tell that those are the same
+   kind of fact. One treatment for one kind of fact is the whole point.
+
+   The rule above it is a hairline, not a panel: the number is the answer to
+   the two questions directly above, so it has to read as attached to them
+   rather than as a separate box stacked on top. */
+.ms-quote-start__result {
+  border-top: 1px solid var(--ms-color-border);
+  padding-top: var(--ms-space-3);
+}
+
+.ms-quote-start__readout {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--ms-space-2);
+}
+
+.ms-quote-start__from {
+  font-size: var(--ms-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ms-color-ink-faint);
+}
+
+.ms-quote-start__amount {
+  font-family: var(--ms-font-display);
+  font-size: var(--ms-text-xl);
+  font-weight: 800;
+  color: var(--ms-color-blue-dark);
+}
+
+.ms-quote-start__unit { font-size: var(--ms-text-xs); color: var(--ms-color-ink-faint); }
+
+/* What the number rests on, in the customer's own terms. A price with no
+   stated basis invites the reading that it is THE price; this line is what
+   makes "From" mean something specific. */
+.ms-quote-start__basis {
+  font-size: var(--ms-text-xs);
+  color: var(--ms-color-ink-soft);
+  line-height: var(--ms-leading-snug);
+  margin-top: var(--ms-space-2);
+}
+
+.ms-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-2);
+}
+
+.ms-field label {
+  font-size: var(--ms-text-sm);
+  font-weight: 700;
+  color: var(--ms-color-ink);
+}
+
+.ms-field select {
+  font: inherit;
+  font-size: var(--ms-text-base);
+  color: var(--ms-color-ink);
+  background: var(--ms-color-surface-base);
+  border: 1px solid transparent;
+  box-shadow: var(--ms-shadow-sunken);
+  border-radius: var(--ms-radius-sm);
+  padding: var(--ms-space-3);
+  min-height: 44px;
+}
+
+.ms-field select:hover { box-shadow: var(--ms-shadow-sunken), 0 0 0 1px var(--ms-color-blue); }
+
+.ms-quote-start__submit { margin-top: var(--ms-space-2); }
+
+.ms-quote-start__note {
+  font-size: var(--ms-text-xs);
+  color: var(--ms-color-ink-faint);
+}
+
+@media (min-width: 64em) {
+  /* Panel padding (new vs. the old bare section) eats into the grid's
+     available width, so the copy column and gap are both trimmed here to
+     keep the visual column wide enough that the photo doesn't get
+     swallowed by the 336px quote-start card overlaid on it. */
+  .ms-hero__inner {
+    /* Copy column narrowed from 30rem — the headline is now four words and
+       no longer needs that width, so the extra space goes to the photo
+       column, which grows both wider and (via the aspect-ratio below)
+       taller as a result. */
+    grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--ms-space-6);
+    padding: var(--ms-space-6);
+  }
+  .ms-hero__copy { max-width: none; }
+  .ms-hero__heading { text-wrap: balance; }
+
+  .ms-hero__visual { position: relative; }
+
+  /* Taller than the old 6/5 — the photo needs to read as a room, not a
+     sliver behind the quote card. */
+  .ms-hero__media { aspect-ratio: 9 / 8; }
+  .ms-hero__photo { object-position: 42% 50%; }
+
+  .ms-quote-start {
+    position: absolute;
+    top: 50%;
+    /* Left edge (the empty-wall side) only — keeps the person and the
+       window, on the photo's right, uncovered. Width is ~45% of the photo
+       panel, not 55%+, so most of the room stays visible. */
+    left: var(--ms-space-6);
+    transform: translateY(-50%);
+    width: 18rem;
+    max-width: calc(100% - 2 * var(--ms-space-6));
+    padding: var(--ms-space-5);
+    gap: var(--ms-space-2);
+  }
+  /* At the narrower 18rem card width, text-xl wraps "Choose your clean" to
+     two lines ("Choose your" / "clean") — one size down fits it on one
+     line, and this heading only appears inside this absolutely-positioned
+     card, never at the wider default size used elsewhere. */
+  .ms-quote-start__heading { font-size: var(--ms-text-lg); }
+}
+
+/* -------------------------------------------------------------------------
+   Services — a four-up grid of raised tiles.
+
+   This replaced a 3D coverflow carousel (Call Rabbit's Swiper+Atropos
+   pattern, reimplemented in vanilla JS in assets/js/ui.js). Coverflow
+   earns its complexity when a list is too long to show at once, and there
+   are exactly four services here that never change. It showed one card
+   properly and two at an angle, could not hold more than a single line of
+   description inside a 280x360 card, and the wrapped fourth card leaked
+   readable text fragments past the track's edge mask no matter how that
+   mask was tuned. Showing all four at once is simpler AND carries more
+   information. The 3D is kept where it belongs — a hover lift on a real
+   surface — rather than a permanent rotation applied to copy the visitor
+   is trying to read.
+   ------------------------------------------------------------------------- */
+/* Top padding is one step tighter than a full section gap: the hero panel
+   already contributes 48px of its own bottom padding, so a full 64px here
+   made 112px of empty background between the hero and this heading. */
+.ms-services { padding-block: var(--ms-space-6) var(--ms-rhythm-section); }
+
+.ms-service-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ms-space-5);
+  align-items: stretch;
+}
+
+@media (min-width: 40em) {
+  .ms-service-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 64em) {
+  .ms-service-grid { grid-template-columns: repeat(4, 1fr); gap: var(--ms-space-4); }
+}
+
+.ms-service-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-2);
+  /* height: 100% (not just stretch) so every tile fills its grid row and
+     the "What's included" line lands on the same baseline in all four
+     columns. The tiles carry deliberately unequal amounts of copy; without
+     this they read as four misaligned cards instead of one row. */
+  height: 100%;
+  padding: var(--ms-space-5);
+  border-radius: var(--ms-radius-lg);
+  background: var(--ms-color-surface);
+  box-shadow: var(--ms-shadow-raised-sm);
+  text-decoration: none;
+  color: inherit;
+}
+
+/* The lift is set as --ms-lift in the Motion section at the end of this file,
+   not as a transform here. A transform declared on :hover wins the whole
+   property at higher specificity, which silently cancelled the pointer tilt
+   at the exact moment the card was being pointed at. Shadow still belongs
+   here: it is the hover's own business, and nothing else competes for it. */
+.ms-service-tile:hover,
+.ms-service-tile:focus-visible {
+  box-shadow: var(--ms-shadow-raised-lg);
+}
+
+.ms-service-tile:hover .ms-service-tile__more,
+.ms-service-tile:focus-visible .ms-service-tile__more { color: var(--ms-color-blue-dark); }
+
+.ms-service-tile:hover .ms-service-tile__more::after,
+.ms-service-tile:focus-visible .ms-service-tile__more::after { transform: rotate(45deg) translate(2px, -2px); }
+
+.ms-card__num {
+  font-family: var(--ms-font-display);
+  font-size: var(--ms-text-lg);
+  font-weight: 800;
+  color: var(--ms-color-blue);
+  background: var(--ms-color-gold-tint);
+  border-radius: var(--ms-radius-pill);
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  margin-bottom: var(--ms-space-2);
+}
+
+.ms-card__title {
+  font-size: var(--ms-text-lg);
+  color: var(--ms-color-ink);
+  /* Reserve a two-line area regardless of actual wrap — "Move-In /
+     Move-Out Cleaning" wraps at four-up and its three neighbours do not,
+     so without this the price sits at a different height in that column. */
+  min-height: calc(var(--ms-text-lg) * var(--ms-leading-tight) * 2);
+}
+
+.ms-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ms-space-1);
+}
+.ms-card__price-amt {
+  font-family: var(--ms-font-display);
+  font-size: var(--ms-text-xl);
+  font-weight: 800;
+  color: var(--ms-color-blue-dark);
+}
+.ms-card__price-unit {
+  font-size: var(--ms-text-xs);
+  color: var(--ms-color-ink-faint);
+}
+
+.ms-card__desc {
+  font-size: var(--ms-text-sm);
+  color: var(--ms-color-ink-soft);
+  line-height: var(--ms-leading-normal);
+}
+
+/* Badge and price on one row. The badge used to sit alone above the title
+   with nothing to relate to, and the price sat BELOW a title that reserves
+   two lines whether it uses them or not — so the two single-line titles had
+   about 25px of dead white between title and price. Pairing them solves both
+   at once: the badge gets a partner, and the price moves above the reserved
+   space rather than below it. */
+
+/* The rule now sits under the TITLE rather than under the lead sentence, so
+   it closes the head block. Because the title reserves two lines, the rule
+   lands on the same baseline in all four columns — which is what keeps the
+   lead sentences and the tick lists aligned across the row. */
+.ms-service-tile .ms-card__title {
+  padding-bottom: var(--ms-space-3);
+  border-bottom: 1px solid var(--ms-color-border);
+  /* The base two-line reserve is a CONTENT height, but box-sizing is
+     border-box globally, so the padding below was eating into it: a
+     single-line title stopped at the 50.6px reserve while a two-line one
+     grew to 50.6 + 12, leaving the lead sentences and tick lists 13px out
+     of line between the two-line titles and the one-line ones. Add the
+     padding back so the reserve is the reserve. */
+  min-height: calc(var(--ms-text-lg) * var(--ms-leading-tight) * 2 + var(--ms-space-3));
+}
+
+/* One lead sentence, then the detail as ticks. Reuses .ms-check-list from
+   services.html unchanged — the ticks are the same ticks, so the two pages
+   read as one system. */
+.ms-service-tile .ms-card__desc {
+  color: var(--ms-color-ink);
+  font-weight: 600;
+}
+
+/* One column, always. .ms-check-list goes two-up at 48em because on
+   services.html it sits in a full-width panel — but a service tile is about
+   250px wide, so two columns gave each tick ~110px and shredded every line
+   into three or four words. The list has to follow the width it is IN, not
+   the width of the viewport.
+
+   Two class names again, for the same reason as .ms-hero__stats above: the
+   .ms-check-list two-column rule lives in a media query ~330 lines BELOW
+   this one, so at equal specificity it wins on source order and a single-
+   class override here silently does nothing. */
+.ms-check-list.ms-service-tile__list {
+  margin-top: var(--ms-space-1);
+  grid-template-columns: 1fr;
+}
+
+/* Pushed to the bottom of the tile by margin-top:auto, so it acts as a
+   consistent footer row across four columns of unequal copy. */
+.ms-service-tile__more {
+  margin-top: auto;
+  padding-top: var(--ms-space-4);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ms-space-2);
+  font-size: var(--ms-text-sm);
+  font-weight: 700;
+  color: var(--ms-color-blue);
+  transition: color var(--ms-duration-base) var(--ms-ease);
+}
+
+/* A CSS-drawn chevron rather than an arrow GLYPH in ::after content —
+   generated text content is announced by some screen readers, and "right
+   arrow" read after every service name is noise. Borders draw nothing
+   into the accessibility tree. */
+.ms-service-tile__more::after {
+  content: '';
+  width: 0.4em;
+  height: 0.4em;
+  border-right: 2px solid currentColor;
+  border-top: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--ms-duration-base) var(--ms-ease);
+}
+
+.ms-services__note {
+  /* A contained note, not a floating line — same raised-surface language
+     as the tiles above it, so it reads as part of the block. */
+  text-align: center;
+  font-size: var(--ms-text-sm);
+  color: var(--ms-color-ink-soft);
+  /* Wide enough to hold the sentence on one line at desktop. At 34rem it
+     wrapped with a lone "it." on the second line, which reads as a mistake. */
+  max-width: 44rem;
+  margin: var(--ms-rhythm-related) auto 0;
+  padding: var(--ms-space-3) var(--ms-space-6);
+  background: var(--ms-color-surface);
+  border-radius: var(--ms-radius-pill);
+  box-shadow: var(--ms-shadow-raised-sm);
+}
+
+/* -------------------------------------------------------------------------
+   Footer — dark surface (Ink itself). Duck mark + live wordmark text only,
+   per brand constraint (the wordmark IMAGE is light-surface only).
+   ------------------------------------------------------------------------- */
+.ms-footer {
+  --ms-color-focus: var(--ms-color-footer-ink);
+  background: var(--ms-color-footer-bg);
+  color: var(--ms-color-footer-ink-soft);
+  /* Deliberately generous, and deliberately asymmetric the other way from
+     most footers: MORE below than the copyright line needs, because the
+     client's note was that the text sat too close to the bottom edge. Type
+     pinned near the edge of a dark band reads as the page having been cut
+     off rather than finished. */
+  padding-block: var(--ms-space-8) var(--ms-space-8);
+  /* No margin-top. It used to add 64px on top of the last section's own
+     64px of bottom padding, leaving a 128px band of empty page background
+     directly above the footer on every page. A full-bleed dark band is
+     already an unmistakable boundary — it does not need a gap to announce
+     itself, and the gap read as the page having run out rather than ended. */
+  text-align: center;
+}
+
+/* Four columns of live links, all of them at the TOP of the dark panel.
+   The policy links used to sit alone in the bottom bar under a divider,
+   which put the footer's real content at the very bottom of the page with
+   an empty band above it — the client's note was that the items belong
+   toward the top of the green panel, not the bottom. The bar below now
+   carries the copyright line and nothing else. */
+.ms-footer__grid {
+  display: grid;
+  gap: var(--ms-space-6);
+  grid-template-columns: 1fr;
+}
+
+/* Two-up before four-up: at tablet widths four columns of link lists give
+   each one about 150px, which wraps "Move-in / move-out" mid-label. */
+@media (min-width: 40em) {
+  .ms-footer__grid { grid-template-columns: repeat(2, 1fr); gap: var(--ms-space-6); }
+}
+
+@media (min-width: 64em) {
+  .ms-footer__grid { grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: var(--ms-space-7); }
+}
+
+/* The brand column spans the full width of the two-up step so the tagline
+   is not squeezed into a half-column beside a short link list. */
+@media (min-width: 40em) and (max-width: 63.9375em) {
+  .ms-footer__col--brand { grid-column: 1 / -1; }
+}
+
+/* flex, not inline-flex, with the row centred — inline-flex sits wherever
+   the text-align of its parent puts it, which meant the lockup and the
+   tagline below it centred against slightly different boxes and read as
+   half a pixel out of line. */
+.ms-footer__brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ms-space-3);
+  margin-bottom: var(--ms-space-4);
+}
+
+.ms-footer__brand img { width: 3.5rem; height: 3.5rem; }
+
+/* The footer list items are a mix of links and plain lines (the service
+   area is information, not a destination). Both need the same measure so
+   the column reads as one list rather than two. */
+.ms-footer__col li { font-size: var(--ms-text-sm); line-height: var(--ms-leading-snug); }
+
+.ms-footer__wordmark-text {
+  font-family: var(--ms-font-display);
+  font-size: var(--ms-text-lg);
+  font-weight: 800;
+  color: var(--ms-color-footer-ink);
+}
+
+.ms-footer__tagline {
+  font-size: var(--ms-text-sm);
+  max-width: 24rem;
+  /* Centred within its column now that the footer is centred — a max-width
+     block with no auto margins would sit left inside a centred parent. */
+  margin-inline: auto;
+  color: var(--ms-color-footer-ink-soft);
+}
+
+.ms-footer h2 {
+  font-family: var(--ms-font-body);
+  font-size: var(--ms-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ms-color-footer-ink);
+  margin-bottom: var(--ms-space-3);
+}
+
+/* space-1, down from space-2: the links themselves now carry a 24px minimum
+   height, so the old gap on top of that opened the columns up too far. */
+.ms-footer ul { display: flex; flex-direction: column; align-items: center; gap: var(--ms-space-1); }
+
+/* The phone row is a flex row inside a centred column, so it needs its own
+   centring — align-items on the parent centres the ROW, not its contents. */
+.ms-footer .ms-footer__icon-row { justify-content: center; }
+
+/* inline-flex with a 24px min-height, not a bare inline link. These measured
+   20px tall — under WCAG 2.5.8's 24x24 minimum target size, on the one part
+   of the page a visitor reaches for with a thumb. The gap between list items
+   drops to compensate so the column height barely moves. */
+.ms-footer a {
+  color: var(--ms-color-footer-ink-soft);
+  text-decoration: none;
+  font-size: var(--ms-text-sm);
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+.ms-footer a:hover { color: var(--ms-color-footer-ink); text-decoration: underline; }
+
+.ms-footer__icon-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ms-space-2);
+}
+.ms-footer__icon-row svg { flex: none; width: 1rem; height: 1rem; }
+
+/* Copyright only. It used to also carry the policy links, which is what
+   pushed real navigation to the very bottom edge of the page. */
+.ms-footer__bottom {
+  margin-top: var(--ms-space-7);
+  padding-top: var(--ms-space-5);
+  border-top: 1px solid var(--ms-color-footer-border);
+  font-size: var(--ms-text-xs);
+  color: var(--ms-color-footer-ink-soft);
+  text-align: center;
+}
+
+/* ==========================================================================
+   Content pages (Task 11) — services/pricing/about/contact/policies/404.
+   Every rule below reuses existing tokens (colour, radius, shadow, type,
+   spacing) already defined above. No new colours, no new visual language —
+   these are new arrangements of the same raised-panel/pill/gold-accent
+   system the homepage uses.
+   ========================================================================== */
+
+/* Page head — the title of an interior page, and nothing else.
+
+   This replaced .ms-page-hero, which wrapped an eyebrow, a heading, a lead
+   and a duplicate CTA inside a full raised card with a glow behind it. Two
+   problems, both structural rather than cosmetic. First, it spent roughly
+   250px of vertical space to deliver four lines of text, on every page.
+   Second, the eyebrow read "Toronto · residential cleaning" identically on
+   six pages, so it stopped being information after the first one, and the
+   CTA duplicated the "Start your quote" button sitting directly above it
+   in the fixed header. A page title is a label, not a hero — the hero is
+   the homepage's job and it keeps its panel. */
+.ms-page-head {
+  padding-block: var(--ms-space-7) var(--ms-rhythm-related);
+  text-align: center;
+}
+
+.ms-page-head__title {
+  font-family: var(--ms-font-display);
+  font-size: var(--ms-text-3xl);
+  font-weight: 800;
+  line-height: var(--ms-leading-tight);
+  color: var(--ms-color-ink);
+  text-wrap: balance;
+}
+
+.ms-page-head__lead {
+  margin: var(--ms-rhythm-tight) auto 0;
+  /* A measure, not the full container — a single lead line running the
+     whole 68rem width is the "run-on" the client flagged. */
+  max-width: 44rem;
+  font-size: var(--ms-text-md);
+  font-weight: 700;   /* matches .ms-section-lead — same job, same weight */
+  line-height: var(--ms-leading-snug);
+  color: var(--ms-color-ink-soft);
+}
+
+/* Call-to-action panel — the raised card the page hero used to borrow,
+   kept for the two places that genuinely are a call to action (the foot of
+   services.html, and 404.html) rather than a page title. */
+.ms-cta-panel {
+  position: relative;
+  background: var(--ms-color-surface);
+  border-radius: var(--ms-radius-xl);
+  box-shadow: var(--ms-shadow-raised-lg);
+  overflow: hidden;
+  padding: var(--ms-space-6) var(--ms-space-5);
+  text-align: center;
+}
+
+/* :not(.ms-hero__glow) is load-bearing, not decorative — .ms-hero__glow
+   also matches this universal child selector, and being later in the
+   cascade at equal specificity it was overriding the glow's own
+   position: absolute back to relative, pulling the 320px glow div into
+   normal flow and pushing the panel's real content down by its height. */
+.ms-cta-panel > *:not(.ms-hero__glow) { position: relative; z-index: 1; }
+
+.ms-cta-panel .ms-section-lead { margin-top: var(--ms-space-2); }
+.ms-cta-panel__cta { margin-top: var(--ms-space-5); }
+
+@media (min-width: 64em) {
+  .ms-cta-panel { padding: var(--ms-space-8) var(--ms-space-7); }
+}
+
+/* Generic content section rhythm, reused by every interior page. Section
+   padding is the "new topic" gap (--ms-rhythm-section); the head's own
+   margin to its content is the tighter "related" gap (--ms-rhythm-related)
+   — the same two-tier rhythm as .ms-page-head above, applied consistently
+   site-wide rather than picking a --ms-space-N per call site. */
+.ms-section { padding-block: var(--ms-rhythm-section); }
+.ms-section + .ms-section { padding-top: 0; }
+/* The page head already owns the gap below itself. Without this the first
+   section on every interior page adds its own 4rem on top of that head's
+   2rem, and 6rem of empty background between a page title and its first
+   line of content is exactly the "huge gap between sections" the client
+   has flagged twice. */
+.ms-page-head + .ms-section { padding-top: 0; }
+/* 52rem, not 42rem: at 42rem (672px) "Four ways to get it squeaky clean"
+   wrapped onto a second line with one word on it, which reads as a broken
+   heading rather than a deliberate two-liner. The LEAD keeps the tighter
+   measure below — a 52rem line of body copy is about 110 characters, well
+   past comfortable reading. */
+.ms-section__head { max-width: 52rem; margin: 0 auto var(--ms-rhythm-related); text-align: center; }
+.ms-section__head .ms-section-heading { text-align: center; }
+.ms-section__head .ms-section-lead { max-width: 42rem; margin-inline: auto; }
+
+/* Duck watermark — the motif used as a quiet backdrop rather than another
+   sticker. One instance per page, on the flattest section (plain cards on
+   pale background), never behind text that needs to stay legible.
+   overflow:hidden on the section keeps the oversized mark from affecting
+   layout width; the container is re-lifted above it with z-index. */
+.ms-section--duck { position: relative; overflow: hidden; }
+.ms-section--duck::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -5rem;
+  transform: translateY(-50%);
+  width: 24rem;
+  height: 24rem;
+  background: url('../img/duck@2x.webp') center / contain no-repeat;
+  /* Dropped from 0.05. The duck asset was re-cropped to its content, so the
+     same 24rem box now holds a duck roughly a third larger — at the old
+     opacity it stopped reading as texture and started reading as a smudge
+     behind the fourth rate card. A watermark that draws the eye has failed
+     at being a watermark. */
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+}
+.ms-section--duck > .ms-container { position: relative; z-index: 1; }
+
+/* Service detail panels (services.html) — stacked raised cards, each with
+   a title/price header, an inclusion checklist and an optional note. */
+.ms-service-list { display: flex; flex-direction: column; gap: var(--ms-space-6); }
+
+.ms-service-panel {
+  background: var(--ms-color-surface);
+  border-radius: var(--ms-radius-lg);
+  box-shadow: var(--ms-shadow-raised-md);
+  padding: var(--ms-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-4);
+}
+
+@media (min-width: 48em) {
+  .ms-service-panel { padding: var(--ms-space-6); }
+}
+
+.ms-service-panel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ms-space-3);
+}
+
+.ms-service-panel__title { font-size: var(--ms-text-xl); color: var(--ms-color-ink); }
+
+/* These panels run the full 68rem container, and the lead was measuring 121
+   characters per line — the point at which the eye loses the start of the
+   next line on the way back. The panel stays full width; only the reading
+   line is capped.
+
+   54ch, not the 65-75ch a measure rule reads like. The CSS `ch` unit is the
+   width of a ZERO, and in Nunito the zero is 10.8px where the average
+   character is 7.97px — 35% wider. So a literal `max-width: 68ch` rendered
+   as 92 actual characters, and even `65ch` would land near 88. Measured
+   here rather than assumed: 54ch x 10.8px = 583px / 7.97px = about 73
+   characters, which is the range the rule actually means. */
+.ms-service-panel__lead {
+  color: var(--ms-color-ink-soft);
+  font-size: var(--ms-text-md);
+  max-width: 54ch;
+}
+
+.ms-service-panel__sub {
+  font-size: var(--ms-text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ms-color-blue-dark);
+  margin-bottom: calc(-1 * var(--ms-space-2));
+}
+
+/* Inclusion checklist — two columns from tablet up. */
+.ms-check-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ms-space-2) var(--ms-space-5);
+}
+
+@media (min-width: 40em) {
+  .ms-check-list { grid-template-columns: 1fr 1fr; }
+}
+
+.ms-check-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ms-space-2);
+  font-size: var(--ms-text-sm);
+  color: var(--ms-color-ink-soft);
+  line-height: var(--ms-leading-snug);
+}
+
+.ms-check-list li svg {
+  flex: none;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--ms-color-blue);
+  margin-top: 0.2em;
+}
+
+/* Note / callout box — neutral (never gold, gold stays reserved for
+   clickable accents), used for exclusions, surcharges and plain-fact call-
+   outs like the deposit and cancellation terms. */
+.ms-note {
+  background: var(--ms-color-surface-base);
+  border: 1px solid var(--ms-color-border-strong);
+  border-radius: var(--ms-radius-md);
+  padding: var(--ms-space-4) var(--ms-space-5);
+  /* The cap belongs on the BOX, not the paragraph inside it. Capping only
+     the text left the two page-width notes on pricing as a full-width panel
+     with ~500px of empty background to the right of the last word, which
+     reads as a broken box rather than a deliberate callout. Capping the box
+     lets the two end together. A no-op wherever a note already sits in a
+     narrow column (the quote summary, the Minimum & travel column). */
+  max-width: 58ch;
+  display: flex;
+  gap: var(--ms-space-3);
+  align-items: flex-start;
+}
+
+.ms-note svg { flex: none; width: 1.25rem; height: 1.25rem; color: var(--ms-color-blue); margin-top: 0.15em; }
+
+/* No max-width here — the cap lives on .ms-note itself so the box and its
+   text end together. */
+.ms-note p { font-size: var(--ms-text-sm); color: var(--ms-color-ink-soft); line-height: var(--ms-leading-snug); }
+.ms-note strong { color: var(--ms-color-ink); }
+
+/* A note that follows the thing it explains is RELATED to it, so it sits one
+   rhythm-tight step below rather than at an arbitrary per-instance margin.
+   This was three separate declarations — an inline style on pricing.html and
+   two .ms-quote-summary-scoped rules — which is why a legend under a table
+   looked different depending on which page you were on. */
+.ms-note + .ms-note,
+.ms-table-wrap + .ms-note {
+  margin-top: var(--ms-rhythm-tight);
+}
+
+/* A legend carries more than one point. The paragraphs stack inside a single
+   box so the icon still marks the whole block as one aside, instead of every
+   sentence getting its own bordered card. */
+.ms-note--legend > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-3);
+}
+
+/* Compact rate cards (pricing.html) — reuses .ms-card__num / __price /
+   __desc verbatim (those classes are standalone, not scoped to .ms-card). */
+.ms-rate-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ms-space-5);
+}
+
+@media (min-width: 40em) {
+  .ms-rate-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 64em) {
+  .ms-rate-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.ms-rate-card {
+  background: var(--ms-color-surface);
+  border-radius: var(--ms-radius-lg);
+  box-shadow: var(--ms-shadow-raised-md);
+  padding: var(--ms-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-2);
+}
+
+/* Add-on / rate table, wrapped so the radius clips cleanly. */
+.ms-table-wrap {
+  background: var(--ms-color-surface);
+  border-radius: var(--ms-radius-lg);
+  box-shadow: var(--ms-shadow-raised-sm);
+  overflow: hidden;
+}
+
+.ms-table { width: 100%; border-collapse: collapse; }
+
+.ms-table th,
+.ms-table td {
+  text-align: left;
+  padding: var(--ms-space-4) var(--ms-space-5);
+  font-size: var(--ms-text-sm);
+  border-bottom: 1px solid var(--ms-color-border);
+}
+
+.ms-table th {
+  font-family: var(--ms-font-display);
+  font-weight: 800;
+  color: var(--ms-color-ink);
+  background: var(--ms-color-surface-base);
+}
+
+.ms-table td { color: var(--ms-color-ink-soft); }
+.ms-table tr:last-child td { border-bottom: none; }
+.ms-table td:last-child, .ms-table th:last-child { text-align: right; white-space: nowrap; }
+
+/* Stat — one small factual callout, no fabricated numbers.
+
+   There is no .ms-stat-row any more. It was a fixed three-column grid built
+   for the hero and the about page when both showed three stats; both now show
+   ONE. "1 set of hands" and "4 cleaning services" were restating things the
+   surrounding copy says better — the bio directly above already says she works
+   alone, and the services are their own page. Only the years are a fact the
+   page cannot otherwise show, and they are the only number here that has to be
+   derived rather than typed (see [data-years-since] in assets/js/ui.js).
+
+   The grid went with them rather than being left to hold a single item in its
+   left third with two empty tracks beside it. */
+.ms-stat { display: flex; flex-direction: column; gap: var(--ms-space-2); align-items: center; text-align: center; }
+.ms-stat--start { align-items: flex-start; text-align: left; }
+
+.ms-stat__num {
+  font-family: var(--ms-font-display);
+  font-size: var(--ms-text-2xl);
+  font-weight: 800;
+  color: var(--ms-color-blue-dark);
+  position: relative;
+  padding-bottom: var(--ms-space-2);
+}
+/* Gold shows up in a numeral accent, not just buttons — a short rule under
+   every stat number, one of the "rules, numerals, icon fills" the design
+   direction calls out as legitimate accent surface beyond the CTA. */
+.ms-stat__num::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 1.75rem;
+  height: 3px;
+  border-radius: var(--ms-radius-pill);
+  background: var(--ms-color-gold);
+}
+.ms-stat--start .ms-stat__num::after { left: 0; transform: none; }
+
+.ms-stat__label {
+  font-size: var(--ms-text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ms-color-ink-soft);
+  max-width: 12rem;
+  line-height: var(--ms-leading-snug);
+}
+
+/* Photo slot (about.html) — an obviously-marked empty placeholder, never a
+   stock photo of a stranger standing in for Tiffany. */
+.ms-photo-slot {
+  border: 2px dashed var(--ms-color-border-strong);
+  border-radius: var(--ms-radius-lg);
+  background: var(--ms-color-surface-base);
+  aspect-ratio: 4 / 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ms-space-2);
+  color: var(--ms-color-ink-faint);
+  text-align: center;
+  padding: var(--ms-space-5);
+}
+
+.ms-photo-slot svg { width: 2.5rem; height: 2.5rem; }
+.ms-photo-slot span { font-size: var(--ms-text-sm); font-weight: 700; }
+
+/* Closing/continuation sections that follow directly on the section above
+   (a CTA panel, a photo banner) — tighter bottom rhythm than a normal
+   section, since what comes next (usually the footer) is a hard break, not
+   a "new topic" that needs the full --ms-rhythm-section gap. */
+.ms-section--tight { padding-bottom: var(--ms-rhythm-related); }
+
+/* Full-width photography (services/pricing/about) — real imagery instead
+   of another flat white panel on pale blue. Never stretched: object-fit
+   cover inside a fixed aspect-ratio box matches the source's own 1200x652
+   ratio, so cropping is the only thing that happens, never distortion. The
+   duck watermark is the "quiet signature" version of the motif — small,
+   translucent, corner-only, never competing with the photo. */
+.ms-photo-banner {
+  position: relative;
+  border-radius: var(--ms-radius-xl);
+  overflow: hidden;
+  box-shadow: var(--ms-shadow-raised-lg);
+  aspect-ratio: 1200 / 652;
+}
+.ms-photo-banner__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Square photo frame variant (pricing.html) — same treatment, 1:1 crop of
+   detail-bath-square.webp instead of the wide banner crop. */
+.ms-photo-frame {
+  position: relative;
+  border-radius: var(--ms-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--ms-shadow-raised-md);
+  aspect-ratio: 1 / 1;
+}
+
+/* 4:3, matching the source asset's own ratio, so object-fit: cover has
+   nothing to crop away. A square frame around a 4:3 photo was throwing away
+   a quarter of the image and standing a tall box beside a short column of
+   notes — the reason that section needed a max-height bolted on to stop it
+   towering over its own content. Ratio first, then the box follows. */
+.ms-photo-frame--wide { aspect-ratio: 4 / 3; }
+/* :not(.ms-duck-badge) is load-bearing — without it this descendant
+   selector also matches the corner duck badge (higher specificity than
+   the badge's own one-class rule), stretching the 3rem duck to 100% of
+   the frame and burying the photo underneath it entirely. */
+.ms-photo-frame img:not(.ms-duck-badge) { width: 100%; height: 100%; object-fit: cover; }
+
+/* The duck as a quiet signature on any photo — small, translucent,
+   corner-only, shared by the wide banner and the square frame above. */
+.ms-duck-badge {
+  position: absolute;
+  right: var(--ms-space-4);
+  bottom: var(--ms-space-4);
+  width: 3rem;
+  height: 3rem;
+  opacity: 0.9;
+  filter: drop-shadow(0 4px 10px rgba(22, 50, 63, 0.3));
+}
+@media (min-width: 48em) {
+  .ms-photo-banner { aspect-ratio: 1200 / 460; }
+  .ms-duck-badge { right: var(--ms-space-6); bottom: var(--ms-space-6); width: 3.75rem; height: 3.75rem; }
+}
+
+/* Simple two-column info layout (about.html, contact.html). */
+.ms-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ms-space-6);
+  /* start, not stretch — quote.html's sticky summary sits in the second
+     column next to a much taller form, and stretching it would fight the
+     `position: sticky` behaviour. Instances where the two columns' natural
+     content heights are lopsided (a couple of short notes beside a tall
+     square photo) opt into --fill below instead of changing this default. */
+  align-items: start;
+}
+
+@media (min-width: 56em) {
+  .ms-info-grid { grid-template-columns: 1.1fr 0.9fr; }
+}
+
+/* Minimum & travel (pricing.html) — two short .ms-note boxes next to a
+   square photo the same height as the section: align-items:start above
+   left the shorter note column ending well before the photo does, reading
+   as a dead gap above the footer rather than a deliberate layout (the
+   "fixed-height box, content floating in a gap" pattern this project keeps
+   tripping on — except here it's the SHORT column, not the box, that left
+   the gap). Stretch this instance's row to the tallest column and centre
+   the notes within it so both columns visually end together. */
+.ms-info-grid--fill { align-items: stretch; }
+.ms-info-grid--fill > :first-child {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* No gap. This column used to be three loose note boxes that needed one;
+     it is now a table with its legend attached, and .ms-table-wrap + .ms-note
+     already spaces that pair the same way it does everywhere else. A gap here
+     as well would double it and detach the legend from its table. */
+  gap: 0;
+}
+
+/* The max-height that used to sit here is gone. It was compensating for a
+   square frame wrapped around a 4:3 photo — the frame is now 4:3 itself
+   (.ms-photo-frame--wide), so its natural height already sits close to the
+   notes column and there is nothing left to clamp. Fixing the ratio beat
+   capping the symptom. */
+
+.ms-prose { display: flex; flex-direction: column; gap: var(--ms-space-4); }
+.ms-prose p { color: var(--ms-color-ink-soft); font-size: var(--ms-text-md); line-height: var(--ms-leading-normal); }
+
+/* A stat set into running prose needs more air than the paragraph gap gives
+   it, or it reads as another paragraph that happens to start with a numeral.
+   The .ms-prose gap already supplies space-4 on each side; this adds to it. */
+.ms-prose__stat { margin-block: var(--ms-space-3); }
+
+/* Contact page detail rows. */
+.ms-contact-list { display: flex; flex-direction: column; gap: var(--ms-space-4); }
+
+.ms-contact-list__item {
+  background: var(--ms-color-surface);
+  border-radius: var(--ms-radius-lg);
+  box-shadow: var(--ms-shadow-raised-sm);
+  padding: var(--ms-space-5);
+  display: flex;
+  gap: var(--ms-space-3);
+  align-items: flex-start;
+}
+
+.ms-contact-list__item svg { flex: none; width: 1.5rem; height: 1.5rem; color: var(--ms-color-blue); margin-top: 0.15em; }
+.ms-contact-list__item h3 { font-family: var(--ms-font-display); font-size: var(--ms-text-md); font-weight: 800; color: var(--ms-color-ink); margin: 0 0 var(--ms-space-1); }
+.ms-contact-list__item p { font-size: var(--ms-text-sm); color: var(--ms-color-ink-soft); margin: 0; max-width: 58ch; }
+.ms-contact-list__item a { font-weight: 700; }
+
+/* 404 page. */
+.ms-404 { padding-block: var(--ms-space-8) var(--ms-space-9); }
+.ms-404__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ms-space-3);
+  justify-content: center;
+  margin-top: var(--ms-space-5);
+}
+
+/* ==========================================================================
+   Quote calculator (Task 12) — quote.html only. New arrangements of existing
+   tokens (colour, radius, shadow, type, spacing, motion) — no new colours,
+   no new shadows, no new radii. Reuses .ms-info-grid, .ms-service-panel,
+   .ms-card__num, .ms-note, .ms-table/.ms-table-wrap, .ms-field verbatim.
+   ========================================================================== */
+
+/* Extend the existing .ms-field input styling (built for <select> only) to
+   plain text/number inputs — same look, not a new visual language. */
+.ms-field input[type="text"],
+.ms-field input[type="number"],
+.ms-field input[type="tel"] {
+  font: inherit;
+  font-size: var(--ms-text-base);
+  color: var(--ms-color-ink);
+  background: var(--ms-color-surface-base);
+  border: 1px solid transparent;
+  box-shadow: var(--ms-shadow-sunken);
+  border-radius: var(--ms-radius-sm);
+  padding: var(--ms-space-3);
+  min-height: 44px;
+  width: 100%;
+}
+.ms-field input[type="text"]:hover,
+.ms-field input[type="number"]:hover,
+.ms-field input[type="tel"]:hover {
+  box-shadow: var(--ms-shadow-sunken), 0 0 0 1px var(--ms-color-blue);
+}
+
+.ms-quote-form { display: flex; flex-direction: column; gap: var(--ms-space-6); }
+
+/* Each step reuses .ms-service-panel's raised-card look; this class only
+   resets the fieldset/legend user-agent defaults that panel doesn't cover. */
+fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
+.ms-quote-step__legend {
+  display: flex;
+  align-items: center;
+  gap: var(--ms-space-3);
+  font-family: var(--ms-font-display);
+  font-size: var(--ms-text-lg);
+  font-weight: 800;
+  color: var(--ms-color-ink);
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  float: left;
+}
+.ms-quote-step__legend .ms-card__num { margin-bottom: 0; flex: none; }
+
+.ms-option-grid { display: grid; grid-template-columns: 1fr; gap: var(--ms-space-3); }
+@media (min-width: 30em) {
+  .ms-option-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.ms-option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-1);
+  border: 1px solid var(--ms-color-border-strong);
+  border-radius: var(--ms-radius-md);
+  padding: var(--ms-space-4);
+  cursor: pointer;
+  background: var(--ms-color-surface-base);
+  transition: border-color var(--ms-duration-base) var(--ms-ease), background-color var(--ms-duration-base) var(--ms-ease);
+}
+.ms-option:hover { border-color: var(--ms-color-blue); }
+.ms-option:has(input:checked) {
+  border-color: var(--ms-color-gold-hover);
+  background: var(--ms-color-gold-tint);
+}
+.ms-option input { accent-color: var(--ms-color-blue-dark); width: 1.1rem; height: 1.1rem; }
+.ms-option__title { font-weight: 700; color: var(--ms-color-ink); font-size: var(--ms-text-sm); }
+
+/* The rate on a service option is the SAME component as on the rate cards,
+   the service tiles and the hero readout — .ms-card__price, display face,
+   weight 800, blue-dark, small faint unit. This was the last place on the
+   site that set a price as flat 13px body text, which left the one number
+   distinguishing these four choices as the least legible thing in the card,
+   on the page where the customer is actually choosing between them.
+
+   One step down in size (md, not xl) because it sits inside a two-up form
+   control rather than a card that leads with its price — same voice, quieter
+   register. Nothing here restyles .ms-card__price itself; the scale change is
+   scoped to .ms-option so the component stays one component. */
+.ms-option__meta {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--ms-space-2);
+  font-size: var(--ms-text-xs);
+  color: var(--ms-color-ink-soft);
+}
+.ms-option .ms-card__price-amt { font-size: var(--ms-text-md); }
+/* Carries a literal "·" rather than a ::before. Generated content is
+   announced by some screen readers, and the separator is decoration — the
+   same reason .ms-service-tile__more draws its chevron with borders. */
+.ms-option__unit { color: var(--ms-color-ink-faint); }
+
+.ms-option--compact { flex-direction: row; align-items: center; gap: var(--ms-space-2); padding: var(--ms-space-3) var(--ms-space-4); }
+.ms-option--compact span { font-size: var(--ms-text-sm); font-weight: 700; color: var(--ms-color-ink); }
+
+.ms-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--ms-space-2);
+  font-size: var(--ms-text-sm);
+  font-weight: 700;
+  color: var(--ms-color-ink-soft);
+  cursor: pointer;
+  margin-top: var(--ms-space-1);
+}
+.ms-toggle input { width: 1.1rem; height: 1.1rem; accent-color: var(--ms-color-blue-dark); flex: none; }
+
+.ms-quote-estimator {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-4);
+  margin-top: var(--ms-space-4);
+  padding-top: var(--ms-space-4);
+  border-top: 1px dashed var(--ms-color-border-strong);
+}
+.ms-quote-estimator[hidden] { display: none; }
+
+.ms-addon-list { display: flex; flex-direction: column; gap: var(--ms-space-3); }
+
+.ms-addon-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--ms-space-3);
+  border: 1px solid var(--ms-color-border-strong);
+  border-radius: var(--ms-radius-md);
+  padding: var(--ms-space-3) var(--ms-space-4);
+  cursor: pointer;
+  transition: border-color var(--ms-duration-base) var(--ms-ease), background-color var(--ms-duration-base) var(--ms-ease);
+}
+.ms-addon-row:has(input[type="checkbox"]:checked) {
+  border-color: var(--ms-color-gold-hover);
+  background: var(--ms-color-gold-tint);
+}
+.ms-addon-row input[type="checkbox"] { accent-color: var(--ms-color-blue-dark); width: 1.1rem; height: 1.1rem; }
+.ms-addon-row__label { flex: 1; font-size: var(--ms-text-sm); font-weight: 700; color: var(--ms-color-ink); }
+.ms-addon-row__price { font-size: var(--ms-text-sm); color: var(--ms-color-blue-dark); font-weight: 700; white-space: nowrap; }
+.ms-addon-row__price--quoted {
+  color: var(--ms-color-ink-faint);
+  font-weight: 700;
+  font-size: var(--ms-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ms-addon-row--counted { cursor: default; }
+.ms-addon-row__check { display: flex; align-items: center; gap: var(--ms-space-2); cursor: pointer; flex: 1; min-width: 11rem; }
+.ms-addon-row__count-label { display: flex; align-items: center; gap: var(--ms-space-2); font-size: var(--ms-text-xs); color: var(--ms-color-ink-soft); }
+.ms-addon-row__count-label input {
+  width: 4.5rem;
+  font: inherit;
+  font-size: var(--ms-text-sm);
+  color: var(--ms-color-ink);
+  background: var(--ms-color-surface);
+  border: 1px solid var(--ms-color-border-strong);
+  border-radius: var(--ms-radius-sm);
+  padding: var(--ms-space-2);
+  min-height: 36px;
+}
+.ms-addon-row__count-label input:disabled { opacity: 0.5; }
+
+.ms-condition-list { display: flex; flex-direction: column; gap: var(--ms-space-4); }
+.ms-condition-row { display: flex; flex-direction: column; gap: var(--ms-space-2); }
+.ms-condition-row__question { font-size: var(--ms-text-sm); font-weight: 700; color: var(--ms-color-ink); margin: 0; }
+.ms-condition-row__options { display: flex; gap: var(--ms-space-3); }
+
+/* Live summary sidebar. */
+.ms-quote-summary {
+  background: var(--ms-color-surface);
+  border-radius: var(--ms-radius-lg);
+  box-shadow: var(--ms-shadow-raised-lg);
+  padding: var(--ms-space-5);
+}
+@media (min-width: 56em) {
+  .ms-quote-summary { position: sticky; top: 7rem; }
+}
+.ms-quote-summary__heading { font-size: var(--ms-text-lg); color: var(--ms-color-ink); margin: 0 0 var(--ms-space-4); }
+.ms-quote-summary__empty { color: var(--ms-color-ink-soft); font-size: var(--ms-text-sm); margin: 0; }
+
+.ms-quote-outcome__heading { font-size: var(--ms-text-md); font-weight: 800; color: var(--ms-color-ink); margin: 0 0 var(--ms-space-3); }
+.ms-quote-outcome__reasons { margin: var(--ms-space-2) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--ms-space-1); }
+.ms-quote-outcome__reasons li { font-size: var(--ms-text-sm); color: var(--ms-color-ink-soft); line-height: var(--ms-leading-snug); }
+
+.ms-quote-total-row td {
+  font-weight: 800;
+  color: var(--ms-color-ink);
+  font-size: var(--ms-text-md);
+  border-top: 2px solid var(--ms-color-border-strong);
+}
+
+.ms-quote-cta { display: flex; flex-wrap: wrap; gap: var(--ms-space-3); margin-top: var(--ms-space-5); }
+/* nowrap — the "Or call/text (416) 564-2125" ghost button has a 12rem flex
+   basis it can be squeezed below (narrow sidebar next to a long form,
+   quote.html); without this the phone number itself line-wraps mid-digit
+   ("564-" / "2125") instead of the whole button dropping to its own row,
+   which flex-wrap on the parent already handles once the label can't
+   shrink internally. */
+.ms-quote-cta .ms-btn { flex: 1 1 12rem; white-space: nowrap; }
+
+/* Note spacing moved out of here and up to the .ms-note block itself — the
+   pricing page now stacks a note under a table in exactly the same way the
+   quote summary does, and two copies of the same rule is how the two drift. */
+
+/* ==========================================================================
+   Motion — depth, not decoration.
+
+   The site already carries a lighting model: tactile-raised surfaces sit
+   above the page with light catching their top edge, tactile-sunken ones
+   press into it. Everything below is that same model in motion — panels that
+   respond to where the light (the cursor) is, and content that settles onto
+   the page plane from slightly behind it. No new colours, no new shadows and
+   no new easing: every token used here is already defined at the top of this
+   file.
+
+   THREE RULES THIS SECTION KEEPS
+
+   1. Nothing here is required to read the page. Every hidden-then-revealed
+      state is scoped under html.ms-motion, a class only assets/js/ui.js adds.
+      No JavaScript, an old browser, a thrown exception — the class is absent,
+      the rules below never match, and the page renders exactly as it did
+      before this section existed. A scroll animation that can strand content
+      invisible is a bug wearing a design's clothes.
+
+   2. Motion is opt-out at the OS level, and the opt-out is checked in JS as
+      well as here, so a visitor who prefers reduced motion never even gets
+      the observer wired up.
+
+   3. Every animated property is transform or opacity. Both are composited, so
+      none of this triggers layout or paint while scrolling.
+   ========================================================================== */
+
+:root {
+  /* Longer than --ms-duration-base (220ms, tuned for hover feedback). A
+     reveal is a settling motion, not a response to a click, and at 220ms it
+     reads as a flicker rather than an arrival. */
+  --ms-duration-reveal: 620ms;
+  --ms-duration-tilt: 400ms;
+}
+
+/* --------------------------------------------------------------------------
+   Depth reveal — content settles onto the page plane from behind it.
+
+   translate3d on the Z axis rather than only Y: with perspective applied the
+   card genuinely approaches the viewer, so it scales very slightly as it
+   arrives. That read is what separates this from the standard fade-and-slide,
+   and it costs nothing extra to composite.
+
+   Perspective is declared INSIDE the transform rather than as its own
+   property on an ancestor, on purpose. A perspective property establishes a
+   containing block for fixed-position descendants — this site has a fixed nav
+   pill and a sticky quote summary, and both would silently start computing
+   their offsets against the wrong box.
+   -------------------------------------------------------------------------- */
+html.ms-motion [data-ms-reveal] {
+  opacity: 0;
+  transform: perspective(1200px) translate3d(0, 1.5rem, -4rem) rotateX(2.5deg);
+  transition:
+    opacity var(--ms-duration-reveal) var(--ms-ease),
+    transform var(--ms-duration-reveal) var(--ms-ease);
+}
+
+html.ms-motion [data-ms-reveal].is-revealed {
+  opacity: 1;
+  transform: perspective(1200px) translate3d(0, 0, 0) rotateX(0deg);
+}
+
+/* --------------------------------------------------------------------------
+   Pointer tilt on lifted panels.
+
+   The rotation is driven by two custom properties the pointer handler sets,
+   and the hover lift is a THIRD, so hover and tilt compose instead of
+   overwriting one another. Writing "transform: translateY(-4px)" in the hover
+   rule — as this file did before — means the last matching rule wins the
+   whole property, so the tilt vanished the moment a card was hovered, which
+   is exactly when it should have been tilting.
+   -------------------------------------------------------------------------- */
+.ms-service-tile,
+.ms-rate-card {
+  --ms-tilt-x: 0deg;
+  --ms-tilt-y: 0deg;
+  --ms-lift: 0px;
+  transform:
+    perspective(900px)
+    rotateX(var(--ms-tilt-x))
+    rotateY(var(--ms-tilt-y))
+    translate3d(0, var(--ms-lift), 0);
+}
+
+/* Tilt only where there is a real cursor to tilt toward. On a touch screen
+   the pointer events fire once on tap and leave the card stuck at an angle
+   with nothing to straighten it. */
+@media (hover: hover) and (pointer: fine) {
+  .ms-service-tile:hover,
+  .ms-service-tile:focus-visible,
+  .ms-rate-card:hover {
+    --ms-lift: -4px;
+  }
+}
+
+/* While the pointer is inside a card the transform must track it with no
+   easing — a 400ms transition on a value that updates every frame reads as
+   lag, not smoothness. The class comes off on pointerleave, so the return to
+   flat IS eased. */
+.ms-service-tile.is-tilting,
+.ms-rate-card.is-tilting {
+  transition: box-shadow var(--ms-duration-base) var(--ms-ease);
+}
+
+.ms-service-tile:not(.is-tilting),
+.ms-rate-card:not(.is-tilting) {
+  transition:
+    transform var(--ms-duration-tilt) var(--ms-ease),
+    box-shadow var(--ms-duration-base) var(--ms-ease);
+}
+
+/* --------------------------------------------------------------------------
+   Hero parallax — the quote card floats above the photograph.
+
+   Two layers moving by different amounts against the same pointer is the
+   cheapest honest depth cue there is. The card travels further than the photo
+   because it is nearer to the viewer.
+
+   --ms-float composes with the centring transform rather than replacing it.
+   At 64em and up the card is absolutely positioned at top:50% with a
+   translateY(-50%) pulling it back; a bare transform here would drop that
+   -50% and hang the card half its own height too low.
+   -------------------------------------------------------------------------- */
+.ms-quote-start { transform: var(--ms-float, none); }
+.ms-hero__photo { transform: var(--ms-float, none); }
+
+@media (min-width: 64em) {
+  .ms-quote-start { transform: translateY(-50%) var(--ms-float, translate3d(0, 0, 0)); }
+}
+
+/* Eased only when the pointer is NOT being tracked, for the same reason as
+   the card tilt above: follow instantly, return gently. */
+.ms-hero__inner:not(.is-tracking) .ms-quote-start,
+.ms-hero__inner:not(.is-tracking) .ms-hero__photo {
+  transition: transform var(--ms-duration-tilt) var(--ms-ease);
+}
+
+/* --------------------------------------------------------------------------
+   The duck drifts.
+
+   The badge is the brand's quiet signature on a photograph. A scroll-linked
+   drift of a few pixels makes it read as sitting ON the image rather than
+   stamped INTO it — the same parallax idea as above, at a scale nobody
+   consciously notices.
+   -------------------------------------------------------------------------- */
+.ms-duck-badge { transform: translate3d(0, var(--ms-drift, 0px), 0); }
+
+/* --------------------------------------------------------------------------
+   The belt to the JS braces.
+
+   ui.js already refuses to add .ms-motion when the visitor prefers reduced
+   motion, so in practice nothing above is ever live for them. This block
+   covers the case the JS guard cannot: the preference being flipped mid-visit
+   on a browser that does not fire the matchMedia change event. Neutralise
+   every transform, and show everything.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html.ms-motion [data-ms-reveal],
+  html.ms-motion [data-ms-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .ms-service-tile,
+  .ms-rate-card,
+  .ms-hero__photo,
+  .ms-duck-badge,
+  .ms-quote-start { transform: none; }
+}
+
+/* Restores the centring the reduced-motion reset above just cleared. Nested
+   inside the same preference so it only applies to that visitor. */
+@media (prefers-reduced-motion: reduce) and (min-width: 64em) {
+  .ms-quote-start { transform: translateY(-50%); }
+}

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Your Price — Make it Squeaky</title>
+  <meta name="description" content="Answer a few quick questions about your home and get an instant price for regular, deep, move-in/move-out, or post-renovation cleaning in Toronto.">
+  <link rel="canonical" href="https://makeitsqueaky.com/quote.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Make it Squeaky">
+  <meta property="og:title" content="Get Your Price — Make it Squeaky">
+  <meta property="og:description" content="Answer a few quick questions about your home and get an instant price for regular, deep, move-in/move-out, or post-renovation cleaning in Toronto.">
+  <meta property="og:url" content="https://makeitsqueaky.com/quote.html">
+  <meta property="og:image" content="https://makeitsqueaky.com/assets/img/hero.webp">
+  <link rel="icon" href="assets/img/duck.webp" type="image/webp">
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+  <a class="ms-skip-link" href="#main">Skip to content</a>
+
+  <header class="ms-header">
+    <div class="ms-header__inner">
+      <a class="ms-logo" href="index.html" aria-label="Make it Squeaky — home">
+        <span class="ms-logo__badge">
+          <img
+            class="ms-logo__mark"
+            src="assets/img/duck.webp"
+            srcset="assets/img/duck.webp 220w, assets/img/duck@2x.webp 440w"
+            sizes="96px"
+            width="220" height="220"
+            alt="">
+        </span>
+        <img
+          class="ms-logo__word"
+          src="assets/img/wordmark.webp"
+          srcset="assets/img/wordmark.webp 576w, assets/img/wordmark@2x.webp 1152w"
+          sizes="220px"
+          width="576" height="136"
+          alt="Make it Squeaky">
+      </a>
+
+      <nav class="ms-nav" aria-label="Primary">
+        <button type="button" class="ms-nav__summary" id="ms-nav-toggle" aria-expanded="false" aria-controls="ms-nav-list" aria-label="Menu">
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true">
+            <path d="M1 1H17M1 7H17M1 13H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="ms-nav__summary-label">Menu</span>
+        </button>
+        <ul class="ms-nav__list" id="ms-nav-list">
+          <li><a href="services.html">Services</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+
+      <a class="ms-btn ms-btn--accent ms-header__cta" href="quote.html">
+        <span class="ms-header__cta-full">Start your quote</span>
+        <span class="ms-header__cta-short">Get a price</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="ms-page-head" aria-labelledby="page-hero-heading">
+      <div class="ms-container">
+        <h1 id="page-hero-heading" class="ms-page-head__title">Get your price</h1>
+        <p class="ms-page-head__lead">Answer a few quick questions and the price updates live as you go. Most homes get an instant number — no account, no call required.</p>
+      </div>
+    </section>
+
+    <!-- No section heading. "Get your price" above already says what this
+         page is, and the form's own numbered steps label its parts, so
+         "Your details / Every price updates live as you answer" was a
+         second large heading stacked under the title. The live-update
+         promise moved into the page lead, where it is read first. -->
+    <section class="ms-section" aria-label="Your details">
+      <div class="ms-container">
+        <div class="ms-info-grid">
+          <form class="ms-quote-form" id="quote-form" novalidate>
+
+            <fieldset class="ms-service-panel ms-quote-step">
+              <legend class="ms-quote-step__legend"><span class="ms-card__num" aria-hidden="true">1</span> Service</legend>
+              <div class="ms-option-grid" id="quote-service-options">
+                <label class="ms-option">
+                  <input type="radio" name="service" value="regular" required>
+                  <span class="ms-option__title">Regular Cleaning</span>
+                  <span class="ms-option__meta">
+                    <span class="ms-card__price"><span class="ms-card__price-amt">$0.25</span><span class="ms-card__price-unit">/ sq ft</span></span>
+                    <span class="ms-option__unit">· half-day</span>
+                  </span>
+                </label>
+                <label class="ms-option">
+                  <input type="radio" name="service" value="deep">
+                  <span class="ms-option__title">Deep Cleaning</span>
+                  <span class="ms-option__meta">
+                    <span class="ms-card__price"><span class="ms-card__price-amt">$0.40</span><span class="ms-card__price-unit">/ sq ft</span></span>
+                    <span class="ms-option__unit">· full-day</span>
+                  </span>
+                </label>
+                <label class="ms-option">
+                  <input type="radio" name="service" value="moveInOut">
+                  <span class="ms-option__title">Move-In / Move-Out Cleaning</span>
+                  <span class="ms-option__meta">
+                    <span class="ms-card__price"><span class="ms-card__price-amt">$0.65</span><span class="ms-card__price-unit">/ sq ft</span></span>
+                    <span class="ms-option__unit">· full-day</span>
+                  </span>
+                </label>
+                <label class="ms-option">
+                  <input type="radio" name="service" value="postReno">
+                  <span class="ms-option__title">Post-Renovation Cleaning</span>
+                  <span class="ms-option__meta">
+                    <span class="ms-card__price"><span class="ms-card__price-amt">$0.75</span><span class="ms-card__price-unit">/ sq ft</span></span>
+                    <span class="ms-option__unit">· full-day</span>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="ms-service-panel ms-quote-step">
+              <p class="ms-quote-step__legend"><span class="ms-card__num" aria-hidden="true">2</span> Postal code</p>
+              <div class="ms-field">
+                <label for="quote-postal">Your postal code</label>
+                <input type="text" id="quote-postal" name="postalCode" placeholder="e.g. M4B 1B3" autocomplete="postal-code" inputmode="text">
+              </div>
+              <div class="ms-note" id="postal-status">
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v4.5M10 6.75v.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <p id="postal-status-text" role="status" aria-live="polite">We'll let you know right away if a travel fee applies.</p>
+              </div>
+            </div>
+
+            <div class="ms-service-panel ms-quote-step">
+              <p class="ms-quote-step__legend"><span class="ms-card__num" aria-hidden="true">3</span> Square footage</p>
+              <div class="ms-field">
+                <label for="quote-sqft">Approximate square footage</label>
+                <input type="number" id="quote-sqft" name="sqFt" min="0" step="1" inputmode="numeric" placeholder="e.g. 1200">
+              </div>
+              <label class="ms-toggle" for="quote-unsure-toggle">
+                <input type="checkbox" id="quote-unsure-toggle">
+                <span>I'm not sure — estimate it for me</span>
+              </label>
+              <div class="ms-quote-estimator" id="quote-estimator" hidden>
+                <div class="ms-field">
+                  <label for="quote-hometype">Home type</label>
+                  <select id="quote-hometype" name="homeType">
+                    <option value="condo">Condo / apartment</option>
+                    <option value="townhouse">Townhouse</option>
+                    <option value="house">House</option>
+                  </select>
+                </div>
+                <div class="ms-field">
+                  <label for="quote-bedrooms">Bedrooms</label>
+                  <input type="number" id="quote-bedrooms" name="bedrooms" min="0" step="1" value="2" inputmode="numeric">
+                </div>
+                <div class="ms-field">
+                  <label for="quote-bathrooms">Bathrooms</label>
+                  <input type="number" id="quote-bathrooms" name="bathrooms" min="0" step="1" value="1" inputmode="numeric">
+                </div>
+                <div class="ms-note" id="quote-estimate-note" hidden>
+                  <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v4.5M10 6.75v.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  <p id="quote-estimate-note-text"></p>
+                </div>
+              </div>
+            </div>
+
+            <fieldset class="ms-service-panel ms-quote-step">
+              <legend class="ms-quote-step__legend"><span class="ms-card__num" aria-hidden="true">4</span> Add-ons</legend>
+              <div class="ms-addon-list">
+                <label class="ms-addon-row">
+                  <input type="checkbox" id="addon-oven">
+                  <span class="ms-addon-row__label">Inside oven</span>
+                  <span class="ms-addon-row__price">$50</span>
+                </label>
+                <label class="ms-addon-row">
+                  <input type="checkbox" id="addon-fridge">
+                  <span class="ms-addon-row__label">Inside refrigerator</span>
+                  <span class="ms-addon-row__price">$50</span>
+                </label>
+                <div class="ms-addon-row ms-addon-row--counted">
+                  <label class="ms-addon-row__check" for="addon-windows-toggle">
+                    <input type="checkbox" id="addon-windows-toggle">
+                    <span class="ms-addon-row__label">Interior windows</span>
+                    <span class="ms-addon-row__price">$10 each</span>
+                  </label>
+                  <label class="ms-addon-row__count-label" for="addon-windows-count">
+                    Number of windows
+                    <input type="number" id="addon-windows-count" min="0" step="1" value="0" inputmode="numeric" disabled>
+                  </label>
+                </div>
+                <label class="ms-addon-row">
+                  <input type="checkbox" id="addon-cabinets">
+                  <span class="ms-addon-row__label">Inside cabinets and drawers</span>
+                  <span class="ms-addon-row__price">From $75</span>
+                </label>
+                <label class="ms-addon-row">
+                  <input type="checkbox" id="addon-wallwashing">
+                  <span class="ms-addon-row__label">Wall washing</span>
+                  <span class="ms-addon-row__price">From $75</span>
+                </label>
+                <div class="ms-addon-row ms-addon-row--counted">
+                  <label class="ms-addon-row__check" for="addon-appliances">
+                    <input type="checkbox" id="addon-appliances">
+                    <span class="ms-addon-row__label">Inside kitchen appliances</span>
+                    <span class="ms-addon-row__price">From $25 each</span>
+                  </label>
+                  <label class="ms-addon-row__count-label" for="addon-appliances-count">
+                    Number of appliances
+                    <input type="number" id="addon-appliances-count" min="0" step="1" value="0" inputmode="numeric" disabled>
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="ms-service-panel ms-quote-step">
+              <legend class="ms-quote-step__legend"><span class="ms-card__num" aria-hidden="true">5</span> Condition</legend>
+              <div class="ms-condition-list">
+                <div class="ms-condition-row" role="radiogroup" aria-label="Has the home been professionally cleaned recently?">
+                  <p class="ms-condition-row__question">Has the home been professionally cleaned recently?</p>
+                  <div class="ms-condition-row__options">
+                    <label class="ms-option ms-option--compact"><input type="radio" name="condition-heavyGrime" value="yes"><span>Yes</span></label>
+                    <label class="ms-option ms-option--compact"><input type="radio" name="condition-heavyGrime" value="no"><span>No / not sure</span></label>
+                  </div>
+                </div>
+                <div class="ms-condition-row" role="radiogroup" aria-label="Is there more pet hair to manage than in a typical home?">
+                  <p class="ms-condition-row__question">Is there more pet hair to manage than in a typical home?</p>
+                  <div class="ms-condition-row__options">
+                    <label class="ms-option ms-option--compact"><input type="radio" name="condition-heavyPetHair" value="yes"><span>Yes</span></label>
+                    <label class="ms-option ms-option--compact"><input type="radio" name="condition-heavyPetHair" value="no"><span>No</span></label>
+                  </div>
+                </div>
+                <div class="ms-condition-row" role="radiogroup" aria-label="Has there been recent renovation or construction work in the home?">
+                  <p class="ms-condition-row__question">Has there been recent renovation or construction work in the home?</p>
+                  <div class="ms-condition-row__options">
+                    <label class="ms-option ms-option--compact"><input type="radio" name="condition-heavyConstructionResidue" value="yes"><span>Yes</span></label>
+                    <label class="ms-option ms-option--compact"><input type="radio" name="condition-heavyConstructionResidue" value="no"><span>No</span></label>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+
+          <aside class="ms-quote-summary" id="quote-summary" aria-labelledby="quote-summary-heading">
+            <h2 id="quote-summary-heading" class="ms-quote-summary__heading">Your estimate</h2>
+            <!-- Not a live region: this panel re-renders on every keystroke,
+                 so announcing it would repeat the whole price table per
+                 character. #quote-live below carries one debounced sentence. -->
+            <div id="quote-summary-body">
+              <p class="ms-quote-summary__empty" id="quote-summary-empty">Fill in the form to see your price.</p>
+            </div>
+            <p class="ms-visually-hidden" id="quote-live" role="status" aria-live="polite"></p>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ms-footer">
+    <div class="ms-container">
+      <div class="ms-footer__grid">
+        <div class="ms-footer__col ms-footer__col--brand">
+          <div class="ms-footer__brand">
+            <img src="assets/img/duck.webp" srcset="assets/img/duck.webp 220w, assets/img/duck@2x.webp 440w" sizes="56px" width="220" height="220" alt="">
+            <span class="ms-footer__wordmark-text">Make it Squeaky</span>
+          </div>
+          <p class="ms-footer__tagline">
+            Over <span data-years-since="2014">12</span> years of professional cleaning experience, one set of hands on every job —
+            serving the City of Toronto.
+          </p>
+        </div>
+
+        <div class="ms-footer__col">
+          <h2>Cleaning</h2>
+          <ul>
+            <li><a href="services.html#regular-heading">Regular</a></li>
+            <li><a href="services.html#deep-heading">Deep</a></li>
+            <li><a href="services.html#moveinout-heading">Move-in / move-out</a></li>
+            <li><a href="services.html#postreno-heading">Post-renovation</a></li>
+          </ul>
+        </div>
+
+        <div class="ms-footer__col">
+          <h2>Company</h2>
+          <ul>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="about.html">About Tiffany</a></li>
+            <li><a href="policies.html">Policies</a></li>
+          </ul>
+        </div>
+
+        <div class="ms-footer__col" id="service-area">
+          <h2>Contact</h2>
+          <ul>
+            <li class="ms-footer__icon-row">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5.5C3 4.67 3.67 4 4.5 4h2.06c.46 0 .87.3 1.01.74l.9 2.72a1.08 1.08 0 0 1-.28 1.1L6.9 9.9a12 12 0 0 0 5.2 5.2l1.34-1.29a1.08 1.08 0 0 1 1.1-.28l2.72.9c.44.14.74.55.74 1.01v2.06c0 .83-.67 1.5-1.5 1.5C8.6 19 3 13.4 3 5.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              <a href="tel:+14165642125">+1 (416) 564-2125</a>
+            </li>
+            <li class="ms-footer__icon-row">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.75" y="4.75" width="14.5" height="10.5" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="m3.5 6.25 6.5 4.5 6.5-4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <a href="mailto:tiffanypoerazoff10@gmail.com">Email Tiffany</a>
+            </li>
+            <li>City of Toronto — all M postal codes</li>
+            <li>Inner &amp; outer GTA for a travel fee</li>
+            <li><a href="quote.html">Start your quote</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ms-footer__bottom">
+        <span>© 2026 Make it Squeaky. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="assets/js/ui.js"></script>
+  <script type="module" src="assets/js/quote-form.js"></script>
+</body>
+</html>

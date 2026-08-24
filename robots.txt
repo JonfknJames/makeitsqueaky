@@ -1,0 +1,9 @@
+# Make it Squeaky robots.txt
+#
+# Default: allow crawling of the whole public site. There is no private
+# or account-gated area in Phase 1 — every page here is meant to be found.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://makeitsqueaky.com/sitemap.xml

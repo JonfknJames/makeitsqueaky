@@ -1,0 +1,34 @@
+{
+  "version": "2026-08-07",
+  "currency": "CAD",
+  "minimumJobPrice": 180,
+  "hstRegistered": false,
+  "taxRate": 0,
+  "maxSqFt": 6000,
+  "maxAddOnUnits": 60,
+  "services": {
+    "regular":   { "label": "Regular Cleaning",          "ratePerSqFt": 0.25, "unit": "half-day" },
+    "deep":      { "label": "Deep Cleaning",             "ratePerSqFt": 0.40, "unit": "full-day" },
+    "moveInOut": { "label": "Move-In / Move-Out Cleaning","ratePerSqFt": 0.65, "unit": "full-day" },
+    "postReno":  { "label": "Post-Renovation Cleaning",  "ratePerSqFt": 0.75, "unit": "full-day" }
+  },
+  "addOns": {
+    "oven":            { "label": "Inside oven",               "price": 50, "type": "fixed" },
+    "fridge":          { "label": "Inside refrigerator",       "price": 50, "type": "fixed" },
+    "interiorWindows": { "label": "Interior windows",          "price": 10, "type": "perUnit", "unitLabel": "window" },
+    "cabinets":        { "label": "Inside cabinets and drawers","price": 75, "type": "fixed",   "from": true },
+    "wallWashing":     { "label": "Wall washing",              "price": 75, "type": "fixed",   "from": true },
+    "appliances":      { "label": "Inside kitchen appliances", "price": 25, "type": "perUnit", "unitLabel": "appliance", "from": true }
+  },
+  "conditionFlags": ["heavyGrime", "heavyPetHair", "heavyConstructionResidue"],
+  "sqFtEstimator": {
+    "condo":     { "base": 400, "perBedroom": 250, "perBathroom": 50 },
+    "townhouse": { "base": 600, "perBedroom": 300, "perBathroom": 60 },
+    "house":     { "base": 800, "perBedroom": 350, "perBathroom": 70 }
+  },
+  "travelZones": {
+    "toronto":   { "label": "City of Toronto", "prefixes": ["M"],              "fee": 0 },
+    "inner905":  { "label": "Inner GTA",       "prefixes": ["L3", "L4", "L5"], "fee": 35 },
+    "outer905":  { "label": "Outer GTA",       "prefixes": ["L1", "L6", "L7"], "fee": 60 }
+  }
+}

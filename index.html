@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Make it Squeaky — Residential Cleaning in Toronto</title>
+  <meta name="description" content="Over a decade of professional cleaning experience. Tiffany cleans every home herself, across the City of Toronto — regular, deep, move-in/move-out, and post-renovation cleans.">
+  <link rel="canonical" href="https://makeitsqueaky.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Make it Squeaky">
+  <meta property="og:title" content="Make it Squeaky — Residential Cleaning in Toronto">
+  <meta property="og:description" content="Over a decade of professional cleaning experience. Tiffany cleans every home herself, across the City of Toronto — regular, deep, move-in/move-out, and post-renovation cleans.">
+  <meta property="og:url" content="https://makeitsqueaky.com/">
+  <meta property="og:image" content="https://makeitsqueaky.com/assets/img/hero.webp">
+  <link rel="icon" href="assets/img/duck.webp" type="image/webp">
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+  <a class="ms-skip-link" href="#main">Skip to content</a>
+
+  <header class="ms-header">
+    <div class="ms-header__inner">
+      <a class="ms-logo" href="index.html" aria-label="Make it Squeaky — home">
+        <span class="ms-logo__badge">
+          <img
+            class="ms-logo__mark"
+            src="assets/img/duck.webp"
+            srcset="assets/img/duck.webp 220w, assets/img/duck@2x.webp 440w"
+            sizes="96px"
+            width="220" height="220"
+            alt="">
+        </span>
+        <img
+          class="ms-logo__word"
+          src="assets/img/wordmark.webp"
+          srcset="assets/img/wordmark.webp 576w, assets/img/wordmark@2x.webp 1152w"
+          sizes="220px"
+          width="576" height="136"
+          alt="Make it Squeaky">
+      </a>
+
+      <nav class="ms-nav" aria-label="Primary">
+        <button type="button" class="ms-nav__summary" id="ms-nav-toggle" aria-expanded="false" aria-controls="ms-nav-list" aria-label="Menu">
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true">
+            <path d="M1 1H17M1 7H17M1 13H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="ms-nav__summary-label">Menu</span>
+        </button>
+        <ul class="ms-nav__list" id="ms-nav-list">
+          <li><a href="services.html">Services</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+
+      <a class="ms-btn ms-btn--accent ms-header__cta" href="quote.html">
+        <span class="ms-header__cta-full">Start your quote</span>
+        <span class="ms-header__cta-short">Get a price</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="ms-hero" aria-labelledby="hero-heading">
+      <div class="ms-container">
+        <div class="ms-hero__inner">
+          <div class="ms-hero__glow" aria-hidden="true"></div>
+          <div class="ms-hero__copy">
+            <h1 id="hero-heading" class="ms-hero__heading">Your home, squeaky clean.</h1>
+            <p class="ms-hero__lead">
+              No franchise crew, no rotating strangers. Tiffany cleans every home herself, bringing
+              the same eye for detail whether it's a weekly refresh or a full move-out clean ready
+              for inspection.
+            </p>
+
+            <div class="ms-stat ms-stat--start ms-hero__stat">
+              <span class="ms-stat__num" data-years-since="2014">12</span>
+              <span class="ms-stat__label">Years of experience</span>
+            </div>
+          </div>
+
+          <div class="ms-hero__visual">
+            <div class="ms-hero__media">
+              <picture>
+                <source media="(max-width: 63.9375em)" srcset="assets/img/hero-mobile.webp" width="820" height="546">
+                <img
+                  class="ms-hero__photo"
+                  src="assets/img/hero.webp"
+                  alt="A bright, tidy living space with warm wood floors"
+                  width="1600" height="1066">
+              </picture>
+            </div>
+
+            <!-- The eyebrow ("Step 1 of 3") and the lead ("we'll walk you
+                 straight to a price") are both gone: the card answers the
+                 question here rather than describing the journey to the
+                 answer. What is left is two choices, the number they produce,
+                 and the way to firm it up. -->
+            <form class="ms-quote-start" id="quote-start" action="quote.html" method="get" aria-labelledby="quote-start-heading">
+              <h2 id="quote-start-heading" class="ms-quote-start__heading">What will it cost?</h2>
+
+              <div class="ms-field">
+                <label for="quote-service">Service</label>
+                <select id="quote-service" name="service">
+                  <option value="regular" selected>Regular Cleaning</option>
+                  <option value="deep">Deep Cleaning</option>
+                  <option value="moveInOut">Move-In / Move-Out Cleaning</option>
+                  <option value="postReno">Post-Renovation Cleaning</option>
+                </select>
+              </div>
+
+              <div class="ms-field">
+                <label for="quote-size">Home size</label>
+                <!-- Values are the estimator's own inputs — home type, bedrooms,
+                     bathrooms — not square footages typed in here by hand. The
+                     sq ft each one implies is derived from data/pricing.json at
+                     runtime, so this shortlist cannot quietly disagree with the
+                     calculator the button leads to. -->
+                <select id="quote-size" name="size">
+                  <option value="condo|1|1">One-bedroom condo</option>
+                  <option value="condo|2|1" selected>Two-bedroom condo</option>
+                  <option value="condo|3|2">Three-bedroom condo</option>
+                  <option value="townhouse|3|2">Three-bedroom townhouse</option>
+                  <option value="house|3|2">Three-bedroom house</option>
+                  <option value="house|4|3">Four-bedroom house</option>
+                </select>
+              </div>
+
+              <!-- Ships hidden and EMPTY. A price written into the HTML would be
+                   correct until the next rate change and wrong silently after
+                   it; the only number this card ever shows is one the engine
+                   just produced. With JavaScript off the card stays what it has
+                   always been — two choices and a button to the calculator. -->
+              <div class="ms-quote-start__result" id="quote-start-result" role="status" aria-live="polite" hidden>
+                <p class="ms-quote-start__readout">
+                  <span class="ms-quote-start__from">From</span>
+                  <span class="ms-quote-start__amount" id="quote-start-amount"></span>
+                  <span class="ms-quote-start__unit" id="quote-start-unit"></span>
+                </p>
+                <p class="ms-quote-start__basis" id="quote-start-basis"></p>
+              </div>
+
+              <button type="submit" class="ms-btn ms-btn--accent ms-btn--block ms-quote-start__submit">
+                Get your exact price
+              </button>
+              <p class="ms-quote-start__note">Takes about a minute. No account required.</p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ms-services" id="services" aria-labelledby="services-heading">
+      <div class="ms-container">
+        <div class="ms-section__head">
+          <h2 id="services-heading" class="ms-section-heading">Four ways to get it squeaky clean</h2>
+          <p class="ms-section-lead">Every visit is done by Tiffany herself and priced by the square foot, so the number is settled before she arrives.</p>
+        </div>
+
+        <div class="ms-service-grid">
+          <a class="ms-service-tile" href="services.html#regular-heading">
+            <p class="ms-card__price"><span class="ms-card__price-amt">$0.25</span><span class="ms-card__price-unit">/ sq ft</span></p>
+            <h3 class="ms-card__title">Regular Cleaning</h3>
+            <p class="ms-card__desc">Upkeep for a home that is already in good order.</p>
+            <ul class="ms-check-list ms-service-tile__list">
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Dusting, vacuuming, floors</li>
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Kitchen counters and appliance fronts</li>
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Bathrooms cleaned and sanitised</li>
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Baseboards, bins, high-touch points</li>
+            </ul>
+            <span class="ms-service-tile__more">What's included</span>
+          </a>
+
+          <a class="ms-service-tile" href="services.html#deep-heading">
+            <p class="ms-card__price"><span class="ms-card__price-amt">$0.40</span><span class="ms-card__price-unit">/ sq ft</span></p>
+            <h3 class="ms-card__title">Deep Cleaning</h3>
+            <p class="ms-card__desc">For a home that has not had a professional clean in a while.</p>
+            <ul class="ms-check-list ms-service-tile__list">
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in a regular visit</li>
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Soap scum and hard-water buildup</li>
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Cabinet fronts, doors, frames, trim</li>
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Corners and hard-to-reach spots</li>
+            </ul>
+            <span class="ms-service-tile__more">What's included</span>
+          </a>
+
+          <a class="ms-service-tile" href="services.html#moveinout-heading">
+            <p class="ms-card__price"><span class="ms-card__price-amt">$0.65</span><span class="ms-card__price-unit">/ sq ft</span></p>
+            <h3 class="ms-card__title">Move-In / Move-Out Cleaning</h3>
+            <p class="ms-card__desc">For an empty place that has to pass inspection.</p>
+            <ul class="ms-check-list ms-service-tile__list">
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in a deep clean</li>
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Inside closets, shelves, storage</li>
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Window sills, tracks, light switches</li>
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Final walk-through and touches</li>
+            </ul>
+            <span class="ms-service-tile__more">What's included</span>
+          </a>
+
+          <a class="ms-service-tile" href="services.html#postreno-heading">
+            <p class="ms-card__price"><span class="ms-card__price-amt">$0.75</span><span class="ms-card__price-unit">/ sq ft</span></p>
+            <h3 class="ms-card__title">Post-Renovation Cleaning</h3>
+            <p class="ms-card__desc">For the fine dust left behind once the trades have gone.</p>
+            <ul class="ms-check-list ms-service-tile__list">
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Walls, trim, doors and frames</li>
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Cabinets and countertops</li>
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Sills, tracks, full vacuum and mop</li>
+              <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Final detail pass</li>
+            </ul>
+            <span class="ms-service-tile__more">What's included</span>
+          </a>
+        </div>
+
+        <!-- These two facts are the ones that change a price before anything
+             else does, so they stay on the page. Everything else about money
+             now lives in one place instead of being sprinkled across pages —
+             hence the link rather than a third paragraph of fine print. -->
+        <p class="ms-services__note">Minimum job $180 · No travel fee within Toronto · <a href="pricing.html">See add-ons and travel fees</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ms-footer">
+    <div class="ms-container">
+      <div class="ms-footer__grid">
+        <div class="ms-footer__col ms-footer__col--brand">
+          <div class="ms-footer__brand">
+            <img src="assets/img/duck.webp" srcset="assets/img/duck.webp 220w, assets/img/duck@2x.webp 440w" sizes="56px" width="220" height="220" alt="">
+            <span class="ms-footer__wordmark-text">Make it Squeaky</span>
+          </div>
+          <p class="ms-footer__tagline">
+            Over <span data-years-since="2014">12</span> years of professional cleaning experience, one set of hands on every job —
+            serving the City of Toronto.
+          </p>
+        </div>
+
+        <div class="ms-footer__col">
+          <h2>Cleaning</h2>
+          <ul>
+            <li><a href="services.html#regular-heading">Regular</a></li>
+            <li><a href="services.html#deep-heading">Deep</a></li>
+            <li><a href="services.html#moveinout-heading">Move-in / move-out</a></li>
+            <li><a href="services.html#postreno-heading">Post-renovation</a></li>
+          </ul>
+        </div>
+
+        <div class="ms-footer__col">
+          <h2>Company</h2>
+          <ul>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="about.html">About Tiffany</a></li>
+            <li><a href="policies.html">Policies</a></li>
+          </ul>
+        </div>
+
+        <div class="ms-footer__col" id="service-area">
+          <h2>Contact</h2>
+          <ul>
+            <li class="ms-footer__icon-row">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5.5C3 4.67 3.67 4 4.5 4h2.06c.46 0 .87.3 1.01.74l.9 2.72a1.08 1.08 0 0 1-.28 1.1L6.9 9.9a12 12 0 0 0 5.2 5.2l1.34-1.29a1.08 1.08 0 0 1 1.1-.28l2.72.9c.44.14.74.55.74 1.01v2.06c0 .83-.67 1.5-1.5 1.5C8.6 19 3 13.4 3 5.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              <a href="tel:+14165642125">+1 (416) 564-2125</a>
+            </li>
+            <li class="ms-footer__icon-row">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.75" y="4.75" width="14.5" height="10.5" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="m3.5 6.25 6.5 4.5 6.5-4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <a href="mailto:tiffanypoerazoff10@gmail.com">Email Tiffany</a>
+            </li>
+            <li>City of Toronto — all M postal codes</li>
+            <li>Inner &amp; outer GTA for a travel fee</li>
+            <li><a href="quote.html">Start your quote</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ms-footer__bottom">
+        <span>© 2026 Make it Squeaky. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="assets/js/ui.js"></script>
+  <!-- Home page only — the price preview in the hero. ui.js stays site chrome. -->
+  <script type="module" src="assets/js/home-estimate.js"></script>
+</body>
+</html>
