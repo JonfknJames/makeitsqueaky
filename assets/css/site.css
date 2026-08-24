@@ -834,8 +834,14 @@ button { font: inherit; }
 
 .ms-quote-start {
   background: var(--ms-color-surface);
-  border-radius: var(--ms-radius-lg);
-  box-shadow: var(--ms-shadow-raised-md);
+  /* radius-xl, not radius-lg. This is the one card on the site that sits ON a
+     photograph rather than on the page, so its edge is the only place where
+     the brand's shape language is read against something else. The softer
+     corner matches the duck badge and the nav pill — the two other rounded
+     white objects floating over other content — instead of matching the flat
+     content cards, which it is not one of. */
+  border-radius: var(--ms-radius-xl);
+  box-shadow: var(--ms-shadow-raised-lg);
   padding: var(--ms-space-6);
   display: flex;
   flex-direction: column;
@@ -951,22 +957,38 @@ button { font: inherit; }
 
   .ms-hero__visual { position: relative; }
 
-  /* Taller than the old 6/5 — the photo needs to read as a room, not a
-     sliver behind the quote card. */
-  .ms-hero__media { aspect-ratio: 9 / 8; }
-  .ms-hero__photo { object-position: 42% 50%; }
+  /* 4/3, widened from 9/8. The source photograph is 3:2, so a 9/8 frame threw
+     away a quarter of its width — and with the card now centred, the parts
+     being cropped are exactly the parts doing the work: the window on the
+     left and the sofa on the right. 4/3 crops about 11% instead of 25%, keeps
+     both, and makes the hero shorter into the bargain. */
+  /* 5/4 rather than 4/3: the centred card is about 470px tall, and in a 4/3
+     frame that left roughly 20px of photograph above and below it — the card
+     read as jammed into the frame rather than placed on it. 5/4 buys about
+     40px of margin on each edge, which is what makes it look deliberate. */
+  .ms-hero__media { aspect-ratio: 5 / 4; }
+  /* Centred, because the composition is now symmetrical around the card
+     rather than weighted away from it. */
+  .ms-hero__photo { object-position: 50% 50%; }
 
   .ms-quote-start {
     position: absolute;
     top: 50%;
-    /* Left edge (the empty-wall side) only — keeps the person and the
-       window, on the photo's right, uncovered. Width is ~45% of the photo
-       panel, not 55%+, so most of the room stays visible. */
-    left: var(--ms-space-6);
-    transform: translateY(-50%);
-    width: 18rem;
+    /* Centred, not pinned to the left edge.
+       Off to one side, the card read as something dropped ONTO the photo —
+       the composition had two subjects competing, the room and the card, with
+       the card losing. Centred, the photograph becomes a setting for it and
+       the two stop arguing. The new photo is composed for this: window at the
+       left edge, blue sofa and yellow cushions at the right, both clear of a
+       card in the middle. */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Slightly wider than the old 18rem. A centred card has symmetric margin
+       to spend, and the extra 2rem keeps "Move-In / Move-Out Cleaning" on one
+       line in the select. */
+    width: 20rem;
     max-width: calc(100% - 2 * var(--ms-space-6));
-    padding: var(--ms-space-5);
+    padding: var(--ms-space-6);
     gap: var(--ms-space-2);
   }
   /* At the narrower 18rem card width, text-xl wraps "Choose your clean" to
@@ -1554,14 +1576,6 @@ button { font: inherit; }
   margin-top: var(--ms-rhythm-tight);
 }
 
-/* A legend carries more than one point. The paragraphs stack inside a single
-   box so the icon still marks the whole block as one aside, instead of every
-   sentence getting its own bordered card. */
-.ms-note--legend > div {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ms-space-3);
-}
 
 /* Compact rate cards (pricing.html) — reuses .ms-card__num / __price /
    __desc verbatim (those classes are standalone, not scoped to .ms-card). */
@@ -1712,27 +1726,6 @@ button { font: inherit; }
   object-fit: cover;
 }
 
-/* Square photo frame variant (pricing.html) — same treatment, 1:1 crop of
-   detail-bath-square.webp instead of the wide banner crop. */
-.ms-photo-frame {
-  position: relative;
-  border-radius: var(--ms-radius-lg);
-  overflow: hidden;
-  box-shadow: var(--ms-shadow-raised-md);
-  aspect-ratio: 1 / 1;
-}
-
-/* 4:3, matching the source asset's own ratio, so object-fit: cover has
-   nothing to crop away. A square frame around a 4:3 photo was throwing away
-   a quarter of the image and standing a tall box beside a short column of
-   notes — the reason that section needed a max-height bolted on to stop it
-   towering over its own content. Ratio first, then the box follows. */
-.ms-photo-frame--wide { aspect-ratio: 4 / 3; }
-/* :not(.ms-duck-badge) is load-bearing — without it this descendant
-   selector also matches the corner duck badge (higher specificity than
-   the badge's own one-class rule), stretching the 3rem duck to 100% of
-   the frame and burying the photo underneath it entirely. */
-.ms-photo-frame img:not(.ms-duck-badge) { width: 100%; height: 100%; object-fit: cover; }
 
 /* The duck as a quiet signature on any photo — small, translucent,
    corner-only, shared by the wide banner and the square frame above. */
@@ -1766,32 +1759,6 @@ button { font: inherit; }
 @media (min-width: 56em) {
   .ms-info-grid { grid-template-columns: 1.1fr 0.9fr; }
 }
-
-/* Minimum & travel (pricing.html) — two short .ms-note boxes next to a
-   square photo the same height as the section: align-items:start above
-   left the shorter note column ending well before the photo does, reading
-   as a dead gap above the footer rather than a deliberate layout (the
-   "fixed-height box, content floating in a gap" pattern this project keeps
-   tripping on — except here it's the SHORT column, not the box, that left
-   the gap). Stretch this instance's row to the tallest column and centre
-   the notes within it so both columns visually end together. */
-.ms-info-grid--fill { align-items: stretch; }
-.ms-info-grid--fill > :first-child {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  /* No gap. This column used to be three loose note boxes that needed one;
-     it is now a table with its legend attached, and .ms-table-wrap + .ms-note
-     already spaces that pair the same way it does everywhere else. A gap here
-     as well would double it and detach the legend from its table. */
-  gap: 0;
-}
-
-/* The max-height that used to sit here is gone. It was compensating for a
-   square frame wrapped around a 4:3 photo — the frame is now 4:3 itself
-   (.ms-photo-frame--wide), so its natural height already sits close to the
-   notes column and there is nothing left to clamp. Fixing the ratio beat
-   capping the symptom. */
 
 .ms-prose { display: flex; flex-direction: column; gap: var(--ms-space-4); }
 .ms-prose p { color: var(--ms-color-ink-soft); font-size: var(--ms-text-md); line-height: var(--ms-leading-normal); }
@@ -2151,31 +2118,17 @@ html.ms-motion [data-ms-reveal].is-revealed {
     box-shadow var(--ms-duration-base) var(--ms-ease);
 }
 
-/* --------------------------------------------------------------------------
-   Hero parallax — the quote card floats above the photograph.
+/* The hero parallax that used to live here is gone.
 
-   Two layers moving by different amounts against the same pointer is the
-   cheapest honest depth cue there is. The card travels further than the photo
-   because it is nearer to the viewer.
-
-   --ms-float composes with the centring transform rather than replacing it.
-   At 64em and up the card is absolutely positioned at top:50% with a
-   translateY(-50%) pulling it back; a bare transform here would drop that
-   -50% and hang the card half its own height too low.
+   It moved the photo and the quote card by different amounts against the
+   pointer. It read as disruptive, and the reason is structural rather than a
+   matter of degree: that card holds the price, two selects and the primary
+   button: it is the most interactive object on the site. Motion under a
+   cursor that is trying to aim at a control makes a page feel unstable, not
+   deep. Parallax belongs on things a visitor LOOKS at, never on things they
+   OPERATE. The card tilt above survives because a service tile is a link, not
+   a form.
    -------------------------------------------------------------------------- */
-.ms-quote-start { transform: var(--ms-float, none); }
-.ms-hero__photo { transform: var(--ms-float, none); }
-
-@media (min-width: 64em) {
-  .ms-quote-start { transform: translateY(-50%) var(--ms-float, translate3d(0, 0, 0)); }
-}
-
-/* Eased only when the pointer is NOT being tracked, for the same reason as
-   the card tilt above: follow instantly, return gently. */
-.ms-hero__inner:not(.is-tracking) .ms-quote-start,
-.ms-hero__inner:not(.is-tracking) .ms-hero__photo {
-  transition: transform var(--ms-duration-tilt) var(--ms-ease);
-}
 
 /* --------------------------------------------------------------------------
    The duck drifts.
@@ -2212,7 +2165,142 @@ html.ms-motion [data-ms-reveal].is-revealed {
 }
 
 /* Restores the centring the reduced-motion reset above just cleared. Nested
-   inside the same preference so it only applies to that visitor. */
+   inside the same preference so it only applies to that visitor. Both axes —
+   the card is centred on the photo now, so clearing its transform drops it
+   half a card down AND half a card right. */
 @media (prefers-reduced-motion: reduce) and (min-width: 64em) {
-  .ms-quote-start { transform: translateY(-50%); }
+  .ms-quote-start { transform: translate(-50%, -50%); }
 }
+
+/* ==========================================================================
+   Price sheet (pricing.html) — one panel, grouped rows.
+
+   Replaces two sections that each had a 44px heading, a table at a different
+   width from the other, and a note box stranded underneath at 58ch. Three
+   headings competed with the page title while the least-consulted content on
+   the page — the minimum, travel and tax fine print — was set in the
+   second-largest type on screen.
+
+   The fix is hierarchy by SIZE rather than by separation: group labels are
+   eyebrows inside the panel, so the page reads title, then group, then row,
+   instead of three things all shouting at the same volume.
+   ========================================================================== */
+.ms-sheet {
+  background: var(--ms-color-surface);
+  border-radius: var(--ms-radius-lg);
+  box-shadow: var(--ms-shadow-raised-sm);
+  overflow: hidden;
+}
+
+/* The table already carries .ms-table, so rows, padding, tabular figures and
+   the right-aligned amount column all come from there unchanged — this is one
+   table vocabulary across the pricing page, the quote summary and the add-on
+   list, not a third one. */
+.ms-sheet__table { width: 100%; }
+
+/* Group label. Small, uppercase, tracked — the same eyebrow treatment as
+   .ms-footer h2 and .ms-stat__label, so it reads as a label rather than as a
+   heading that lost its size. */
+/* tr.ms-sheet__group th, not .ms-sheet__group th.
+   The amount column is right-aligned by `.ms-table th:last-child` (0,2,1), and
+   a colspan=2 group label IS the last child of its row — so it inherited the
+   money alignment and both group labels rendered flush right, reading as
+   captions for the column rather than as labels for the group. A single-class
+   selector (0,1,1) loses that fight no matter where it sits in the file;
+   adding the element qualifier (0,2,2) settles it on specificity rather than
+   on source order, which is the thing that keeps breaking in this stylesheet. */
+.ms-sheet__table tr.ms-sheet__group th {
+  background: var(--ms-color-surface-base);
+  font-size: var(--ms-text-xs);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ms-color-ink);
+  text-align: left;
+  padding: var(--ms-space-4) var(--ms-space-5);
+  border-bottom: 1px solid var(--ms-color-border);
+}
+
+/* The qualifier rides along at sentence case and lower contrast, so the label
+   can say what the group IS and what it costs the reader to care about,
+   without a second line or a second type size. */
+.ms-sheet__table tr.ms-sheet__group th span {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600;
+  color: var(--ms-color-ink-faint);
+}
+.ms-sheet__table tr.ms-sheet__group th span::before { content: '\00a0\00a0·\00a0\00a0'; }
+
+/* A second tbody starts a new group; the border above it separates the two
+   without a rule that would collide with the group label's own. */
+.ms-sheet__table tbody + tbody tr.ms-sheet__group th { border-top: 1px solid var(--ms-color-border); }
+
+/* Footnotes live INSIDE the panel, at the panel's width.
+   As standalone .ms-note boxes these capped at 58ch under a 100%-wide table,
+   which is what produced the ragged half-empty rows. Inside the sheet they
+   are plainly footnotes to the rows above, and the reading measure is held by
+   the paragraph rather than by a box that then fails to fill its row. */
+.ms-sheet__notes {
+  background: var(--ms-color-surface-base);
+  border-top: 1px solid var(--ms-color-border);
+  padding: var(--ms-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-3);
+}
+
+.ms-sheet__notes p {
+  margin: 0;
+  font-size: var(--ms-text-sm);
+  line-height: var(--ms-leading-snug);
+  color: var(--ms-color-ink-soft);
+  max-width: 68ch;
+}
+
+.ms-sheet__notes strong { color: var(--ms-color-ink); }
+
+/* ==========================================================================
+   Closing call to action.
+
+   The pricing page had none. A visitor could read every number on it and have
+   no way forward but the nav — on the one page where intent is highest.
+
+   Gold TINT rather than a photograph: the page is otherwise white panels on
+   pale blue, and a photo here would be the third kind of object competing at
+   the bottom of a page whose whole problem was too many kinds of object. The
+   tint gives the warmth a photo would have, carries the brand's one accent
+   colour, and puts ink on a background light enough to keep contrast well
+   clear of AA without a scrim.
+   ========================================================================== */
+.ms-cta-band {
+  background: var(--ms-color-gold-tint);
+  border-radius: var(--ms-radius-xl);
+  padding: var(--ms-space-7) var(--ms-space-6);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ms-space-3);
+}
+
+.ms-cta-band__duck {
+  width: 4.5rem;
+  height: 4.5rem;
+  filter: drop-shadow(0 6px 14px rgba(22, 50, 63, 0.18));
+}
+
+.ms-cta-band__title {
+  font-size: var(--ms-text-xl);
+  color: var(--ms-color-ink);
+  margin: 0;
+}
+
+.ms-cta-band__lead {
+  font-size: var(--ms-text-sm);
+  color: var(--ms-color-ink-soft);
+  max-width: 46ch;
+  margin: 0;
+}
+
+.ms-cta-band .ms-btn { margin-top: var(--ms-space-2); }

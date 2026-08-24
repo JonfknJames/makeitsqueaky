@@ -108,21 +108,31 @@
       </div>
     </section>
 
-    <section class="ms-section" aria-labelledby="addons-heading">
+    <!-- ONE price sheet, not two sections.
+         Add-ons and the minimum/travel/tax block used to be separate sections,
+         each with its own 44px heading, its own table at a different width,
+         and its own orphaned note underneath. Three type sizes competed with
+         the page title, and the notes — capped at 58ch for readability — sat
+         as narrow blocks under full-width tables, leaving a ragged empty half
+         twice on the same page.
+         They are one lookup table with two groups. Group labels are eyebrows
+         inside the panel rather than headings above it, every amount aligns
+         down a single column, and each group's footnote sits inside the panel
+         it belongs to, so nothing is left dangling. -->
+    <section class="ms-section" aria-labelledby="sheet-heading">
       <div class="ms-container">
         <div class="ms-section__head">
-          <h2 id="addons-heading" class="ms-section-heading">Add-ons</h2>
-          <p class="ms-section-lead">Extra work you can add to any service. Each one is added to your quote as you tick it.</p>
+          <h2 id="sheet-heading" class="ms-section-heading">What else can appear</h2>
+          <p class="ms-section-lead">Everything beyond the per-square-foot rate, in one place. Nothing here is added without you choosing it — except travel, which follows from your postal code.</p>
         </div>
-        <div class="ms-table-wrap">
-          <table class="ms-table">
-            <thead>
-              <tr>
-                <th scope="col">Item</th>
-                <th scope="col">Amount</th>
-              </tr>
-            </thead>
+
+        <div class="ms-sheet">
+          <table class="ms-table ms-sheet__table">
+            <caption class="ms-visually-hidden">Add-on prices, and the minimum, travel and tax that can appear on a quote</caption>
             <tbody>
+              <tr class="ms-sheet__group">
+                <th colspan="2" scope="colgroup">Add-ons <span>you can tick any of these</span></th>
+              </tr>
               <tr><td>Inside oven</td><td>$50</td></tr>
               <tr><td>Inside refrigerator</td><td>$50</td></tr>
               <tr><td>Interior windows</td><td>$10 per window</td></tr>
@@ -130,64 +140,38 @@
               <tr><td>Wall washing</td><td>From $75</td></tr>
               <tr><td>Inside kitchen appliances</td><td>From $25 per appliance</td></tr>
             </tbody>
+            <tbody>
+              <tr class="ms-sheet__group">
+                <th colspan="2" scope="colgroup">Minimum, travel &amp; tax <span>worked out for you</span></th>
+              </tr>
+              <tr><td>Minimum job</td><td>$180</td></tr>
+              <tr><td>Travel — City of Toronto</td><td>No fee</td></tr>
+              <tr><td>Travel — inner GTA</td><td>$35</td></tr>
+              <tr><td>Travel — outer GTA</td><td>$60</td></tr>
+              <tr><td>Tax</td><td>None</td></tr>
+            </tbody>
           </table>
-        </div>
-        <!-- One legend, not two boxes. "What from means" and "quoted
-             individually" are both notes ABOUT the table above — splitting
-             them into two identical bordered boxes made the page look like it
-             had four kinds of caveat instead of one legend with two entries. -->
-        <div class="ms-note ms-note--legend">
-          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v4.5M10 6.75v.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          <div>
+
+          <!-- Inside the panel, at the panel's own width. As separate boxes
+               below it these were the single ugliest thing on the page. -->
+          <div class="ms-sheet__notes">
             <p><strong>"From" is a starting price, not a cap.</strong> The calculator includes those items at that figure so you still get a number, and Tiffany confirms the final amount after a look. Nothing is charged until you both agree.</p>
-            <p><strong>Quoted individually:</strong> heavy grime or excessive buildup, heavy pet hair, and heavy construction residue. These vary too much job-to-job for even a starting price — Tiffany will look and confirm before the visit.</p>
+            <p><strong>Quoted individually:</strong> heavy grime or excessive buildup, heavy pet hair, and heavy construction residue vary too much job-to-job for even a starting price.</p>
+            <p><strong>Small jobs</strong> are floored at the minimum rather than billed at the raw per-square-foot rate, and no tax is added. A booked job holds a full day of Tiffany's time, so the <a href="policies.html">deposit and cancellation terms</a> are worth a read first.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Same table, same two columns, same headers as the add-ons above and as
-         the calculator's own summary. These four numbers used to be sentences
-         inside three separate note boxes — $180, $35 and $60 buried mid-prose
-         while $50 and $10 got a table on the same page. A number a customer
-         may end up paying is shown one way on this site. -->
-    <section class="ms-section" aria-labelledby="minimum-heading">
+    <!-- The page had no call to action at all: a visitor who read every number
+         and wanted their own had nowhere to go but the nav. -->
+    <section class="ms-section ms-section--tight">
       <div class="ms-container">
-        <div class="ms-section__head">
-          <h2 id="minimum-heading" class="ms-section-heading">Minimum, travel &amp; tax</h2>
-          <p class="ms-section-lead">The rest of what can appear on your quote. Travel is worked out from your postal code.</p>
-        </div>
-        <div class="ms-info-grid ms-info-grid--fill">
-          <div>
-            <div class="ms-table-wrap">
-              <table class="ms-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Item</th>
-                    <th scope="col">Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>Minimum job</td><td>$180</td></tr>
-                  <tr><td>Travel — City of Toronto</td><td>No fee</td></tr>
-                  <tr><td>Travel — inner GTA</td><td>$35</td></tr>
-                  <tr><td>Travel — outer GTA</td><td>$60</td></tr>
-                  <tr><td>Tax</td><td>None</td></tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="ms-note ms-note--legend">
-              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v4.5M10 6.75v.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-              <div>
-                <p>Small jobs are floored at the minimum rather than billed at the raw per-square-foot rate. Make it Squeaky is not currently HST-registered, so no tax is added.</p>
-                <p>A booked job holds a full day of Tiffany's time. The <a href="policies.html">deposit and cancellation terms</a> are worth a read before you book.</p>
-              </div>
-            </div>
-          </div>
-          <div class="ms-photo-frame ms-photo-frame--wide">
-            <img src="assets/img/detail-kitchen.webp" width="1000" height="750" alt="" loading="lazy">
-            <img class="ms-duck-badge" src="assets/img/duck.webp" srcset="assets/img/duck.webp 220w, assets/img/duck@2x.webp 440w" sizes="48px" width="220" height="220" alt="">
-          </div>
+        <div class="ms-cta-band">
+          <img class="ms-cta-band__duck" src="assets/img/duck.webp" srcset="assets/img/duck.webp 220w, assets/img/duck@2x.webp 440w" sizes="72px" width="220" height="220" alt="">
+          <h2 class="ms-cta-band__title">Now put your own numbers in</h2>
+          <p class="ms-cta-band__lead">Square footage, add-ons and postal code — the price updates as you answer. About a minute, no account.</p>
+          <a class="ms-btn ms-btn--accent" href="quote.html">Get your exact price</a>
         </div>
       </div>
     </section>

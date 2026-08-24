@@ -247,50 +247,16 @@
     }
   }
 
-  // ------------------------------------------------------------------------
-  // Hero parallax — photo and quote card move by different amounts.
-  // ------------------------------------------------------------------------
-  const heroInner = document.querySelector('.ms-hero__inner');
-  const heroPhoto = document.querySelector('.ms-hero__photo');
-  const heroCard = document.querySelector('.ms-quote-start');
-
-  if (heroInner && finePointer.matches) {
-    const PHOTO_PX = 6;
-    const CARD_PX = 11;
-
-    const apply = throttled((x, y) => {
-      // Opposed signs. Both layers sliding the same way is a slide; sliding
-      // against each other is what the eye reads as depth.
-      if (heroPhoto) {
-        heroPhoto.style.setProperty(
-          '--ms-float',
-          'translate3d(' + (-x * PHOTO_PX).toFixed(1) + 'px,' + (-y * PHOTO_PX).toFixed(1) + 'px,0)',
-        );
-      }
-      if (heroCard) {
-        heroCard.style.setProperty(
-          '--ms-float',
-          'translate3d(' + (x * CARD_PX).toFixed(1) + 'px,' + (y * CARD_PX).toFixed(1) + 'px,0)',
-        );
-      }
-    });
-
-    heroInner.addEventListener('pointerenter', () => heroInner.classList.add('is-tracking'));
-
-    heroInner.addEventListener('pointermove', (e) => {
-      const r = heroInner.getBoundingClientRect();
-      apply(
-        (e.clientX - r.left) / r.width * 2 - 1,
-        (e.clientY - r.top) / r.height * 2 - 1,
-      );
-    });
-
-    heroInner.addEventListener('pointerleave', () => {
-      heroInner.classList.remove('is-tracking');
-      if (heroPhoto) heroPhoto.style.setProperty('--ms-float', 'translate3d(0,0,0)');
-      if (heroCard) heroCard.style.setProperty('--ms-float', 'translate3d(0,0,0)');
-    });
-  }
+  // No hero parallax.
+  //
+  // There was one here: the photo and the quote card tracked the pointer by
+  // different amounts to fake depth. It was removed because it was disruptive
+  // in use — the card carries the price and two selects the visitor is
+  // actively reading and clicking, and moving a control while someone is
+  // trying to aim at it makes the page feel unstable rather than deep.
+  //
+  // The general rule this leaves behind: parallax belongs on things the
+  // visitor LOOKS at, never on things they OPERATE.
 
   // ------------------------------------------------------------------------
   // The duck drifts against the photograph it sits on.
