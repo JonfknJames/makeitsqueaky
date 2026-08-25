@@ -152,6 +152,17 @@
 
   /* Motion — calm cubic-bezier, no bounce/overshoot */
   --ms-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  /* A second curve, because one curve was doing two different jobs.
+     --ms-ease above is symmetric (ease-in-out) and correct for the 150-220ms
+     state changes it was written for: a hover starts and ends under the
+     pointer, so easing in at both ends feels right.
+     An arrival is not a state change. Something settling onto the page should
+     be moving fastest at the moment it appears and decelerate into place; the
+     symmetric curve instead spends the first ~150ms of a 620ms reveal barely
+     moving, which reads as hesitation and makes the whole animation feel
+     slower than it is. This is an exponential ease-out — nearly all the
+     distance is covered early, then it eases to a long, soft stop. */
+  --ms-ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
   --ms-duration-fast: 150ms;
   --ms-duration-base: 220ms;
 
@@ -348,6 +359,33 @@ button { font: inherit; }
      browser's greedy line-breaker. Degrades to normal wrapping where
      unsupported, so there is nothing to guard. */
   text-wrap: balance;
+}
+
+/* The same fix, one level down. That earlier pass balanced every HEADING and
+   stopped there, so the leads directly beneath them kept producing the exact
+   orphan it was written to remove — the About lead ended on "job." alone and
+   the Pricing lead on "furnishings." alone, both centred under a balanced
+   title, which is where a single trailing word is most obvious.
+
+   Two values, chosen per role rather than applied blanket:
+
+   `balance` equalises line lengths across the whole block, which is right for
+   a short centred lead of one to three lines and is what the headings use.
+   Browsers stop applying it past a handful of lines, so it is wasted on
+   anything longer.
+
+   `pretty` leaves the line-breaking alone and only protects the LAST line,
+   which is what longer left-aligned body copy actually needs — balancing a
+   four-line paragraph fights the ragged edge instead of fixing the widow. */
+.ms-page-head__lead,
+.ms-section-lead,
+.ms-cta-band__lead {
+  text-wrap: balance;
+}
+
+.ms-hero__lead,
+.ms-service-panel__lead {
+  text-wrap: pretty;
 }
 
 /* Weight 600, not 400. Nunito's regular is a light-feeling face at 18px and
@@ -967,25 +1005,46 @@ button { font: inherit; }
      read as jammed into the frame rather than placed on it. 5/4 buys about
      40px of margin on each edge, which is what makes it look deliberate. */
   .ms-hero__media { aspect-ratio: 5 / 4; }
-  /* Centred, because the composition is now symmetrical around the card
-     rather than weighted away from it. */
-  .ms-hero__photo { object-position: 50% 50%; }
+  /* Re-cropped for the overhanging card. With the card off to the right the
+     visible area is the frame's left ~344px, and a centred crop put the
+     largest object in the room — the pale chair back — squarely in it, sliced
+     down the middle by the card's edge. Chosen by rendering 20/35/50/65/80
+     and looking rather than by reasoning about a photograph in the abstract.
+
+     35% brings the window forward and lets the furniture recede toward the
+     card, so the chair is mostly behind it instead of cut across the open
+     half. It also puts the light source in view, which is the whole idea the
+     rest of the page is built on. Past 65% the room gets busier and the
+     wooden chair starts being clipped by the left edge instead. */
+  .ms-hero__photo { object-position: 35% 50%; }
 
   .ms-quote-start {
     position: absolute;
     top: 50%;
-    /* Centred, not pinned to the left edge.
-       Off to one side, the card read as something dropped ONTO the photo —
-       the composition had two subjects competing, the room and the card, with
-       the card losing. Centred, the photograph becomes a setting for it and
-       the two stop arguing. The new photo is composed for this: window at the
-       left edge, blue sofa and yellow cushions at the right, both clear of a
-       card in the middle. */
-    left: 50%;
-    transform: translate(-50%, -50%);
-    /* Slightly wider than the old 18rem. A centred card has symmetric margin
-       to spend, and the extra 2rem keeps "Move-In / Move-Out Cleaning" on one
-       line in the select. */
+    /* Overhanging the photo's right edge, NOT centred on it.
+
+       Centring was a deliberate earlier decision, and its argument was good: a
+       card off to one side reads as something dropped ONTO the photo, while a
+       centred one turns the photo into its setting. It was written when this
+       column was wider. Measured at 1440px it no longer holds — a 320px card
+       centred on a 640px photo covers exactly HALF of it and leaves two 160px
+       slivers, and 160px is too narrow for either the window on the left or
+       the sofa on the right to read as anything. The photo had stopped being a
+       setting and become two offcuts.
+
+       Hanging the card past the right edge leaves ~344px of unbroken
+       photograph — one continuous scene instead of two fragments — and reads
+       as deliberate layering rather than a card that drifted off centre. It
+       also sharpens what the card was already doing: breaking the frame states
+       "in front of" far more clearly than floating inside it does.
+
+       The overhang is 1.5rem into the hero panel's 2rem of padding, so the
+       card still lands inside the panel and never touches its edge. */
+    right: calc(-1 * var(--ms-space-5));
+    left: auto;
+    transform: translateY(-50%);
+    /* Slightly wider than the old 18rem — the extra 2rem keeps "Move-In /
+       Move-Out Cleaning" on one line in the select. */
     width: 20rem;
     max-width: calc(100% - 2 * var(--ms-space-6));
     padding: var(--ms-space-6);
@@ -1253,6 +1312,41 @@ button { font: inherit; }
   .ms-footer__col--brand { grid-column: 1 / -1; }
 }
 
+/* Link columns align LEFT once there is more than one of them.
+
+   .ms-footer sets text-align:center for the single-column phone-width stack,
+   where centring is right. From the two-up step upward it stops being right:
+   the grid is 1.5fr 1fr 1fr 1.2fr, so four centred columns centre on four
+   different axes and nothing lines up with anything. Measured on the live
+   desktop page, 18 of 18 text leaves in the footer were centred — including
+   the link lists — and that is what made the whole band read as unresolved.
+
+   mobile.css already reached this conclusion and overrides to `left` below
+   767px. This is the desktop half of the same decision, not a new one: the
+   phone build was simply fixed first and the wide build never caught up. The
+   brand column keeps centring, exactly as mobile keeps it. */
+@media (min-width: 40em) {
+  .ms-footer__col { text-align: left; }
+}
+
+/* The brand column centres ONLY while it spans the full width.
+   At the two-up step it is a full-bleed row of its own, and a centred lockup
+   over a centred tagline is right for that. At four-up it becomes the leftmost
+   column in a row of three left-aligned ones, where centring leaves it the
+   only block in the footer with no left edge to anchor to — it reads as the
+   odd one out rather than as the brand. So it aligns with its neighbours, and
+   the three rules move together: the text, the lockup's flex axis, and the
+   tagline's auto margins, which would otherwise keep re-centring it. */
+@media (min-width: 40em) and (max-width: 63.9375em) {
+  .ms-footer__col--brand { text-align: center; }
+}
+
+@media (min-width: 64em) {
+  .ms-footer__col--brand { text-align: left; }
+  .ms-footer__col--brand .ms-footer__brand { justify-content: flex-start; }
+  .ms-footer__col--brand .ms-footer__tagline { margin-inline: 0; }
+}
+
 /* flex, not inline-flex, with the row centred — inline-flex sits wherever
    the text-align of its parent puts it, which meant the lockup and the
    tagline below it centred against slightly different boxes and read as
@@ -1305,6 +1399,21 @@ button { font: inherit; }
 /* The phone row is a flex row inside a centred column, so it needs its own
    centring — align-items on the parent centres the ROW, not its contents. */
 .ms-footer .ms-footer__icon-row { justify-content: center; }
+
+/* The flex half of the left-align decision above (see the text-align block
+   near .ms-footer__grid). It has to live HERE, after the two rules it
+   overrides, rather than up there with its other half.
+
+   `align-items: center` on a flex column is what actually centres these
+   items: it shrink-wraps every <li> and centres the box, so the inherited
+   text-align never gets a say. Overriding it needs equal specificity to land
+   AFTER it — `.ms-footer ul` is (0,1,1) either way and a media query adds
+   nothing to that, so source order is the entire tiebreak. Written above the
+   base rule it parses fine, matches fine, and silently loses. */
+@media (min-width: 40em) {
+  .ms-footer ul { align-items: stretch; }
+  .ms-footer .ms-footer__icon-row { justify-content: flex-start; }
+}
 
 /* inline-flex with a 24px min-height, not a bare inline link. These measured
    20px tall — under WCAG 2.5.8's 24x24 minimum target size, on the one part
@@ -2023,6 +2132,19 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
   cursor: pointer;
   transition: border-color var(--ms-duration-base) var(--ms-ease), background-color var(--ms-duration-base) var(--ms-ease);
 }
+/* Same hover as .ms-option, because this is the same control wearing a
+   different class: both are a bordered, rounded, pointer-cursor card wrapping
+   a native input, both carry the identical transition, and both already share
+   the gold :has(:checked) state. .ms-option got a hover rule and this never
+   did, so half the choices on the quote page answered the pointer and half
+   sat inert — on the page whose entire job is being filled in.
+
+   Deliberately the shared value rather than a new one: a second hover colour
+   for the control directly below would be drift, not distinction. */
+.ms-addon-row:hover { border-color: var(--ms-color-blue); }
+
+/* After :hover, so selection outranks it — a chosen row stays unmistakably
+   chosen while the pointer crosses it, which matches .ms-option. */
 .ms-addon-row:has(input[type="checkbox"]:checked) {
   border-color: var(--ms-color-gold-hover);
   background: var(--ms-color-gold-tint);
@@ -2150,8 +2272,8 @@ html.ms-motion [data-ms-reveal] {
   opacity: 0;
   transform: perspective(1200px) translate3d(0, 1.5rem, -4rem) rotateX(2.5deg);
   transition:
-    opacity var(--ms-duration-reveal) var(--ms-ease),
-    transform var(--ms-duration-reveal) var(--ms-ease);
+    opacity var(--ms-duration-reveal) var(--ms-ease-entrance),
+    transform var(--ms-duration-reveal) var(--ms-ease-entrance);
 }
 
 html.ms-motion [data-ms-reveal].is-revealed {
@@ -2203,9 +2325,13 @@ html.ms-motion [data-ms-reveal].is-revealed {
   transition: box-shadow var(--ms-duration-base) var(--ms-ease);
 }
 
+/* The return to flat is an arrival too — the card is settling back to rest,
+   not responding to a pointer that is still there — so it takes the entrance
+   curve for the same reason the reveal does. The shadow keeps the symmetric
+   curve: that one IS still tracking a hover. */
 .ms-service-tile:not(.is-tilting) {
   transition:
-    transform var(--ms-duration-tilt) var(--ms-ease),
+    transform var(--ms-duration-tilt) var(--ms-ease-entrance),
     box-shadow var(--ms-duration-base) var(--ms-ease);
 }
 
@@ -2254,12 +2380,17 @@ html.ms-motion [data-ms-reveal].is-revealed {
   .ms-quote-start { transform: none; }
 }
 
-/* Restores the centring the reduced-motion reset above just cleared. Nested
-   inside the same preference so it only applies to that visitor. Both axes —
-   the card is centred on the photo now, so clearing its transform drops it
-   half a card down AND half a card right. */
+/* Restores the vertical centring the reduced-motion reset above just cleared.
+   Nested inside the same preference so it only applies to that visitor.
+
+   ONE axis, not two. The card is positioned horizontally by `right:` now and
+   only its vertical centring comes from a transform, so this has to match the
+   layout rule exactly — restoring both axes here (as it did while the card was
+   centred) would shove it half a card sideways for reduced-motion visitors
+   alone. A layout that disagrees with itself based on an OS preference is the
+   kind of defect nobody sees until the one person it affects reports it. */
 @media (prefers-reduced-motion: reduce) and (min-width: 64em) {
-  .ms-quote-start { transform: translate(-50%, -50%); }
+  .ms-quote-start { transform: translateY(-50%); }
 }
 
 /* ==========================================================================

@@ -129,17 +129,34 @@
   // keystroke, and a fresh element carrying the hidden state would flicker the
   // customer's own price at them while they type.
   // ------------------------------------------------------------------------
+  // This list is markup, and markup moves. Measured across all eight pages
+  // before this edit: pricing, policies and 404 marked ZERO elements, and
+  // services — the longest page on the site at 3449px — marked exactly one,
+  // its decorative photo banner. Four of the ten selectors below matched
+  // nothing anywhere: .ms-rate-card, .ms-table-wrap, .ms-photo-frame and
+  // .ms-photo-slot were all components that later passes redesigned away.
+  //
+  // So the motion layer had quietly become a home-page-and-contact effect
+  // while still describing itself as how this site presents content. A
+  // visitor going from the home page to pricing got a rich settle and then
+  // nothing, which reads as the second page being unfinished.
+  //
+  // A dead selector is silent by nature — it costs nothing, throws nothing,
+  // and matches nothing — so this can only be caught by counting matches
+  // against the live DOM. Re-run scratch coverage if these classes change.
   const REVEAL = [
     '.ms-section__head',
     '.ms-service-tile',
-    '.ms-rate-card',
-    '.ms-table-wrap',
     '.ms-contact-list__item',
     '.ms-photo-banner',
-    '.ms-photo-frame',
-    '.ms-photo-slot',
     '.ms-services__note',
     '.ms-prose',
+    // Added: the block components the current markup is actually built from.
+    '.ms-service-panel', // services + policies — 8 blocks that never moved
+    '.ms-rates', // pricing: the four-rate band
+    '.ms-pricecard', // pricing: add-ons / minimum panels
+    '.ms-cta-panel', // the closing gold band, incl. 404
+    '.ms-portrait', // about: Tiffany's photo
   ].join(',');
 
   const EXCLUDE = '.ms-quote-summary, .ms-quote-form, .ms-hero';

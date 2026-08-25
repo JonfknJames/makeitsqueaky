@@ -200,6 +200,21 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
 .ms-addon-row { min-height: 56px; }
 .ms-toggle { min-height: 44px; align-items: center; }
 
+/* The counted add-on ("Interior windows") is the one row that is a <div>
+   holding two labels rather than being a <label> itself, so sizing the ROW
+   does not size the thing you actually tap. The row was 56px and the label
+   inside it 276x24 — a target that LOOKS like the full row and responds on
+   the middle 24px of it, which is worse than an honestly small one, because
+   the misses read as the page being broken rather than as bad aim.
+
+   align-self, not just min-height: it fills whatever height the row settles
+   at instead of guessing one, so the tappable area and the visible row stay
+   the same shape if either changes. min-height is the floor underneath it. */
+.ms-addon-row--counted .ms-addon-row__check {
+  align-self: stretch;
+  min-height: 44px;
+}
+
 .ms-quote-form { gap: var(--ms-space-5); }
 .ms-quote-step { padding: var(--ms-space-5); }
 
@@ -415,15 +430,37 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
   /* Momentum scrolling without a visible bar eating 12px of a 390px row. */
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+
+  /* The row overflows on EVERY phone — measured 43px on a Pixel 5, 46px on an
+     iPhone 14, 116px on an SE — and the scrollbar is hidden, so nothing told
+     the visitor there was more. The fourth chip just stopped mid-word at the
+     screen edge, which reads as text that got cut off rather than as a row
+     that scrolls.
+
+     A soft right edge is the affordance: content that fades has obviously not
+     ended. Costs no layout, no script, and no bar. Where mask-image is
+     unsupported the declaration is dropped and the row behaves exactly as it
+     does today, so there is nothing to guard.
+
+     The trade is that the last chip is also faded once you scroll to the end.
+     That is the accepted cost of a static mask, and it is a far smaller lie
+     than a hard cut that says "this is the end" when it is not. */
+  mask-image: linear-gradient(to right, #000 calc(100% - 1.75rem), transparent);
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 1.75rem), transparent);
 }
 
 .ms-jump ul::-webkit-scrollbar { display: none; }
 
+/* space-3 rather than space-4: four chips at 16px of side padding measured
+   388px of content against 342px of screen. Trimming 4px a side gives back
+   32px, so on a normal phone the row is now a nudge from fitting rather than
+   a third of a chip past the edge. The chips stay well over 44px wide, so no
+   tap target is traded for it. */
 .ms-jump a {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding-inline: var(--ms-space-4);
+  padding-inline: var(--ms-space-3);
   white-space: nowrap;
   border-radius: var(--ms-radius-pill);
   background: var(--ms-color-surface);
