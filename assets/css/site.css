@@ -1005,44 +1005,44 @@ button { font: inherit; }
      read as jammed into the frame rather than placed on it. 5/4 buys about
      40px of margin on each edge, which is what makes it look deliberate. */
   .ms-hero__media { aspect-ratio: 5 / 4; }
-  /* Re-cropped for the overhanging card. With the card off to the right the
-     visible area is the frame's left ~344px, and a centred crop put the
-     largest object in the room — the pale chair back — squarely in it, sliced
-     down the middle by the card's edge. Chosen by rendering 20/35/50/65/80
-     and looking rather than by reasoning about a photograph in the abstract.
+  /* Centred, to match the centred card. The photograph was framed for exactly
+     this: window and chair clear to the left of a card in the middle, sofa and
+     yellow cushions clear to the right, so both slivers carry something.
 
-     35% brings the window forward and lets the furniture recede toward the
-     card, so the chair is mostly behind it instead of cut across the open
-     half. It also puts the light source in view, which is the whole idea the
-     rest of the page is built on. Past 65% the room gets busier and the
-     wooden chair starts being clipped by the left edge instead. */
-  .ms-hero__photo { object-position: 35% 50%; }
+     Briefly 35% while the card overhung the right edge — correct for that
+     layout and wrong for this one, since the crop and the card's position are
+     one decision, not two. Rendered 20/35/50/65/80 against the centred card
+     before settling back here; 35% keeps the window whole at the cost of
+     pushing the sofa toward the frame edge, and the symmetry matters more. */
+  .ms-hero__photo { object-position: 50% 50%; }
 
   .ms-quote-start {
     position: absolute;
     top: 50%;
-    /* Overhanging the photo's right edge, NOT centred on it.
+    /* Centred on the photograph.
 
-       Centring was a deliberate earlier decision, and its argument was good: a
-       card off to one side reads as something dropped ONTO the photo, while a
-       centred one turns the photo into its setting. It was written when this
-       column was wider. Measured at 1440px it no longer holds — a 320px card
-       centred on a 640px photo covers exactly HALF of it and leaves two 160px
-       slivers, and 160px is too narrow for either the window on the left or
-       the sofa on the right to read as anything. The photo had stopped being a
-       setting and become two offcuts.
+       This was moved to an overhang on 2026-08-24 and moved back the same day,
+       so the reasoning for both is worth keeping rather than replaying.
 
-       Hanging the card past the right edge leaves ~344px of unbroken
-       photograph — one continuous scene instead of two fragments — and reads
-       as deliberate layering rather than a card that drifted off centre. It
-       also sharpens what the card was already doing: breaking the frame states
-       "in front of" far more clearly than floating inside it does.
+       The case for the overhang was measurable: a 320px card centred on a
+       640px photo covers exactly half of it and leaves two 160px slivers,
+       which is not enough for either the window or the chair to read as a
+       whole object. That measurement is still true.
 
-       The overhang is 1.5rem into the hero panel's 2rem of padding, so the
-       card still lands inside the panel and never touches its edge. */
-    right: calc(-1 * var(--ms-space-5));
-    left: auto;
-    transform: translateY(-50%);
+       It was reverted anyway, on review, because the number was measuring the
+       wrong thing. The photograph here is a SETTING, not a subject — the card
+       is what the hero is for, and the room only has to read as a warm, bright
+       room behind it. Centred, it does; the card sits in the middle of a
+       symmetrical frame and the two stop competing. Overhung, the card
+       committed the composition to a direction the rest of the panel does not
+       have, and the extra 184px of visible room bought detail nobody was
+       looking at.
+
+       Rule of thumb this leaves behind: measure occlusion when the image is
+       the subject, and compose when it is the ground. Half a photograph
+       covered is only a defect if someone needed to see it. */
+    left: 50%;
+    transform: translate(-50%, -50%);
     /* Slightly wider than the old 18rem — the extra 2rem keeps "Move-In /
        Move-Out Cleaning" on one line in the select. */
     width: 20rem;
@@ -2380,17 +2380,19 @@ html.ms-motion [data-ms-reveal].is-revealed {
   .ms-quote-start { transform: none; }
 }
 
-/* Restores the vertical centring the reduced-motion reset above just cleared.
-   Nested inside the same preference so it only applies to that visitor.
+/* Restores the centring the reduced-motion reset above just cleared. Nested
+   inside the same preference so it only applies to that visitor.
 
-   ONE axis, not two. The card is positioned horizontally by `right:` now and
-   only its vertical centring comes from a transform, so this has to match the
-   layout rule exactly — restoring both axes here (as it did while the card was
-   centred) would shove it half a card sideways for reduced-motion visitors
-   alone. A layout that disagrees with itself based on an OS preference is the
-   kind of defect nobody sees until the one person it affects reports it. */
+   BOTH axes, because the card is centred by transform on both. This rule has
+   to track the layout rule above exactly: while the card was briefly
+   positioned by `right:` and centred only vertically, restoring both axes here
+   dragged it 160px sideways for reduced-motion visitors alone — measured, not
+   theorised. A layout that disagrees with itself based on an OS preference is
+   the kind of defect nobody sees, because every screenshot in review is taken
+   with motion on. If the card's positioning ever changes again, change this
+   line in the same edit. */
 @media (prefers-reduced-motion: reduce) and (min-width: 64em) {
-  .ms-quote-start { transform: translateY(-50%); }
+  .ms-quote-start { transform: translate(-50%, -50%); }
 }
 
 /* ==========================================================================
