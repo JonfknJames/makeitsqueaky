@@ -2426,7 +2426,15 @@ html.ms-motion [data-ms-reveal].is-revealed {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--ms-space-5);
-  align-items: start;
+  /* stretch (the grid default), not start. With `start`, six add-on rows sat
+     beside five minimum/travel/tax rows and the right card simply stopped
+     71px short of the left one — two panels that present as one set, ending
+     at two different heights, read as an accident rather than a layout.
+     Stretching alone would swap that defect for a different one (a dead band
+     under the shorter card's last row); the flex + growing-table rules on
+     .ms-pricecard below are what turn the extra height into slightly taller
+     rows instead. The three rules are one decision. */
+  align-items: stretch;
 }
 
 @media (min-width: 56em) {
@@ -2438,7 +2446,17 @@ html.ms-motion [data-ms-reveal].is-revealed {
   border-radius: var(--ms-radius-lg);
   box-shadow: var(--ms-shadow-raised-sm);
   overflow: hidden;
+  /* The other two thirds of the equal-height decision on .ms-price-cols
+     above. The card is a column so the table (not the title) absorbs any
+     height the grid hands down, and a table stretched past its content
+     distributes the surplus across its ROWS — so the five-row card's rows
+     each run slightly taller than the six-row card's, and both bottom edges
+     land on the same line with no empty band under the last row. */
+  display: flex;
+  flex-direction: column;
 }
+
+.ms-pricecard .ms-table { flex: 1; }
 
 /* A real h2, sized like a label.
    The section used to carry a centred 44px heading that competed with the page
