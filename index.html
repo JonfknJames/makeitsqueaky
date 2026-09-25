@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Make it Squeaky — Residential Cleaning in Toronto</title>
-  <meta name="description" content="Over a decade of professional cleaning experience. Tiffany cleans every home herself, across the City of Toronto — regular, deep, move-in/move-out, and post-renovation cleans.">
+  <meta name="description" content="Residential cleaning in Toronto with the full rate card published. Tiffany cleans every home herself — regular, deep, move-in/move-out and post-renovation.">
   <link rel="canonical" href="https://makeitsqueaky.com/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Make it Squeaky">
@@ -14,9 +14,80 @@
   <meta property="og:description" content="Over a decade of professional cleaning experience. Tiffany cleans every home herself, across the City of Toronto — regular, deep, move-in/move-out, and post-renovation cleans.">
   <meta property="og:url" content="https://makeitsqueaky.com/">
   <meta property="og:image" content="https://makeitsqueaky.com/assets/img/hero.webp">
+  <meta property="og:image:width" content="1600">
+  <meta property="og:image:height" content="1067">
+  <meta property="og:image:alt" content="A bright living room with a wooden armchair beside a shuttered window">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/img/duck.webp" type="image/webp">
   <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/mobile.css" media="screen and (max-width: 767px)">
+  <!-- Structured data. Every price in here is a published figure and is held
+       to the same rule as the visible copy: tests/copy-rules.test.js parses
+       this block and fails the build if any number disagrees with
+       data/pricing.json. Nothing appears here that the business cannot
+       truthfully state — no street address, no opening hours, no ratings, no
+       social profiles. An absent field is honest; an invented one is a lie in
+       machine-readable form. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://makeitsqueaky.com/#business",
+        "name": "Make it Squeaky",
+        "url": "https://makeitsqueaky.com/",
+        "telephone": "+14165642125",
+        "email": "tiffanypoerazoff10@gmail.com",
+        "image": "https://makeitsqueaky.com/assets/img/hero.webp",
+        "logo": "https://makeitsqueaky.com/assets/img/duck.webp",
+        "description": "Residential cleaning in Toronto. Tiffany cleans every home herself — no crews, no subcontractors — with the full rate card published: regular, deep, move-in/move-out and post-renovation cleaning priced by square footage.",
+        "founder": { "@type": "Person", "name": "Tiffany Wells" },
+        "numberOfEmployees": { "@type": "QuantitativeValue", "value": 1 },
+        "slogan": "One set of hands on every job.",
+        "areaServed": [
+          {
+            "@type": "City",
+            "name": "Toronto",
+            "containedInPlace": { "@type": "AdministrativeArea", "name": "Ontario" }
+          },
+          { "@type": "AdministrativeArea", "name": "Greater Toronto Area" }
+        ],
+        "currenciesAccepted": "CAD",
+        "priceRange": "$180+",
+        "makesOffer": [
+          {
+            "@type": "Offer",
+            "itemOffered": { "@type": "Service", "name": "Regular Cleaning", "serviceType": "House cleaning" },
+            "priceSpecification": { "@type": "UnitPriceSpecification", "price": 0.25, "priceCurrency": "CAD", "unitCode": "FTK", "unitText": "per square foot" }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": { "@type": "Service", "name": "Deep Cleaning", "serviceType": "House cleaning" },
+            "priceSpecification": { "@type": "UnitPriceSpecification", "price": 0.40, "priceCurrency": "CAD", "unitCode": "FTK", "unitText": "per square foot" }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": { "@type": "Service", "name": "Move-In / Move-Out Cleaning", "serviceType": "House cleaning" },
+            "priceSpecification": { "@type": "UnitPriceSpecification", "price": 0.65, "priceCurrency": "CAD", "unitCode": "FTK", "unitText": "per square foot" }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": { "@type": "Service", "name": "Post-Renovation Cleaning", "serviceType": "House cleaning" },
+            "priceSpecification": { "@type": "UnitPriceSpecification", "price": 0.75, "priceCurrency": "CAD", "unitCode": "FTK", "unitText": "per square foot" }
+          }
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://makeitsqueaky.com/#website",
+        "url": "https://makeitsqueaky.com/",
+        "name": "Make it Squeaky",
+        "publisher": { "@id": "https://makeitsqueaky.com/#business" }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <a class="ms-skip-link" href="#main">Skip to content</a>

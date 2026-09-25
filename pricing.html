@@ -5,18 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>Pricing — Make it Squeaky</title>
+  <title>House Cleaning Prices in Toronto — Make it Squeaky</title>
   <meta name="description" content="Per-square-foot rates for regular, deep, move-in/move-out and post-renovation cleaning in Toronto, plus add-ons, the minimum job, and travel fees.">
   <link rel="canonical" href="https://makeitsqueaky.com/pricing.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Make it Squeaky">
-  <meta property="og:title" content="Pricing — Make it Squeaky">
+  <meta property="og:title" content="House Cleaning Prices in Toronto — Make it Squeaky">
   <meta property="og:description" content="Per-square-foot rates for regular, deep, move-in/move-out and post-renovation cleaning in Toronto, plus add-ons, the minimum job, and travel fees.">
   <meta property="og:url" content="https://makeitsqueaky.com/pricing.html">
   <meta property="og:image" content="https://makeitsqueaky.com/assets/img/hero.webp">
+  <meta property="og:image:width" content="1600">
+  <meta property="og:image:height" content="1067">
+  <meta property="og:image:alt" content="A bright living room with a wooden armchair beside a shuttered window">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/img/duck.webp" type="image/webp">
   <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/mobile.css" media="screen and (max-width: 767px)">
+  <!-- The rate card, machine-readable, beside the page that publishes it for
+       people. Same rule as the visible copy: tests/copy-rules.test.js parses
+       this block and fails the build if any figure disagrees with
+       data/pricing.json. "From" prices are minPrice, never price — the data
+       distinguishes them and the schema must not flatten "from $75" into
+       "$75". -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://makeitsqueaky.com/#business",
+        "name": "Make it Squeaky",
+        "url": "https://makeitsqueaky.com/",
+        "telephone": "+14165642125",
+        "hasOfferCatalog": { "@id": "https://makeitsqueaky.com/pricing.html#rates" }
+      },
+      {
+    "@type": "OfferCatalog",
+    "@id": "https://makeitsqueaky.com/pricing.html#rates",
+    "name": "Make it Squeaky rate card",
+    "url": "https://makeitsqueaky.com/pricing.html",
+    "itemListElement": [
+      { "@type": "Offer", "name": "Regular Cleaning", "priceSpecification": { "@type": "UnitPriceSpecification", "price": 0.25, "priceCurrency": "CAD", "unitCode": "FTK", "unitText": "per square foot" } },
+      { "@type": "Offer", "name": "Deep Cleaning", "priceSpecification": { "@type": "UnitPriceSpecification", "price": 0.40, "priceCurrency": "CAD", "unitCode": "FTK", "unitText": "per square foot" } },
+      { "@type": "Offer", "name": "Move-In / Move-Out Cleaning", "priceSpecification": { "@type": "UnitPriceSpecification", "price": 0.65, "priceCurrency": "CAD", "unitCode": "FTK", "unitText": "per square foot" } },
+      { "@type": "Offer", "name": "Post-Renovation Cleaning", "priceSpecification": { "@type": "UnitPriceSpecification", "price": 0.75, "priceCurrency": "CAD", "unitCode": "FTK", "unitText": "per square foot" } },
+      { "@type": "Offer", "name": "Inside oven", "priceSpecification": { "@type": "PriceSpecification", "price": 50, "priceCurrency": "CAD" } },
+      { "@type": "Offer", "name": "Inside refrigerator", "priceSpecification": { "@type": "PriceSpecification", "price": 50, "priceCurrency": "CAD" } },
+      { "@type": "Offer", "name": "Interior windows", "priceSpecification": { "@type": "UnitPriceSpecification", "price": 10, "priceCurrency": "CAD", "unitText": "per window" } },
+      { "@type": "Offer", "name": "Inside cabinets and drawers", "priceSpecification": { "@type": "PriceSpecification", "minPrice": 75, "priceCurrency": "CAD" } },
+      { "@type": "Offer", "name": "Wall washing", "priceSpecification": { "@type": "PriceSpecification", "minPrice": 75, "priceCurrency": "CAD" } },
+      { "@type": "Offer", "name": "Inside kitchen appliances", "priceSpecification": { "@type": "UnitPriceSpecification", "minPrice": 25, "priceCurrency": "CAD", "unitText": "per appliance" } },
+      { "@type": "Offer", "name": "Minimum job", "priceSpecification": { "@type": "PriceSpecification", "minPrice": 180, "priceCurrency": "CAD" } },
+      { "@type": "Offer", "name": "Travel fee — City of Toronto", "priceSpecification": { "@type": "PriceSpecification", "price": 0, "priceCurrency": "CAD" } },
+      { "@type": "Offer", "name": "Travel fee — inner GTA", "priceSpecification": { "@type": "PriceSpecification", "price": 35, "priceCurrency": "CAD" } },
+      { "@type": "Offer", "name": "Travel fee — outer GTA", "priceSpecification": { "@type": "PriceSpecification", "price": 60, "priceCurrency": "CAD" } }
+    ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <a class="ms-skip-link" href="#main">Skip to content</a>
@@ -156,8 +203,8 @@
               <tbody>
                 <tr><td>Minimum job</td><td>$180</td></tr>
                 <tr><td>Travel — City of Toronto</td><td>No fee</td></tr>
-                <tr><td>Travel — inner GTA</td><td>$35</td></tr>
-                <tr><td>Travel — outer GTA</td><td>$60</td></tr>
+                <tr><td>Travel — inner GTA (postal codes L3, L4, L5)</td><td>$35</td></tr>
+                <tr><td>Travel — outer GTA (L1, L6, L7)</td><td>$60</td></tr>
                 <tr><td>Tax</td><td>None</td></tr>
               </tbody>
             </table>
@@ -167,7 +214,7 @@
         <div class="ms-footnotes">
           <p><strong>"From" is a starting price</strong> Those three items are quoted at that figure so you still get a number, and Tiffany confirms the final amount after a look. Nothing is charged until you both agree.</p>
           <p><strong>Quoted individually</strong> Heavy grime, heavy pet hair and construction residue vary too much job-to-job for even a starting price.</p>
-          <p><strong>Small jobs</strong> Floored at the minimum rather than billed at the raw rate. A booked job holds a full day, so the <a href="policies.html">deposit and cancellation terms</a> are worth a read first.</p>
+          <p><strong>Small jobs</strong> Floored at the minimum rather than billed at the raw rate. A booked job holds a full day, so the <a href="policies.html">booking terms</a> are worth a read first.</p>
         </div>
       </div>
     </section>

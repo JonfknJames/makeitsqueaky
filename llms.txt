@@ -2,6 +2,16 @@
 
 > Residential cleaning in Toronto, run by Tiffany Wells. Over a decade of professional cleaning experience, one set of hands on every job — no crews, no subcontractors. Regular, deep, move-in/move-out, and post-renovation cleaning, priced instantly from square footage.
 
+Service area: City of Toronto (every postal code starting with M) at no travel fee. Travel fees beyond it: inner GTA $35 (postal codes starting L3, L4 or L5); outer GTA $60 (L1, L6 or L7). The fee is derived from the postal code and added after the minimum job price, never absorbed by it.
+
+Services and rates, per square foot, CAD: Regular Cleaning $0.25 (half-day); Deep Cleaning $0.40 (full-day); Move-In / Move-Out Cleaning $0.65 (full-day); Post-Renovation Cleaning $0.75 (full-day). Quoted by approximate square footage, or estimated from home type, bedrooms and bathrooms if the exact figure isn't known. Minimum job price $180 — small jobs are floored at the minimum, not billed at the raw rate.
+
+Add-ons: inside oven $50 and inside refrigerator $50 are fixed. Interior windows are $10 per window. Inside cabinets and drawers and wall washing start from $75 each, and inside kitchen appliances start from $25 per appliance — those three are starting prices, confirmed after a look. Heavy grime or excessive buildup, heavy pet hair, and heavy construction residue are not priced automatically; Tiffany confirms these in person so the price is right the first time.
+
+No online payment in this phase — quotes are followed up by phone or message. No deposit is taken today and there is no cancellation charge today; a 50% deposit for full-day services and a 48-hour cancellation window take effect only when online booking opens.
+
+Contact: phone/text +1 (416) 564-2125, email tiffanypoerazoff10@gmail.com.
+
 ## Key Pages
 
 - [Home](https://makeitsqueaky.com/): Overview of the business, service list, and the fastest path to a quote.
@@ -12,20 +22,6 @@
 - [Contact](https://makeitsqueaky.com/contact.html): Phone number and a link to start a quote online.
 - [Policies](https://makeitsqueaky.com/policies.html): Deposit, cancellation, service area, and standard-clean scope.
 
-## Key Facts
+## Data
 
-- Service area: City of Toronto (all M postal codes) at no travel fee; inner and outer GTA available for a travel fee.
-- Travel fees: City of Toronto no fee, inner GTA $35, outer GTA $60. Derived from the postal code, and added after the minimum job price rather than absorbed by it.
-- Services: Regular Cleaning ($0.25/sq ft, half-day), Deep Cleaning ($0.40/sq ft, full-day), Move-In / Move-Out Cleaning ($0.65/sq ft, full-day), Post-Renovation Cleaning ($0.75/sq ft, full-day).
-- Pricing basis: quoted by approximate square footage, or estimated from home type, bedrooms, and bathrooms if the exact figure isn't known.
-- Minimum job price: $180 CAD. Small jobs are floored at this minimum, not billed at the raw per-square-foot rate.
-- Add-ons: inside oven ($50) and inside refrigerator ($50) are fixed. Interior windows are $10 per window. Inside cabinets and drawers and wall washing start from $75 each, and inside kitchen appliances starts from $25 per appliance — those three are starting prices, confirmed after a look.
-- Quoted individually, with no starting price: heavy grime or excessive buildup, heavy pet hair, and heavy construction residue.
-- Jobs with heavy grime buildup, unusually heavy pet hair, or recent construction residue are not priced automatically — Tiffany confirms these in person so the price is right the first time.
-- Currency: CAD. No online payment in this phase — quotes are followed up by phone or message.
-- Contact: phone/text at +1 (416) 564-2125, or email tiffanypoerazoff10@gmail.com.
-
-## Contact
-
-+1 (416) 564-2125
-tiffanypoerazoff10@gmail.com
+- [Rate card (JSON)](https://makeitsqueaky.com/data/pricing.json): The machine-readable source every published price on the site is checked against — rates, add-ons, minimum, travel zones by postal prefix, and the square-footage estimator.

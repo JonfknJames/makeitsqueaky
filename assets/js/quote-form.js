@@ -74,6 +74,39 @@ const appliancesCount = document.getElementById('addon-appliances-count');
 // unusable with a screen reader. One short debounced sentence goes here
 // instead, once the typing settles.
 const liveRegion = document.getElementById('quote-live');
+
+// The phone price bar (quote.html, mobile.css). The estimate panel sits
+// several screens below the last question at phone width, so the bar mirrors
+// the panel's one-line state and jumps to it. It is hidden while the panel
+// itself is on screen: it must never cover the thing it points at, nor the
+// footer beneath. site.css keeps it display:none at desktop width, so on a
+// wide screen these calls update text nobody is shown — cheap, and simpler
+// than branching on viewport width in two places.
+const bar = document.getElementById('quote-bar');
+const barLabel = document.getElementById('quote-bar-label');
+const barValue = document.getElementById('quote-bar-value');
+const summaryPanel = document.getElementById('quote-summary');
+
+function setBar (label, value) {
+  if (!bar) return;
+  barLabel.textContent = label;
+  barValue.textContent = value;
+}
+
+// Rect maths on a rAF-throttled scroll handler, not IntersectionObserver —
+// the same reasoning as the reveal in ui.js: measured on WebKit, the observer
+// reported elements squarely in view as not intersecting. A control that
+// decides what the visitor can see has to be right on every engine.
+let barFrame = 0;
+function syncBar () {
+  if (!bar || !summaryPanel) return;
+  const r = summaryPanel.getBoundingClientRect();
+  bar.hidden = r.top < window.innerHeight && r.bottom > 0;
+}
+function scheduleBarSync () {
+  if (barFrame) return;
+  barFrame = window.requestAnimationFrame(() => { barFrame = 0; syncBar(); });
+}
 const ANNOUNCE_DELAY_MS = 700;
 let announceTimer = null;
 
@@ -390,6 +423,7 @@ function recompute () {
 
   if (missing.length) {
     renderIncomplete(missing);
+    setBar('Still needed', `${missing.length} more answer${missing.length === 1 ? '' : 's'}`);
     return;
   }
 
@@ -402,8 +436,10 @@ function recompute () {
 
   if (result.quoteOnly) {
     renderQuoteOnly(result.reasons, ctx);
+    setBar('Your price', 'Needs a quick look');
   } else {
     renderPriced(result, ctx);
+    setBar(result.isEstimate ? 'From' : 'Your price', money(result.total));
   }
 }
 
@@ -441,6 +477,10 @@ function applyQuery () {
 }
 
 function wireForm () {
+  window.addEventListener('scroll', scheduleBarSync, { passive: true });
+  window.addEventListener('resize', scheduleBarSync);
+  syncBar();
+
   form.addEventListener('input', recompute);
   form.addEventListener('change', recompute);
 

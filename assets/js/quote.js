@@ -128,7 +128,11 @@ export function quote (input, pricing) {
   const flooredTotal = minimumApplied ? pricing.minimumJobPrice : subtotal;
 
   if (minimumApplied) {
-    lineItems.push({ label: 'Half-day minimum', amount: flooredTotal - subtotal });
+    // "Minimum job", not "Half-day minimum": the floor applies to every
+    // service, and a small Deep or Move-Out job that lands under it is a
+    // full-day booking. The old label was wrong on three of the four
+    // services and read as a surcharge on all of them.
+    lineItems.push({ label: 'Minimum job top-up', amount: flooredTotal - subtotal });
   }
 
   // Travel is added AFTER the floor. Folding it in first would let the minimum

@@ -5,15 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>Get Your Price — Make it Squeaky</title>
+  <title>Instant House Cleaning Quote, Toronto — Make it Squeaky</title>
   <meta name="description" content="Answer a few quick questions about your home and get an instant price for regular, deep, move-in/move-out, or post-renovation cleaning in Toronto.">
   <link rel="canonical" href="https://makeitsqueaky.com/quote.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Make it Squeaky">
-  <meta property="og:title" content="Get Your Price — Make it Squeaky">
+  <meta property="og:title" content="Instant House Cleaning Quote, Toronto — Make it Squeaky">
   <meta property="og:description" content="Answer a few quick questions about your home and get an instant price for regular, deep, move-in/move-out, or post-renovation cleaning in Toronto.">
   <meta property="og:url" content="https://makeitsqueaky.com/quote.html">
   <meta property="og:image" content="https://makeitsqueaky.com/assets/img/hero.webp">
+  <meta property="og:image:width" content="1600">
+  <meta property="og:image:height" content="1067">
+  <meta property="og:image:alt" content="A bright living room with a wooden armchair beside a shuttered window">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/img/duck.webp" type="image/webp">
   <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/mobile.css" media="screen and (max-width: 767px)">
@@ -120,8 +124,8 @@
               </div>
             </fieldset>
 
-            <div class="ms-service-panel ms-quote-step">
-              <p class="ms-quote-step__legend"><span class="ms-card__num" aria-hidden="true">2</span> Postal code</p>
+            <fieldset class="ms-service-panel ms-quote-step">
+              <legend class="ms-quote-step__legend"><span class="ms-card__num" aria-hidden="true">2</span> Postal code</legend>
               <div class="ms-field">
                 <label for="quote-postal">Your postal code</label>
                 <input type="text" id="quote-postal" name="postalCode" placeholder="e.g. M4B 1B3" autocomplete="postal-code" inputmode="text">
@@ -130,10 +134,10 @@
                 <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v4.5M10 6.75v.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
                 <p id="postal-status-text" role="status" aria-live="polite">We'll let you know right away if a travel fee applies.</p>
               </div>
-            </div>
+            </fieldset>
 
-            <div class="ms-service-panel ms-quote-step">
-              <p class="ms-quote-step__legend"><span class="ms-card__num" aria-hidden="true">3</span> Square footage</p>
+            <fieldset class="ms-service-panel ms-quote-step">
+              <legend class="ms-quote-step__legend"><span class="ms-card__num" aria-hidden="true">3</span> Square footage</legend>
               <div class="ms-field">
                 <label for="quote-sqft">Approximate square footage</label>
                 <input type="number" id="quote-sqft" name="sqFt" min="0" step="1" inputmode="numeric" placeholder="e.g. 1200">
@@ -164,7 +168,7 @@
                   <p id="quote-estimate-note-text"></p>
                 </div>
               </div>
-            </div>
+            </fieldset>
 
             <fieldset class="ms-service-panel ms-quote-step">
               <legend class="ms-quote-step__legend"><span class="ms-card__num" aria-hidden="true">4</span> Add-ons</legend>
@@ -252,6 +256,18 @@
             </div>
             <p class="ms-visually-hidden" id="quote-live" role="status" aria-live="polite"></p>
           </aside>
+
+          <!-- Phone-only price bar. On a phone the estimate panel above sits
+               several screens below the last question, so every answer was
+               updating a number nobody could see. This mirrors the one line
+               that matters — answers still needed, or the total — and jumps
+               to the panel. quote-form.js keeps it hidden while the panel is
+               on screen. site.css hides it at every width; only mobile.css
+               shows it, so the desktop layout is untouched. -->
+          <a class="ms-quote-bar" id="quote-bar" href="#quote-summary" hidden>
+            <span class="ms-quote-bar__label" id="quote-bar-label">Your price</span>
+            <span class="ms-quote-bar__value" id="quote-bar-value">Fill in the form</span>
+          </a>
         </div>
       </div>
     </section>

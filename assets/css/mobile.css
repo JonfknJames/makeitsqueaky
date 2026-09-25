@@ -488,3 +488,57 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
 /* The decorative banner is aria-hidden and carries no information. At 16:9 it
    still reads as a photograph of a real bathroom while giving back ~80px. */
 .ms-photo-banner { aspect-ratio: 16 / 9; }
+
+/* --------------------------------------------------------------------------
+   Quote page — the price bar.
+
+   Measured on the phone build: the estimate panel sits at roughly 3150px on
+   an 812px viewport, four screens below the first question. The page lead
+   promises "the price updates live as you go", and on the primary device
+   every tap updated a number nobody could see. This bar mirrors the one line
+   that matters — how many answers are still needed, or the total — and jumps
+   to the panel. quote-form.js hides it whenever the panel itself is on
+   screen, so it never covers the thing it points at and never sits over the
+   footer.
+
+   [hidden] must win over the class: the UA's [hidden] rule is outranked by
+   .ms-quote-bar's display:flex, so the attribute alone would not hide it.
+   -------------------------------------------------------------------------- */
+.ms-quote-bar {
+  position: fixed;
+  left: var(--ms-space-3);
+  right: var(--ms-space-3);
+  bottom: calc(var(--ms-space-3) + var(--ms-safe-bottom));
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ms-space-3);
+  min-height: 56px;
+  padding: var(--ms-space-3) var(--ms-space-5);
+  border-radius: var(--ms-radius-pill);
+  background: var(--ms-color-surface);
+  box-shadow: var(--ms-shadow-raised-md);
+  color: var(--ms-color-ink);
+  text-decoration: none;
+}
+
+.ms-quote-bar[hidden] { display: none; }
+
+.ms-quote-bar__label {
+  font-size: var(--ms-text-sm);
+  font-weight: 700;
+  color: var(--ms-color-ink-soft);
+}
+
+.ms-quote-bar__value {
+  font-family: var(--ms-font-display);
+  font-size: var(--ms-text-md);
+  font-weight: 800;
+  color: var(--ms-color-blue-dark);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* The same "there is more this way" glyph the service tiles use. */
+.ms-quote-bar__value::after { content: '\00a0\203A'; }

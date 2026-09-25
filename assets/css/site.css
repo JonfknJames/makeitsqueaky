@@ -1968,7 +1968,16 @@ button { font: inherit; }
 .ms-prose__stat { margin-block: var(--ms-space-3); }
 
 /* Contact page detail rows. */
-.ms-contact-list { display: flex; flex-direction: column; gap: var(--ms-space-4); }
+.ms-contact-list { display: grid; grid-template-columns: 1fr; gap: var(--ms-space-4); }
+
+/* Two-up from the same breakpoint the quote layout splits at. Four cards of
+   two lines each were running the full 1150px container, so the right
+   two-thirds of every card was empty and the page read as a stack of mostly
+   blank boxes. Side by side, each card carries its content at a sensible
+   measure and the four read as one set of facts rather than four announcements. */
+@media (min-width: 56em) {
+  .ms-contact-list { grid-template-columns: 1fr 1fr; gap: var(--ms-space-5); }
+}
 
 .ms-contact-list__item {
   background: var(--ms-color-surface);
@@ -2193,6 +2202,12 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
 }
 .ms-quote-summary__heading { font-size: var(--ms-text-lg); color: var(--ms-color-ink); margin: 0 0 var(--ms-space-4); }
 .ms-quote-summary__empty { color: var(--ms-color-ink-soft); font-size: var(--ms-text-sm); margin: 0; }
+
+/* The phone price bar does not exist at desktop width, where the summary
+   panel is sticky and always in view. Hidden here unconditionally; mobile.css
+   is the only place that shows it, so mobile-isolation.spec.js still renders
+   the desktop page identically with and without the phone stylesheet. */
+.ms-quote-bar { display: none; }
 
 .ms-quote-outcome__heading { font-size: var(--ms-text-md); font-weight: 800; color: var(--ms-color-ink); margin: 0 0 var(--ms-space-3); }
 .ms-quote-outcome__reasons { margin: var(--ms-space-2) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--ms-space-1); }
