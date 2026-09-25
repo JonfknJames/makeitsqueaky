@@ -34,6 +34,10 @@ const REASON_COPY = {
   // quote.js's `from` flag and renderPriced() below.
   unknownZone: "This postal code isn't in our mapped service area yet — Tiffany will confirm travel and pricing with you personally.",
   invalidFormat: "We couldn't read that postal code — Tiffany will confirm travel and pricing with you personally.",
+  // The browser never asks the engine to price an undecided prefix (see
+  // updatePostalStatus), so this line is for the Phase 2 server, which prices
+  // whatever it is sent and needs a sentence for every verdict.
+  incompletePostalCode: 'We need a little more of that postal code to place the travel zone — Tiffany will confirm travel and pricing with you personally.',
 };
 
 const money = (n) => `$${Math.round(n).toLocaleString('en-CA')}`;
@@ -132,19 +136,16 @@ function readAddOns () {
   };
 }
 
-// Which radio answer means "this flag is true", per condition question. Most
-// questions are asked so "yes" means the flag applies (more pet hair than
-// usual, recent construction) — but the grime question is phrased the other
-// way round ("has it been cleaned recently?"), so "no" is the one that
-// triggers heavyGrime. Getting this backwards silently prices dirty homes
-// as if they were clean, which is exactly what the condition gate exists
-// to prevent.
-const CONDITION_TRIGGER_VALUE = {
-  heavyGrime: 'no',
-  heavyPetHair: 'yes',
-  heavyConstructionResidue: 'yes',
-};
-
+// Every condition question is asked so that "yes" means the flag applies:
+// heavy grime, more pet hair than usual, recent construction. The grime
+// question used to be the odd one out — "has the home been professionally
+// cleaned recently?", with "No / not sure" as the trigger — and it withdrew
+// the price from most first-time customers, who honestly answer No to that
+// without living in a grimy home. It now asks about the grime itself, which
+// is what the flag was always for, and the inverted mapping that once lived
+// here is gone with it. Keep the questions phrased this way: a single
+// inverted one is exactly the kind of thing a later edit gets backwards.
+//
 // An UNANSWERED condition question is not a "no". Until all three are
 // answered we cannot tell a clean home from one that costs her a twelve-hour
 // day, so nothing bookable renders — see renderIncomplete().
@@ -154,7 +155,7 @@ function readConditions () {
   for (const flag of ['heavyGrime', 'heavyPetHair', 'heavyConstructionResidue']) {
     const checked = form.querySelector(`input[name="condition-${flag}"]:checked`);
     if (!checked) { unanswered += 1; continue; }
-    if (checked.value === CONDITION_TRIGGER_VALUE[flag]) flags.push(flag);
+    if (checked.value === 'yes') flags.push(flag);
   }
   return { flags, unanswered };
 }
@@ -373,8 +374,17 @@ function updatePostalStatus (postalRaw) {
 
   const zone = travelZone(postalRaw, pricing);
 
+  // `complete` here means "enough to price", not "all six characters". The
+  // zone is settled by the first one or two characters (area.js), and the
+  // price shows the moment it is — the rest of the code is asked for, and
+  // reaches Tiffany with the lead, but no longer holds the number back.
   if (zone.reason === 'invalidFormat') {
-    postalStatusText.textContent = "That doesn't look like a complete postal code yet (e.g. M4B 1B3).";
+    postalStatusText.textContent = "That doesn't look like a Canadian postal code (e.g. M4B 1B3).";
+    return { complete: false };
+  }
+
+  if (zone.reason === 'incompletePostalCode') {
+    postalStatusText.textContent = 'One more character and we can tell you about travel (e.g. L5B 3C2).';
     return { complete: false };
   }
 
@@ -413,7 +423,7 @@ function recompute () {
 
   const missing = [];
   if (!service) missing.push('Choose a service (step 1)');
-  if (!postal.complete) missing.push('Your full postal code (step 2)');
+  if (!postal.complete) missing.push('Your postal code (step 2)');
   if (sqFt <= 0) missing.push('Approximate square footage (step 3)');
   if (conditions.unanswered > 0) {
     missing.push(conditions.unanswered === 3
