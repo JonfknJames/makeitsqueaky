@@ -7,7 +7,7 @@
   "maxSqFt": 6000,
   "maxAddOnUnits": 60,
   "services": {
-    "regular":   { "label": "Regular Cleaning",          "ratePerSqFt": 0.25, "unit": "half-day" },
+    "regular":   { "label": "Regular Cleaning",          "ratePerSqFt": 0.25, "unit": "half-day", "maxSqFt": 3000 },
     "deep":      { "label": "Deep Cleaning",             "ratePerSqFt": 0.40, "unit": "full-day" },
     "moveInOut": { "label": "Move-In / Move-Out Cleaning","ratePerSqFt": 0.65, "unit": "full-day" },
     "postReno":  { "label": "Post-Renovation Cleaning",  "ratePerSqFt": 0.75, "unit": "full-day" }

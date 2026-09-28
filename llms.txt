@@ -1,6 +1,6 @@
 # Make it Squeaky
 
-> Residential cleaning in Toronto, run by Tiffany Wells. Over a decade of professional cleaning experience, one set of hands on every job — no crews, no subcontractors. Regular, deep, move-in/move-out, and post-renovation cleaning, priced instantly from square footage.
+> Residential cleaning in Toronto, run by Tiffany. Over a decade of professional cleaning experience, one set of hands on every job — no crews, no subcontractors. Regular, deep, move-in/move-out, and post-renovation cleaning, priced instantly from square footage.
 
 Service area: City of Toronto (every postal code starting with M) at no travel fee. Travel fees beyond it: inner GTA $35 (postal codes starting L3, L4 or L5); outer GTA $60 (L1, L6 or L7). The fee is derived from the postal code and added after the minimum job price, never absorbed by it.
 
@@ -16,8 +16,7 @@ Contact: phone/text +1 (416) 564-2125, email tiffanypoerazoff10@gmail.com.
 
 - [Home](https://makeitsqueaky.com/): Overview of the business, service list, and the fastest path to a quote.
 - [Get Your Price](https://makeitsqueaky.com/quote.html): Instant quote calculator — service type, postal code, square footage (or a bedroom/bathroom estimate), add-ons, and a few condition questions produce a live price.
-- [Services](https://makeitsqueaky.com/services.html): What's included in each of the four cleaning types.
-- [Pricing](https://makeitsqueaky.com/pricing.html): Per-square-foot rates, add-on prices, the minimum job, and travel fees.
+- [Pricing](https://makeitsqueaky.com/pricing.html): What's included in each of the four cleaning types and the per-square-foot rate for each, then add-on prices, the minimum job, and travel fees.
 - [About](https://makeitsqueaky.com/about.html): Background on Tiffany and how the business operates.
 - [Contact](https://makeitsqueaky.com/contact.html): Phone number and a link to start a quote online.
 - [Policies](https://makeitsqueaky.com/policies.html): Deposit, cancellation, service area, and standard-clean scope.

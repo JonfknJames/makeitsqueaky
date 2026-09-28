@@ -43,7 +43,15 @@ export function quote (input, pricing) {
   const reasons = [];
   const flag = (reason) => { if (!reasons.includes(reason)) reasons.push(reason); };
 
-  if (sqFt > pricing.maxSqFt) flag('exceedsMaxSqFt');
+  // A service may carry its own ceiling under the global one — Regular
+  // Cleaning is a half-day, and a half-day cannot cover what a full day can,
+  // so the size the rate card will price as one is smaller. The LOWER of the
+  // two applies: a per-service value above the global cap is a typo in
+  // pricing.json, not permission to price a bigger home.
+  const ceiling = Number(service.maxSqFt) > 0
+    ? Math.min(pricing.maxSqFt, Number(service.maxSqFt))
+    : pricing.maxSqFt;
+  if (sqFt > ceiling) flag('exceedsMaxSqFt');
 
   for (const conditionFlag of input.conditionFlags || []) {
     if (pricing.conditionFlags.includes(conditionFlag)) flag(conditionFlag);

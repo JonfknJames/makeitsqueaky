@@ -1696,69 +1696,9 @@ button { font: inherit; }
 }
 
 
-/* Rates band (pricing.html) — ONE panel divided into four, not four cards.
-
-   Four separate cards carried four separate shadows around four mostly-empty
-   boxes, and made a claim that is not true of the content: that these are four
-   independent offers. They are one price list with four variants. A divided
-   panel says exactly that, and removes three of the four shadows, which was
-   most of the visual noise in the band.
-
-   Reuses .ms-card__price / __price-amt / __price-unit verbatim — the same
-   money component as the service tiles and the quote form's radios. */
-.ms-rates {
-  background: var(--ms-color-surface);
-  border-radius: var(--ms-radius-lg);
-  box-shadow: var(--ms-shadow-raised-md);
-  display: grid;
-  grid-template-columns: 1fr;
-  overflow: hidden;
-}
-
-.ms-rates__item {
-  padding: var(--ms-space-5);
-  display: flex;
-  flex-direction: column;
-  gap: var(--ms-space-1);
-}
-
-/* Hairlines BETWEEN items only. Drawn on the leading edge of every item after
-   the first, so the panel never carries an outer rule that would fight its own
-   rounded corner. The axis flips with the layout below. */
-.ms-rates__item + .ms-rates__item { border-top: 1px solid var(--ms-color-border); }
-
-.ms-rates__name {
-  font-size: var(--ms-text-md);
-  font-weight: 800;
-  color: var(--ms-color-ink);
-  margin: 0;
-}
-
-.ms-rates__desc {
-  font-size: var(--ms-text-sm);
-  color: var(--ms-color-ink-soft);
-  line-height: var(--ms-leading-snug);
-  margin: 0;
-}
-
-@media (min-width: 40em) {
-  .ms-rates { grid-template-columns: 1fr 1fr; }
-  /* Two-up: the rule between columns is vertical, and rows 3-4 need a
-     horizontal rule above them that the +-selector alone cannot express. */
-  .ms-rates__item + .ms-rates__item { border-top: 0; }
-  .ms-rates__item:nth-child(even) { border-left: 1px solid var(--ms-color-border); }
-  .ms-rates__item:nth-child(n + 3) { border-top: 1px solid var(--ms-color-border); }
-}
-
-@media (min-width: 64em) {
-  .ms-rates { grid-template-columns: repeat(4, 1fr); }
-  .ms-rates__item:nth-child(n + 3) { border-top: 0; }
-  .ms-rates__item + .ms-rates__item { border-left: 1px solid var(--ms-color-border); }
-  /* Equal-height columns need the tallest name to reserve its space, or the
-     descriptions sit at four different heights. "Move-In / Move-Out Cleaning"
-     is the only one that wraps at this width. */
-  .ms-rates__name { min-height: calc(var(--ms-text-md) * var(--ms-leading-tight) * 2); }
-}
+/* The rates band that used to sit at the top of pricing.html is gone: the
+   page merged into services.html on 2026-09-27, where each service panel
+   already carries its rate and unit in its header. */
 
 /* Add-on / rate table, wrapped so the radius clips cleanly. */
 .ms-table-wrap {
