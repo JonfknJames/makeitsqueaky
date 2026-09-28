@@ -287,6 +287,9 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
 .ms-footer__col li.ms-footer__icon-row {
   display: flex;
   align-items: center;
+  /* Left, like the three plain lines under it; the phone and email rows were
+     the only centred lines in a left-aligned column. */
+  justify-content: flex-start;
   gap: var(--ms-space-2);
 }
 
@@ -326,6 +329,10 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
    -------------------------------------------------------------------------- */
 .ms-prose p { font-size: var(--ms-text-base); }
 .ms-info-grid { gap: var(--ms-space-5); }
+/* On a phone the portrait comes first: it introduces the person before her
+   words, and it stops a 460px photo landing between the "See pricing" button
+   and the Get in touch section it was pushing away. */
+.ms-info-grid .ms-portrait { order: -1; }
 .ms-contact-list__item { padding: var(--ms-space-4); }
 
 /* Any standalone call-to-action button gets the full thumb column. */
@@ -403,12 +410,14 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
      visitor is deep in the fourth service and wants the second. */
   top: calc(5.25rem + var(--ms-safe-top));
   z-index: 5;
-  padding-block: var(--ms-space-2);
+  /* No padding of its own: the <ul> carries it, inside its clipping box, so
+     the chips' shadows have room. Same total height as before. */
+  padding-block: 0;
   background: var(--ms-color-surface-base);
 }
 
-/* The four chips total about 460px against 350px of usable width, so the row
-   genuinely has to scroll — and a chip clipped flat at the edge reads as a
+/* The five chips (four services and "Add-ons & fees") total well over the
+   350px of usable width, so the row genuinely has to scroll — and a chip clipped flat at the edge reads as a
    broken layout rather than as "there is more this way". The fade says
    scrollable without spending height on a scrollbar or an arrow.
 
@@ -416,8 +425,8 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
    the scroller travels with its content and the fade would slide away the
    moment the row moved. */
 .ms-jump > .ms-container {
-  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent 100%);
-  mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent 100%);
+  mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent 100%);
 }
 
 .ms-jump ul {
@@ -431,22 +440,17 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 
-  /* The row overflows on EVERY phone — measured 43px on a Pixel 5, 46px on an
-     iPhone 14, 116px on an SE — and the scrollbar is hidden, so nothing told
-     the visitor there was more. The fourth chip just stopped mid-word at the
-     screen edge, which reads as text that got cut off rather than as a row
-     that scrolls.
-
-     A soft right edge is the affordance: content that fades has obviously not
-     ended. Costs no layout, no script, and no bar. Where mask-image is
-     unsupported the declaration is dropped and the row behaves exactly as it
-     does today, so there is nothing to guard.
-
-     The trade is that the last chip is also faded once you scroll to the end.
-     That is the accepted cost of a static mask, and it is a far smaller lie
-     than a hard cut that says "this is the end" when it is not. */
-  mask-image: linear-gradient(to right, #000 calc(100% - 1.75rem), transparent);
-  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 1.75rem), transparent);
+  /* Room for the chips' shadows. overflow-x: auto clips on BOTH axes, and
+     with zero vertical padding every chip's raised shadow ended in a hard
+     horizontal line a few pixels below it — visible at 3x, read as a smudge
+     at 1x. The fade that says "this row scrolls" lives on the wrapper above
+     (a mask on the scroller travels with its content); it used to be
+     declared here as well, which doubled the fade at the right edge. */
+  padding: var(--ms-space-2) var(--ms-space-3);
+  /* Pulled out by the same amount the side padding pushes in, so the first
+     chip still aligns with the page gutter and the last one is never flush
+     against the clipping edge. */
+  margin-inline: calc(-1 * var(--ms-space-3));
 }
 
 .ms-jump ul::-webkit-scrollbar { display: none; }
@@ -464,7 +468,11 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
   white-space: nowrap;
   border-radius: var(--ms-radius-pill);
   background: var(--ms-color-surface);
-  box-shadow: var(--ms-shadow-raised-sm);
+  /* No shadow, like the nav chips these are the phone counterpart of. The
+     raised-small shadow reaches 38px below a chip; inside a scroller that
+     clips on both axes it was cut in a hard line however much padding the
+     list carried, and a sticky row of six drop shadows was heavy anyway.
+     A white pill on the page ground is the control's whole shape. */
   font-size: var(--ms-text-xs);
   font-weight: 700;
   color: var(--ms-color-blue-dark);

@@ -56,7 +56,7 @@
         <ul class="ms-nav__list" id="ms-nav-list">
           <li><a href="pricing.html">Pricing</a></li>
           <li><a href="about.html" aria-current="page">About</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="about.html#contact-heading">Contact</a></li>
         </ul>
       </nav>
 
@@ -70,8 +70,8 @@
   <main id="main">
     <section class="ms-page-head" aria-labelledby="page-hero-heading">
       <div class="ms-container">
-        <h1 id="page-hero-heading" class="ms-page-head__title">About Make it Squeaky</h1>
-        <p class="ms-page-head__lead">Over <span data-years-since="2014">12</span> years of professional cleaning experience, and one set of hands on every job.</p>
+        <h1 id="page-hero-heading" class="ms-page-head__title">About Make&nbsp;it&nbsp;Squeaky</h1>
+        <p class="ms-page-head__lead">One set of hands on every job. Tiffany does the work herself, from weekly upkeep to a post-renovation reset.</p>
       </div>
     </section>
 
@@ -104,10 +104,10 @@
 
             <div class="ms-stat ms-stat--start ms-prose__stat">
               <span class="ms-stat__num" data-years-since="2014">12</span>
-              <span class="ms-stat__label">Years of professional cleaning experience</span>
+              <span class="ms-stat__label">Years of experience</span>
             </div>
 
-            <p class="ms-prose__action"><a class="ms-btn ms-btn--accent" href="pricing.html">See our services</a></p>
+            <p class="ms-prose__action"><a class="ms-btn ms-btn--accent" href="pricing.html">See pricing</a></p>
           </div>
 
           <!-- The source as delivered, 1086x1448 at its own 3:4 ratio.
@@ -124,19 +124,51 @@
       </div>
     </section>
 
-    <section class="ms-section ms-section--tight" aria-hidden="true">
+    <!-- How to reach her, on the page that introduces her. This was
+         contact.html: four cards that stood alone on a page of their own.
+         The nav's "Contact" points here. -->
+    <section class="ms-section" aria-labelledby="contact-heading">
       <div class="ms-container">
-        <div class="ms-photo-banner">
-          <img
-            class="ms-photo-banner__img"
-            src="assets/img/detail-bath.webp"
-            width="1200" height="652"
-            alt=""
-            loading="lazy">
-          <img class="ms-duck-badge" src="assets/img/duck.webp" srcset="assets/img/duck.webp 220w, assets/img/duck@2x.webp 440w" sizes="64px" width="220" height="220" alt="">
+        <div class="ms-section__head">
+          <h2 id="contact-heading" class="ms-section-heading">Get in touch</h2>
+          <p class="ms-section-lead">Call or text for the fastest answer, or start your quote online — it takes about a minute.</p>
+        </div>
+        <div class="ms-contact-list">
+          <div class="ms-contact-list__item">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5.5C3 4.67 3.67 4 4.5 4h2.06c.46 0 .87.3 1.01.74l.9 2.72a1.08 1.08 0 0 1-.28 1.1L6.9 9.9a12 12 0 0 0 5.2 5.2l1.34-1.29a1.08 1.08 0 0 1 1.1-.28l2.72.9c.44.14.74.55.74 1.01v2.06c0 .83-.67 1.5-1.5 1.5C8.6 19 3 13.4 3 5.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            <div>
+              <h3>Phone</h3>
+              <p><a href="tel:+14165642125">+1 (416) 564-2125</a></p>
+            </div>
+          </div>
+
+          <div class="ms-contact-list__item">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.75" y="4.75" width="14.5" height="10.5" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="m3.5 6.25 6.5 4.5 6.5-4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <h3>Email</h3>
+              <p><a href="mailto:tiffanypoerazoff10@gmail.com">tiffanypoerazoff10@gmail.com</a></p>
+            </div>
+          </div>
+
+          <div class="ms-contact-list__item">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 18s6-5.1 6-9.5A6 6 0 0 0 4 8.5C4 12.9 10 18 10 18Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="10" cy="8.5" r="2" stroke="currentColor" stroke-width="1.4"/></svg>
+            <div>
+              <h3>Service area</h3>
+              <p>City of Toronto — all M postal codes, no travel fee. Travel fees: inner GTA $35 (postal codes starting L3, L4 or L5); outer GTA $60 (L1, L6 or L7).</p>
+            </div>
+          </div>
+
+          <div class="ms-contact-list__item">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 10.25V4.5A1.5 1.5 0 0 1 4.5 3h5.75l7 7-7.5 7.5-6.75-7.25Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="7.25" cy="7.25" r="1.25" stroke="currentColor" stroke-width="1.4"/></svg>
+            <div>
+              <h3>Get a price online</h3>
+              <p>Pick a service and get a price in about a minute — no call needed. <a href="quote.html">Start your quote</a>.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
+
   </main>
 
   <footer class="ms-footer">
@@ -168,7 +200,7 @@
           <h2>Company</h2>
           <ul>
             <li><a href="about.html">About Tiffany</a></li>
-            <li><a href="policies.html">Policies</a></li>
+            <li><a href="pricing.html#terms-heading">Booking terms</a></li>
           </ul>
         </div>
 

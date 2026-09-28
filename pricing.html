@@ -99,7 +99,7 @@
         <ul class="ms-nav__list" id="ms-nav-list">
           <li><a href="pricing.html" aria-current="page">Pricing</a></li>
           <li><a href="about.html">About</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="about.html#contact-heading">Contact</a></li>
         </ul>
       </nav>
 
@@ -164,6 +164,7 @@
             <p class="ms-quote-start__basis" id="quote-start-basis"></p>
           </div>
 
+          <noscript><p class="ms-quote-start__note">Prices are worked out in your browser. With scripts off, use the rate on each service below, or call or text for a figure.</p></noscript>
           <button type="submit" class="ms-btn ms-btn--accent ms-btn--block ms-quote-start__submit">
             Get your exact price
           </button>
@@ -187,7 +188,7 @@
           <li class="ms-how__step">
             <span class="ms-card__num" aria-hidden="true">2</span>
             <h3 class="ms-how__title">Never below the minimum</h3>
-            <p class="ms-how__text">Small jobs are lifted to the minimum job $180 rather than billed at the raw rate.</p>
+            <p class="ms-how__text">Small jobs are lifted to the $180 minimum rather than billed at the raw rate.</p>
           </li>
           <li class="ms-how__step">
             <span class="ms-card__num" aria-hidden="true">3</span>
@@ -218,20 +219,6 @@
         </ul>
       </div>
     </nav>
-
-    <section class="ms-section ms-section--tight" aria-hidden="true">
-      <div class="ms-container">
-        <div class="ms-photo-banner">
-          <img
-            class="ms-photo-banner__img"
-            src="assets/img/detail-bath.webp"
-            width="1200" height="652"
-            alt=""
-            loading="lazy">
-          <img class="ms-duck-badge" src="assets/img/duck.webp" srcset="assets/img/duck.webp 220w, assets/img/duck@2x.webp 440w" sizes="64px" width="220" height="220" alt="">
-        </div>
-      </div>
-    </section>
 
     <section class="ms-section" aria-labelledby="regular-heading">
       <div class="ms-container">
@@ -279,7 +266,7 @@
               <p class="ms-card__price"><span class="ms-card__price-amt">$0.40</span><span class="ms-card__price-unit">/ sq ft · full day</span></p>
             </div>
             <p class="ms-service-panel__lead">A more detailed clean for homes that need extra attention or have not been professionally cleaned recently.</p>
-            <p class="ms-service-panel__sub">Everything in Regular Cleaning, plus</p>
+            <p class="ms-service-panel__sub">Everything in Regular, plus</p>
             <ul class="ms-check-list">
               <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Detailed baseboard cleaning</li>
               <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Detailed door and door-frame cleaning</li>
@@ -307,7 +294,7 @@
               <p class="ms-card__price"><span class="ms-card__price-amt">$0.65</span><span class="ms-card__price-unit">/ sq ft · full day</span></p>
             </div>
             <p class="ms-service-panel__lead">Designed to leave a property exceptionally clean and ready for a new occupant or buyer.</p>
-            <p class="ms-service-panel__sub">Everything in Deep Cleaning, plus</p>
+            <p class="ms-service-panel__sub">Everything in Deep, plus</p>
             <ul class="ms-check-list">
               <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Detailed cleaning of empty rooms</li>
               <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Detailed baseboards, trim, doors and frames</li>
@@ -371,8 +358,10 @@
          are not, and the split says so. -->
     <section class="ms-section ms-section--duck" aria-labelledby="fees-heading">
       <div class="ms-container">
-        <h2 id="fees-heading" class="ms-section-heading">Add-ons, minimum &amp; travel</h2>
-        <p class="ms-section-lead">Everything else that can appear on your total, and what each one costs.</p>
+        <div class="ms-section__head">
+          <h2 id="fees-heading" class="ms-section-heading">Add-ons, minimum &amp; travel</h2>
+          <p class="ms-section-lead">Everything else that can appear on your total, and what each one costs.</p>
+        </div>
         <div class="ms-price-cols">
           <div class="ms-pricecard">
             <h3 class="ms-pricecard__title">Add-ons <span>you choose these</span></h3>
@@ -407,9 +396,55 @@
         </div>
 
         <div class="ms-footnotes">
-          <p><strong>"From" is a starting price</strong> Those three items are quoted at that figure so you still get a number, and Tiffany confirms the final amount after a look. Nothing is charged until you both agree.</p>
-          <p><strong>Quoted individually</strong> Heavy grime, heavy pet hair and construction residue vary too much job-to-job for even a starting price.</p>
-          <p><strong>Small jobs</strong> Floored at the minimum rather than billed at the raw rate. A booked job holds a full day, so the <a href="policies.html">booking terms</a> are worth a read first.</p>
+          <p><strong>&ldquo;From&rdquo; is a starting price</strong> Those three items are quoted at that figure so you still get a number, and Tiffany confirms the final amount after a look. Nothing is charged until you both agree.</p>
+          <p><strong>Quoted individually</strong> Heavy grime, heavy pet hair and heavy construction residue — beyond the usual post-renovation dust — vary too much job-to-job for even a starting price.</p>
+          <p><strong>Holding a day</strong> A booked job holds Tiffany's half day (Regular) or full day (the other three), so the <a href="#terms-heading">booking terms</a> are worth a read first.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Booking terms, beside the prices they attach to. This was
+         policies.html, whose other two panels (service area; what a standard
+         clean leaves out) had already been said on this page and on About.
+         The order inside each term is deliberate and PRODUCT.md holds it:
+         what is true today first, then what changes when online booking
+         opens — a terms block that opens with a term it does not yet apply
+         is read as binding by anyone who skims the first line. -->
+    <section class="ms-section" aria-labelledby="terms-heading">
+      <div class="ms-container">
+        <div class="ms-section__head">
+          <h2 id="terms-heading" class="ms-section-heading">Booking terms</h2>
+          <p class="ms-section-lead">What applies today, and what changes when online booking opens.</p>
+        </div>
+        <!-- Two panels side by side above 40em, for the same reason the fee
+             tables are: one panel across the full container put four short
+             paragraphs in its left half and nothing in its right. -->
+        <div class="ms-price-cols">
+          <article class="ms-service-panel" aria-labelledby="deposit-heading">
+            <h3 id="deposit-heading" class="ms-service-panel__title">Deposit</h3>
+            <p class="ms-service-panel__lead">
+              No deposit is taken today. This site gives you a price — it doesn't take payment
+              and it doesn't book the job, so you arrange the day with Tiffany directly.
+            </p>
+            <p class="ms-service-panel__lead">
+              When online booking opens, a 50% deposit will hold a full day: Deep Cleaning,
+              Move-In / Move-Out Cleaning, or Post-Renovation Cleaning. A Regular Cleaning is a
+              half day; whether it takes a deposit is still to be settled.
+            </p>
+          </article>
+          <article class="ms-service-panel" aria-labelledby="cancellation-heading">
+            <h3 id="cancellation-heading" class="ms-service-panel__title">Cancellation</h3>
+            <p class="ms-service-panel__lead">
+              There is no cancellation charge today. Call or text as early as you can and
+              Tiffany will move the day with you.
+            </p>
+            <p class="ms-service-panel__lead">
+              When online booking opens, these terms take effect: cancel or move a booked job at
+              least 48 hours before the start time at no charge; inside 48 hours a 50% fee
+              applies to any booking, half day or full, because time held for you is time that
+              cannot be filled at short notice.
+            </p>
+          </article>
         </div>
       </div>
     </section>
@@ -455,7 +490,7 @@
           <h2>Company</h2>
           <ul>
             <li><a href="about.html">About Tiffany</a></li>
-            <li><a href="policies.html">Policies</a></li>
+            <li><a href="pricing.html#terms-heading">Booking terms</a></li>
           </ul>
         </div>
 

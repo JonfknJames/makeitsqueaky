@@ -1663,7 +1663,13 @@ button { font: inherit; }
    outs like the deposit and cancellation terms. */
 .ms-note {
   background: var(--ms-color-surface-base);
-  border: 1px solid var(--ms-color-border-strong);
+  /* Set in, not outlined. A 1px border with no depth was the one flat
+     stroked surface left on the site, against DESIGN.md's two-states rule.
+     The page-ground tint inside a white panel already reads as a recess; an
+     inset shadow on top of it was tried and made every note register as a
+     card nested in a card (slop-gate, 2026-09-28), so the recess is colour
+     alone — no border, no shadow. */
+  border: 0;
   border-radius: var(--ms-radius-md);
   padding: var(--ms-space-4) var(--ms-space-5);
   /* The cap belongs on the BOX, not the paragraph inside it. Capping only
@@ -2504,6 +2510,10 @@ html.ms-motion [data-ms-reveal].is-revealed {
    ========================================================================== */
 .ms-cta-band {
   background: var(--ms-color-gold-tint);
+  /* Raised: the band is a surface on the page like every other panel, and
+     the two-states rule applies to it too. Without the shadow it read as a
+     flat wash of colour behind the button rather than a thing to press on. */
+  box-shadow: var(--ms-shadow-raised-md);
   border-radius: var(--ms-radius-xl);
   padding: var(--ms-space-7) var(--ms-space-6);
   text-align: center;
