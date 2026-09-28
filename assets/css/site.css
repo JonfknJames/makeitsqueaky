@@ -2554,3 +2554,107 @@ html.ms-motion [data-ms-reveal].is-revealed {
    panels in a scannable column and does not need a jump index; mobile.css
    turns this on below 768px. */
 .ms-jump { display: none; }
+
+/* ==========================================================================
+   Pricing page (pricing.html) — services and pricing as one system.
+
+   Three additions, all built from existing components and tokens:
+   1. The estimator card, IN THE FLOW. .ms-quote-start is the hero's card and
+      at 64em it is absolutely positioned over the photograph; the --page
+      modifier puts it back in normal flow, at reading width, and swaps the
+      photo-edge radius/shadow for the ones content panels use. This block
+      sits after both the 64em layout rule and the reduced-motion restore,
+      so at equal specificity it wins on source order — keep it at the end.
+   2. .ms-how — the three rules every number on the page follows.
+   3. .ms-examples — worked example prices under each service panel, filled
+      by assets/js/service-examples.js. Rows are sunken wells, the same
+      lighting as inputs: a figure to read, not a control to press.
+   ========================================================================== */
+.ms-quote-start--page {
+  position: static;
+  transform: none;
+  width: auto;
+  max-width: 46rem;
+  margin-inline: auto;
+  padding: var(--ms-space-6);
+  gap: var(--ms-space-3);
+  border-radius: var(--ms-radius-lg);
+  box-shadow: var(--ms-shadow-raised-md);
+}
+.ms-quote-start--page .ms-quote-start__heading { font-size: var(--ms-text-xl); }
+
+.ms-quote-start__fields { display: grid; gap: var(--ms-space-3); }
+@media (min-width: 40em) {
+  .ms-quote-start__fields { grid-template-columns: 1fr 1fr; }
+}
+
+.ms-how__eyebrow {
+  font-size: var(--ms-text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ms-color-blue-dark);
+  text-align: center;
+  margin: 0 0 var(--ms-space-4);
+}
+.ms-how {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 64rem;
+  display: grid;
+  gap: var(--ms-space-5);
+}
+@media (min-width: 48em) {
+  .ms-how { grid-template-columns: repeat(3, 1fr); gap: var(--ms-space-6); }
+}
+.ms-how__step { display: flex; flex-direction: column; gap: var(--ms-space-2); }
+.ms-how__title {
+  font-size: var(--ms-text-md);
+  font-weight: 800;
+  color: var(--ms-color-ink);
+  margin: 0;
+}
+.ms-how__text {
+  font-size: var(--ms-text-sm);
+  color: var(--ms-color-ink-soft);
+  line-height: var(--ms-leading-snug);
+  margin: 0;
+  max-width: 34ch;
+}
+
+.ms-examples {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-4);
+  border-top: 1px solid var(--ms-color-border);
+  padding-top: var(--ms-space-4);
+}
+.ms-examples__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--ms-space-2);
+}
+@media (min-width: 48em) {
+  .ms-examples__list { grid-template-columns: repeat(3, 1fr); gap: var(--ms-space-3); }
+}
+.ms-examples__row {
+  display: grid;
+  gap: var(--ms-space-1);
+  padding: var(--ms-space-3) var(--ms-space-4);
+  border-radius: var(--ms-radius-md);
+  background: var(--ms-color-surface-base);
+  box-shadow: var(--ms-shadow-sunken);
+}
+.ms-examples__home { font-size: var(--ms-text-sm); font-weight: 700; color: var(--ms-color-ink); }
+.ms-examples__basis { font-size: var(--ms-text-xs); color: var(--ms-color-ink-faint); }
+.ms-examples__price {
+  font-family: var(--ms-font-display);
+  font-size: var(--ms-text-lg);
+  font-weight: 800;
+  color: var(--ms-color-blue);
+  line-height: var(--ms-leading-tight);
+}
+.ms-examples__note { font-size: var(--ms-text-sm); color: var(--ms-color-ink-soft); margin: 0; }

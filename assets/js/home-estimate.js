@@ -1,4 +1,6 @@
-// assets/js/home-estimate.js — DOM wiring for the home page's price preview.
+// assets/js/home-estimate.js — DOM wiring for the price preview card, on the
+// home page's hero and at the top of pricing.html. One module, one set of
+// ids, so the two cards cannot price differently.
 //
 // Same split as quote-form.js: this file reads two selects and renders what
 // the engine returns. It never does arithmetic on a price, and it never

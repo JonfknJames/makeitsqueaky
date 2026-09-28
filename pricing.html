@@ -114,7 +114,87 @@
     <section class="ms-page-head" aria-labelledby="page-hero-heading">
       <div class="ms-container">
         <h1 id="page-hero-heading" class="ms-page-head__title">Pricing</h1>
-        <p class="ms-page-head__lead">Four services, priced by square footage, done by one set of hands. Exactly what each visit includes and what it costs — then the add-ons, the minimum job and travel.</p>
+        <p class="ms-page-head__lead">Four services, one set of hands, priced by the square foot. Get a starting figure for your home, see exactly what each visit includes and what it costs, then the add-ons, the minimum job and travel.</p>
+      </div>
+    </section>
+
+    <!-- The estimator, in the flow of the page rather than on a photograph.
+         Same form, same ids, same module as the home page's card
+         (assets/js/home-estimate.js), so the two can never price differently;
+         tests/site-structure.test.js holds the two <select>s byte-identical.
+         A page called Pricing that made the visitor leave to learn a price
+         would be a table of contents, not a pricing page. -->
+    <section class="ms-section ms-section--tight" aria-labelledby="quote-start-heading">
+      <div class="ms-container">
+        <form class="ms-quote-start ms-quote-start--page" id="quote-start" action="quote.html" method="get">
+          <h2 id="quote-start-heading" class="ms-quote-start__heading">What will it cost?</h2>
+
+          <div class="ms-quote-start__fields">
+            <div class="ms-field">
+              <label for="quote-service">Service</label>
+              <select id="quote-service" name="service">
+                  <option value="regular" selected>Regular Cleaning</option>
+                  <option value="deep">Deep Cleaning</option>
+                  <option value="moveInOut">Move-In / Move-Out Cleaning</option>
+                  <option value="postReno">Post-Renovation Cleaning</option>
+                </select>
+            </div>
+
+            <div class="ms-field">
+              <label for="quote-size">Home size</label>
+              <select id="quote-size" name="size">
+                  <option value="condo|1|1">One-bedroom condo</option>
+                  <option value="condo|2|1" selected>Two-bedroom condo</option>
+                  <option value="condo|3|2">Three-bedroom condo</option>
+                  <option value="townhouse|3|2">Three-bedroom townhouse</option>
+                  <option value="house|3|2">Three-bedroom house</option>
+                  <option value="house|4|3">Four-bedroom house</option>
+                </select>
+            </div>
+          </div>
+
+          <!-- Ships hidden and EMPTY, as on the home page: the only number this
+               card ever shows is one the engine just produced. -->
+          <div class="ms-quote-start__result" id="quote-start-result" role="status" aria-live="polite" hidden>
+            <p class="ms-quote-start__readout">
+              <span class="ms-quote-start__from">From</span>
+              <span class="ms-quote-start__amount" id="quote-start-amount"></span>
+              <span class="ms-quote-start__unit" id="quote-start-unit"></span>
+            </p>
+            <p class="ms-quote-start__basis" id="quote-start-basis"></p>
+          </div>
+
+          <button type="submit" class="ms-btn ms-btn--accent ms-btn--block ms-quote-start__submit">
+            Get your exact price
+          </button>
+          <p class="ms-quote-start__note">Takes about a minute. No account required.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- The three rules every number on this page follows. Stated once, up
+         front, so the rates, the examples and the fee tables below read as
+         one system rather than three lists. -->
+    <section class="ms-section ms-section--tight" aria-labelledby="how-heading">
+      <div class="ms-container">
+        <h2 id="how-heading" class="ms-how__eyebrow">How the price is worked out</h2>
+        <ol class="ms-how">
+          <li class="ms-how__step">
+            <span class="ms-card__num" aria-hidden="true">1</span>
+            <h3 class="ms-how__title">Rate × square footage</h3>
+            <p class="ms-how__text">Every service has a per-square-foot rate. Don't know your footage? The calculator estimates it from home type, bedrooms and bathrooms.</p>
+          </li>
+          <li class="ms-how__step">
+            <span class="ms-card__num" aria-hidden="true">2</span>
+            <h3 class="ms-how__title">Never below the minimum</h3>
+            <p class="ms-how__text">Small jobs are lifted to the minimum job $180 rather than billed at the raw rate.</p>
+          </li>
+          <li class="ms-how__step">
+            <span class="ms-card__num" aria-hidden="true">3</span>
+            <h3 class="ms-how__title">Add-ons and travel on top</h3>
+            <p class="ms-how__text">Extras you choose are added next, then any travel fee — after the minimum, never absorbed by it.</p>
+          </li>
+        </ol>
       </div>
     </section>
 
@@ -183,6 +263,14 @@
               <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v4.5M10 6.75v.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
               <p><strong>Not included:</strong> Regular cleaning does not include heavy buildup, detailed scrubbing, or inside appliances and cabinets.</p>
             </div>
+            <!-- Worked examples, filled by assets/js/service-examples.js from
+                 the rate card. Hidden and empty until then: no price is ever
+                 typed into this file. -->
+            <div class="ms-examples" data-service="regular" data-sizes="condo|2|1=Two-bedroom condo;townhouse|3|2=Three-bedroom townhouse;house|4|3=Four-bedroom house" hidden>
+              <p class="ms-service-panel__sub">Typical prices</p>
+              <ul class="ms-examples__list"></ul>
+              <p class="ms-examples__note">Before add-ons and travel. <a href="quote.html?service=regular">Price your home</a> for an exact figure.</p>
+            </div>
           </article>
 
           <article class="ms-service-panel" aria-labelledby="deep-heading">
@@ -206,6 +294,11 @@
               <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Removal of accumulated dust and dirt</li>
               <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Extra attention to buildup and neglected areas</li>
             </ul>
+            <div class="ms-examples" data-service="deep" data-sizes="condo|2|1=Two-bedroom condo;townhouse|3|2=Three-bedroom townhouse;house|4|3=Four-bedroom house" hidden>
+              <p class="ms-service-panel__sub">Typical prices</p>
+              <ul class="ms-examples__list"></ul>
+              <p class="ms-examples__note">Before add-ons and travel. <a href="quote.html?service=deep">Price your home</a> for an exact figure.</p>
+            </div>
           </article>
 
           <article class="ms-service-panel" aria-labelledby="moveinout-heading">
@@ -228,6 +321,11 @@
               <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Detailed cleaning of corners and hard-to-reach areas</li>
               <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Final detail inspection and finishing touches</li>
             </ul>
+            <div class="ms-examples" data-service="moveInOut" data-sizes="condo|2|1=Two-bedroom condo;townhouse|3|2=Three-bedroom townhouse;house|4|3=Four-bedroom house" hidden>
+              <p class="ms-service-panel__sub">Typical prices</p>
+              <ul class="ms-examples__list"></ul>
+              <p class="ms-examples__note">Before add-ons and travel. <a href="quote.html?service=moveInOut">Price your home</a> for an exact figure.</p>
+            </div>
           </article>
 
           <article class="ms-service-panel" aria-labelledby="postreno-heading">
@@ -253,6 +351,11 @@
             <div class="ms-note">
               <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v4.5M10 6.75v.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
               <p><strong>Note:</strong> additional charges may apply for heavy construction debris, paint splatter, drywall or mud residue, adhesive, grout or cement residue, stickers, or extensive window cleaning.</p>
+            </div>
+            <div class="ms-examples" data-service="postReno" data-sizes="condo|2|1=Two-bedroom condo;townhouse|3|2=Three-bedroom townhouse;house|4|3=Four-bedroom house" hidden>
+              <p class="ms-service-panel__sub">Typical prices</p>
+              <ul class="ms-examples__list"></ul>
+              <p class="ms-examples__note">Before add-ons and travel. <a href="quote.html?service=postReno">Price your home</a> for an exact figure.</p>
             </div>
           </article>
 
@@ -381,5 +484,7 @@
   </footer>
 
   <script type="module" src="assets/js/ui.js"></script>
+  <script type="module" src="assets/js/home-estimate.js"></script>
+  <script type="module" src="assets/js/service-examples.js"></script>
 </body>
 </html>
