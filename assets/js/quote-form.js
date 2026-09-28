@@ -22,12 +22,16 @@ const HOME_TYPE_LABELS = {
 // Plain-language, non-judgemental explanations for every reason the engine
 // can hand back. Never surfaces the internal reason key or her internal rate
 // floor to the customer — see tests/copy-rules.test.js.
+// Each condition line names the answer that caused it and where to change
+// it. "Homes that need a deeper reset get a quick look" left the visitor to
+// work out which of their answers had withdrawn the price, and that changing
+// it would bring the price back.
 const REASON_COPY = {
-  exceedsMaxSqFt: 'This home is larger than we can price automatically — Tiffany will confirm the details with you directly.',
+  exceedsMaxSqFt: 'This home is larger than we can price automatically for this service — Tiffany will confirm the details with you directly.',
   exceedsMaxAddOnUnits: 'That is more add-on work than we can price automatically — Tiffany will confirm the details with you directly.',
-  heavyGrime: 'Homes that need a deeper reset get a quick look first, so the price is right the first time.',
-  heavyPetHair: 'A heavier pet-hair job gets a quick look first, so the price is right the first time.',
-  heavyConstructionResidue: 'Construction residue varies a lot from job to job — Tiffany will confirm pricing after a look.',
+  heavyGrime: 'You answered Yes to heavy grime or buildup. Tiffany prices that after a quick look, so the price is right the first time. If that isn\'t right, change it in step 5.',
+  heavyPetHair: 'You answered Yes to heavier pet hair, so Tiffany prices this after a quick look. If that isn\'t right, change it in step 5.',
+  heavyConstructionResidue: 'You answered Yes to heavy construction residue, which varies a lot from job to job, so Tiffany confirms the price after a look. If that isn\'t right, change it in step 5.',
   // cabinets / wallWashing / appliances deliberately absent. They carry floor
   // prices on the rate card ($75+, $75+, $25+ each), so they no longer
   // suppress the price — they make it a "from" figure instead. See
@@ -175,8 +179,11 @@ function summarizeAddOns (addOns) {
 }
 
 function buildWhatsAppLink ({ service, sqFt, addOns, postalRaw, result, isQuoteOnly }) {
+  // "Arrange", not "book": the site gives a price and hands the visitor to
+  // Tiffany, who agrees the day with them. Nothing here books anything, and
+  // the booking terms on the pricing page say so.
   const lines = [
-    `Hi Tiffany! I'd like ${isQuoteOnly ? 'a quote for' : 'to book'}:`,
+    `Hi Tiffany! I'd like ${isQuoteOnly ? 'a quote for' : 'to arrange'}:`,
     `- Service: ${SERVICE_LABELS[service] || service}`,
     `- Approx. size: ${sqFt} sq ft`,
     `- Add-ons: ${summarizeAddOns(addOns)}`,
@@ -184,8 +191,8 @@ function buildWhatsAppLink ({ service, sqFt, addOns, postalRaw, result, isQuoteO
   if (postalRaw) lines.push(`- Postal code: ${postalRaw}`);
   if (!isQuoteOnly && result) {
     lines.push(result.isEstimate
-      ? `- Starting total: from ${money(result.total)} CAD (${result.unit} booking) — includes add-ons priced from a minimum`
-      : `- Estimated total: ${money(result.total)} CAD (${result.unit} booking)`);
+      ? `- Starting total: from ${money(result.total)} CAD (${result.unit} visit) — includes add-ons priced from a starting figure`
+      : `- Estimated total: ${money(result.total)} CAD (${result.unit} visit)`);
   }
   const text = lines.join('\n');
   // minimal: Phase 1 has no backend and no mail account, so the lead goes to
@@ -214,6 +221,12 @@ function ctaRow ({ whatsAppHref, whatsAppLabel }) {
   wa.target = '_blank';
   wa.rel = 'noopener noreferrer';
   wa.textContent = whatsAppLabel;
+  // It leaves the site for another app, in a new tab. Said for the screen
+  // reader, since the label already says WhatsApp for everyone else.
+  const hint = document.createElement('span');
+  hint.className = 'ms-visually-hidden';
+  hint.textContent = ' (opens in a new tab)';
+  wa.appendChild(hint);
   wrap.appendChild(wa);
 
   // Fallback for desktop visitors without WhatsApp. There IS an email address
@@ -251,16 +264,22 @@ function renderIncomplete (missing) {
   textWrap.appendChild(introP);
   const ul = document.createElement('ul');
   ul.className = 'ms-quote-outcome__reasons';
+  // Each missing answer is a link to its step. On a phone the panel is
+  // several screens below the form, so a plain "(step 2)" sent the visitor
+  // scrolling back up to find a numeral; the link puts them on the field.
   for (const item of missing) {
     const li = document.createElement('li');
-    li.textContent = item;
+    const a = document.createElement('a');
+    a.href = item.href;
+    a.textContent = item.text;
+    li.appendChild(a);
     ul.appendChild(li);
   }
   textWrap.appendChild(ul);
   note.appendChild(textWrap);
   summaryBody.appendChild(note);
 
-  announce(`Your price isn't ready yet. Still needed: ${missing.join('; ')}.`);
+  announce(`Your price isn't ready yet. Still needed: ${missing.map((m) => m.text).join('; ')}.`);
 }
 
 function renderPriced (result, ctx) {
@@ -303,26 +322,33 @@ function renderPriced (result, ctx) {
   wrap.appendChild(table);
   summaryBody.appendChild(wrap);
 
-  summaryBody.appendChild(noteEl(`This is a ${result.unit} booking.`));
+  summaryBody.appendChild(noteEl(`This is a ${result.unit} visit.`));
 
   // Named, not vague. "Some items are estimates" leaves the customer to guess
   // which ones, and a surprise on the invoice is how a good job turns into an
-  // argument.
+  // argument. Sentence case: the first label keeps its capital, the rest
+  // drop theirs, so two items read as one sentence and not as a list of
+  // headings. "Starting figure", not "minimum" — the $180 minimum job is a
+  // different thing and sits two panels away.
   if (result.isEstimate) {
-    const which = listSentence(result.fromPriced).toLowerCase();
-    const note = noteEl(`${which} ${result.fromPriced.length === 1 ? 'is' : 'are'} priced from a minimum — the amount above is a starting price, and Tiffany will confirm the final figure after a look. Nothing is charged until you both agree.`);
+    const which = listSentence(result.fromPriced.map((label, i) =>
+      i === 0 ? label : label.charAt(0).toLowerCase() + label.slice(1)));
+    const note = noteEl(`${which} ${result.fromPriced.length === 1 ? 'is' : 'are'} priced from a starting figure — the total above can only go up from here, and Tiffany confirms the final amount after a look. Nothing is charged until you both agree.`);
     note.dataset.testid = 'quote-from-notice';
     summaryBody.appendChild(note);
   }
 
+  // "Send", not "book" or "confirm": the button opens WhatsApp with the quote
+  // written out, and Tiffany agrees the day from there. The label says which
+  // app opens, because it leaves the site.
   summaryBody.appendChild(ctaRow({
     whatsAppHref: buildWhatsAppLink({ ...ctx, result, isQuoteOnly: false }),
-    whatsAppLabel: result.isEstimate ? 'Confirm via WhatsApp' : 'Book via WhatsApp',
+    whatsAppLabel: 'Send this quote to Tiffany on WhatsApp',
   }));
 
   announce(result.isEstimate
-    ? `Your starting price: from ${money(result.total)} ${result.currency}, a ${result.unit} booking. Some items are priced from a minimum.`
-    : `Your estimate: ${money(result.total)} ${result.currency}, a ${result.unit} booking.`);
+    ? `Your starting price: from ${money(result.total)} ${result.currency}, a ${result.unit} visit. Some items are priced from a starting figure.`
+    : `Your estimate: ${money(result.total)} ${result.currency}, a ${result.unit} visit.`);
 }
 
 function renderQuoteOnly (reasons, ctx) {
@@ -355,10 +381,10 @@ function renderQuoteOnly (reasons, ctx) {
 
   summaryBody.appendChild(ctaRow({
     whatsAppHref: buildWhatsAppLink({ ...ctx, result: null, isQuoteOnly: true }),
-    whatsAppLabel: 'Request your exact quote',
+    whatsAppLabel: 'Ask Tiffany for an exact quote on WhatsApp',
   }));
 
-  announce('We need a quick look before we can price this. Request your exact quote below.');
+  announce('We need a quick look before we can price this. Ask Tiffany for an exact quote below, or change the answer that needs the look.');
 }
 
 let pricing = null;
@@ -422,13 +448,16 @@ function recompute () {
   const conditions = readConditions();
 
   const missing = [];
-  if (!service) missing.push('Choose a service (step 1)');
-  if (!postal.complete) missing.push('Your postal code (step 2)');
-  if (sqFt <= 0) missing.push('Approximate square footage (step 3)');
+  if (!service) missing.push({ text: 'Choose a service (step 1)', href: '#quote-step-1' });
+  if (!postal.complete) missing.push({ text: 'Your postal code (step 2)', href: '#quote-step-2' });
+  if (sqFt <= 0) missing.push({ text: 'Approximate square footage (step 3)', href: '#quote-step-3' });
   if (conditions.unanswered > 0) {
-    missing.push(conditions.unanswered === 3
-      ? 'The three questions about the home (step 5)'
-      : `${conditions.unanswered} more question${conditions.unanswered === 1 ? '' : 's'} about the home (step 5)`);
+    missing.push({
+      text: conditions.unanswered === 3
+        ? 'The three questions about the home (step 5)'
+        : `${conditions.unanswered} more question${conditions.unanswered === 1 ? '' : 's'} about the home (step 5)`,
+      href: '#quote-step-5',
+    });
   }
 
   if (missing.length) {

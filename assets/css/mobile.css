@@ -119,7 +119,10 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
 
 .ms-hero__visual { gap: var(--ms-space-5); }
 
-.ms-hero__stat { margin-top: var(--ms-space-5); }
+/* Not shown on a phone. With it, "Get your exact price" landed about 30px
+   below an 844px fold — the one button the hero exists for, just out of
+   sight. The figure is on About and in the footer of every page. */
+.ms-hero__stat { display: none; }
 
 /* --------------------------------------------------------------------------
    Service tiles — 2012px, four cards deep, on the page a visitor lands on.
@@ -166,6 +169,10 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
   border-radius: var(--ms-radius-lg);
   line-height: var(--ms-leading-normal);
 }
+/* Three lines, no separators. As one sentence with " · " between the parts
+   it wrapped with a lone dot at a line end and a 40px gap under it. */
+.ms-services__note .ms-services__sep { display: none; }
+.ms-services__note .ms-services__part { display: block; }
 
 /* --------------------------------------------------------------------------
    Sections and headings.
@@ -195,7 +202,20 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
   min-width: 4.5rem;
 }
 
-.ms-option { min-height: 56px; padding: var(--ms-space-4); }
+/* Radio beside the name, not above it. As a flex column the input sat alone
+   on its own row over the service name, and the four service tiles ran to
+   about 500px of screen for four choices. Two columns: the control, then
+   everything else; the rate line drops under the name in the second column. */
+.ms-option {
+  min-height: 56px;
+  padding: var(--ms-space-4);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--ms-space-3);
+  row-gap: var(--ms-space-1);
+  align-items: center;
+}
+.ms-option .ms-option__meta { grid-column: 2; }
 .ms-option--compact { min-height: 48px; }
 .ms-addon-row { min-height: 56px; }
 .ms-toggle { min-height: 44px; align-items: center; }
@@ -329,6 +349,25 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
    -------------------------------------------------------------------------- */
 .ms-prose p { font-size: var(--ms-text-base); }
 .ms-info-grid { gap: var(--ms-space-5); }
+
+/* The estimate panel's table on a phone. The panel is about 340px wide and
+   the amount column carries "From $325 CAD" unbroken, so with 20px of cell
+   padding a side the item column was left about 70px and wrapped "Regular
+   Cleaning — 1000 sq ft" onto four lines in the one place that shows the
+   price. Tighter cells, and the amount column takes only what it needs. (The
+   table's own shadow is removed at every width in site.css.) */
+.ms-quote-summary .ms-table th,
+.ms-quote-summary .ms-table td { padding: var(--ms-space-3); }
+.ms-quote-summary .ms-table td:last-child,
+.ms-quote-summary .ms-table th:last-child { width: 1%; }
+
+/* The "still needed" items are links to their steps; each is its own tap
+   target, so it gets the full 44px like any other. */
+.ms-quote-outcome__reasons a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
 /* On a phone the portrait comes first: it introduces the person before her
    words, and it stops a 460px photo landing between the "See pricing" button
    and the Get in touch section it was pushing away. */
@@ -365,6 +404,19 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
 .ms-hero__visual { display: flex; flex-direction: column; }
 .ms-hero__visual .ms-quote-start { order: 1; }
 .ms-hero__visual .ms-hero__media { order: 2; }
+
+/* On a phone the photograph moves below the card, so the estimator no longer
+   sits ON the photo — it sat as a white raised card inside the white raised
+   hero panel, a card in a card. It is now a section of the hero panel: no
+   background or shadow of its own, a hairline above it (the one job borders
+   have in this system), square-cornered because it has no edge to round. */
+.ms-hero__visual .ms-quote-start {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  border-top: 1px solid var(--ms-color-border);
+  padding: var(--ms-space-5) 0 0;
+}
 
 /* 44px of headline is three lines of "Your home, squeaky clean." before the
    sentence explaining it. Two lines reads as a headline; three reads as a

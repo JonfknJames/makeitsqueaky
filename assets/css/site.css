@@ -810,9 +810,13 @@ button { font: inherit; }
   width: 20rem;
   height: 20rem;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--ms-color-gold) 0%, transparent 70%);
-  filter: blur(70px);
-  opacity: 0.35;
+  /* The warmth in the hero's top-right corner is the gradient itself, which
+     already fades to nothing by 70% of its radius. It used to carry a
+     filter: blur(70px) on top — the "glow halo" the house rules ban, and
+     the blur was doing nothing a wider stop could not. Same warmth, no
+     filter, no repaint cost on scroll. */
+  background: radial-gradient(circle, var(--ms-color-gold) 0%, rgba(255, 255, 255, 0) 72%);
+  opacity: 0.22;
   pointer-events: none;
 }
 
@@ -2173,7 +2177,24 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
    ("564-" / "2125") instead of the whole button dropping to its own row,
    which flex-wrap on the parent already handles once the label can't
    shrink internally. */
-.ms-quote-cta .ms-btn { flex: 1 1 12rem; white-space: nowrap; }
+.ms-quote-cta .ms-btn { flex: 1 1 100%; white-space: nowrap; }
+/* Stacked, one per row, at every width. The WhatsApp button's label is a
+   sentence ("Send this quote to Tiffany on WhatsApp"): under nowrap it made
+   a 390px page 405px wide, and once allowed to wrap it shared a row with the
+   phone-number button on desktop and was crushed into a three-line pill.
+   Full-basis buttons never share a row, so the sentence sits on one line at
+   desktop and wraps to two on a phone; the phone-number button keeps nowrap
+   so the number never splits. */
+.ms-quote-cta .ms-btn--accent { white-space: normal; text-align: center; }
+
+/* The estimate panel's table sits inside a raised panel, so it has no
+   shadow of its own at any width — a raised card inside a raised card is
+   the nested-card the design system forbids. Page-ground tint sets it in. */
+.ms-quote-summary .ms-table-wrap {
+  box-shadow: none;
+  background: var(--ms-color-surface-base);
+  border-radius: var(--ms-radius-md);
+}
 
 /* Note spacing moved out of here and up to the .ms-note block itself — the
    pricing page now stacks a note under a table in exactly the same way the
