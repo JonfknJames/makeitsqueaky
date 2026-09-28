@@ -310,8 +310,11 @@ function renderPriced (result, ctx) {
   totalLabel.textContent = result.isEstimate ? 'Starting total' : 'Total';
   const totalAmt = document.createElement('td');
   totalAmt.textContent = result.isEstimate
-    ? `From ${money(result.total)} ${result.currency}`
-    : `${money(result.total)} ${result.currency}`;
+    // No currency code on screen: every other price on the site is a bare
+    // dollar figure, and "CAD" appeared here alone. The message to Tiffany
+    // keeps it — a written record is where the currency earns its place.
+    ? `From ${money(result.total)}`
+    : money(result.total);
   // No accessible handle distinguishes "the running total" from any other
   // table cell — a minimal test hook for the e2e suite (tests/e2e).
   totalAmt.dataset.testid = 'quote-total';
@@ -347,8 +350,8 @@ function renderPriced (result, ctx) {
   }));
 
   announce(result.isEstimate
-    ? `Your starting price: from ${money(result.total)} ${result.currency}, a ${result.unit} visit. Some items are priced from a starting figure.`
-    : `Your estimate: ${money(result.total)} ${result.currency}, a ${result.unit} visit.`);
+    ? `Your starting price: from ${money(result.total)}, a ${result.unit} visit. Some items are priced from a starting figure.`
+    : `Your estimate: ${money(result.total)}, a ${result.unit} visit.`);
 }
 
 function renderQuoteOnly (reasons, ctx) {
