@@ -264,8 +264,15 @@ body {
   /* dot-grid texture — dark-on-light inversion of Call Rabbit's
      rgba(255,255,255,.03) at 24px; kept very low opacity so it reads as
      paper texture, never as clutter under the raised white surfaces. */
-  background-image: radial-gradient(circle, rgba(22, 50, 63, 0.06) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image:
+    radial-gradient(circle, rgba(22, 50, 63, 0.06) 1px, transparent 1px),
+    /* Lit from above. A soft white wash under the dots, centred on the top
+       edge and gone within the first screen, so the ground reads as the
+       well-lit room the system is named for rather than a flat sheet. A
+       plain gradient, no filter: same reasoning as the hero's corner tint. */
+    radial-gradient(ellipse 70% 34rem at 50% 0, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+  background-size: 24px 24px, 100% 100%;
+  background-repeat: repeat, no-repeat;
   /* Clears the fixed floating pill nav. The duck badge is the tallest thing
      in that pill at every breakpoint from 40em up, so this offset has to
      track the badge size, not a fixed guess — see the steps below, which
@@ -545,7 +552,10 @@ button { font: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  /* Visible, not hidden. The artwork is contained at 88% and never needed
+     clipping; what does need the room is the bubbles (see the Arrival
+     section at the end of this file), which rise out of the badge. */
+  overflow: visible;
   margin-inline-start: -0.375rem;
   z-index: 1;
 }
@@ -845,9 +855,12 @@ button { font: inherit; }
   color: var(--ms-color-ink);
 }
 
+/* 700, the same weight as every other lead on the site (.ms-section-lead,
+   .ms-page-head__lead) — it was the one lead at 600, which made four body
+   weights where the type scale allows three. One job, one weight. */
 .ms-hero__lead {
   font-size: var(--ms-text-md);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--ms-color-ink-soft);
   max-width: 38rem;
 }
@@ -1061,6 +1074,25 @@ button { font: inherit; }
   .ms-quote-start__heading { font-size: var(--ms-text-lg); }
 }
 
+/* Tablet (48em up to the 64em desktop split). The hero is still one column
+   here, so the estimator sat as a white raised card inside the white raised
+   hero panel — a card in a card. Same answer as the phone sheet gives: the
+   card goes first (visual order only; the DOM still reads heading, lead,
+   stat, photo, form), the photograph follows, and the card becomes a
+   section of the panel with a hairline above it instead of a surface of its
+   own. A tablet band, not a phone override — phones have their own file. */
+@media (min-width: 48em) and (max-width: 63.9375em) {
+  .ms-hero__visual .ms-quote-start { order: 1; }
+  .ms-hero__visual .ms-hero__media { order: 2; }
+  .ms-hero__visual .ms-quote-start {
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    border-top: 1px solid var(--ms-color-border);
+    padding: var(--ms-space-5) 0 0;
+  }
+}
+
 /* -------------------------------------------------------------------------
    Services — a four-up grid of raised tiles.
 
@@ -1204,7 +1236,7 @@ button { font: inherit; }
    read as one system. */
 .ms-service-tile .ms-card__desc {
   color: var(--ms-color-ink);
-  font-weight: 600;
+  font-weight: 700; /* the tile's lead sentence takes the lead weight, not a fourth one */
 }
 
 /* One column, always. .ms-check-list goes two-up at 48em because on
@@ -1553,32 +1585,6 @@ button { font: inherit; }
 .ms-section__head { max-width: 52rem; margin: 0 auto var(--ms-rhythm-related); text-align: center; }
 .ms-section__head .ms-section-heading { text-align: center; }
 .ms-section__head .ms-section-lead { max-width: 42rem; margin-inline: auto; }
-
-/* Duck watermark — the motif used as a quiet backdrop rather than another
-   sticker. One instance per page, on the flattest section (plain cards on
-   pale background), never behind text that needs to stay legible.
-   overflow:hidden on the section keeps the oversized mark from affecting
-   layout width; the container is re-lifted above it with z-index. */
-.ms-section--duck { position: relative; overflow: hidden; }
-.ms-section--duck::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: -5rem;
-  transform: translateY(-50%);
-  width: 24rem;
-  height: 24rem;
-  background: url('../img/duck@2x.webp') center / contain no-repeat;
-  /* Dropped from 0.05. The duck asset was re-cropped to its content, so the
-     same 24rem box now holds a duck roughly a third larger — at the old
-     opacity it stopped reading as texture and started reading as a smudge
-     behind the fourth rate card. A watermark that draws the eye has failed
-     at being a watermark. */
-  opacity: 0.03;
-  pointer-events: none;
-  z-index: 0;
-}
-.ms-section--duck > .ms-container { position: relative; z-index: 1; }
 
 /* Service detail panels (services.html) — stacked raised cards, each with
    a title/price header, an inclusion checklist and an optional note. */
@@ -2120,6 +2126,12 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
 }
 
 .ms-addon-row--counted { cursor: default; }
+/* A counted row has two halves — the choice and the count. Side by side the
+   choice's label wrapped ("Inside kitchen / appliances") even at 1440px,
+   because the count field takes a third of the row. The choice now has the
+   whole first line and the count the whole second, at every width; the two
+   counted rows read the same, rather than one fitting and one folding. */
+.ms-addon-row--counted .ms-addon-row__check { flex: 1 1 100%; }
 .ms-addon-row__check { display: flex; align-items: center; gap: var(--ms-space-2); cursor: pointer; flex: 1; min-width: 11rem; }
 .ms-addon-row__count-label { display: flex; align-items: center; gap: var(--ms-space-2); font-size: var(--ms-text-xs); color: var(--ms-color-ink-soft); }
 .ms-addon-row__count-label input {
@@ -2464,7 +2476,7 @@ html.ms-motion [data-ms-reveal].is-revealed {
 .ms-pricecard__title span {
   text-transform: none;
   letter-spacing: 0;
-  font-weight: 600;
+  font-weight: 400; /* the quiet half of the label: body weight, faint ink */
   color: var(--ms-color-ink-faint);
 }
 .ms-pricecard__title span::before { content: '\00a0\00a0·\00a0\00a0'; }
@@ -2689,3 +2701,152 @@ html.ms-motion [data-ms-reveal].is-revealed {
   line-height: var(--ms-leading-tight);
 }
 .ms-examples__note { font-size: var(--ms-text-sm); color: var(--ms-color-ink-soft); margin: 0; }
+/* The link is four words; on a phone it broke as "Get your exact / price."
+   under all four panels. A link is one thing, so it stays on one line. */
+.ms-examples__note a { white-space: nowrap; }
+
+/* ==========================================================================
+   Arrival — the first viewport settles into place.
+
+   The scroll reveal above handles content a visitor scrolls TO. This handles
+   the content they land ON: the hero's heading, lead and stat, then the photo,
+   then the price card; on interior pages the title, its lead, then the first
+   block. One settling motion, staggered by a few frames, in the same lighting
+   model as everything else — content arrives onto the page plane from very
+   slightly behind it (surfaces take a 2% scale with the rise; type takes the
+   rise alone, because scaling text under a reader's eye is a flicker, not an
+   arrival).
+
+   Scoped under html.ms-enter, which assets/js/boot.js adds from <head> BEFORE
+   first paint. That timing is the whole trick: a class added after paint
+   would show the page, hide it, and show it again. No boot.js, no class, no
+   animation — the page is simply there.
+
+   Individual transform properties (translate / scale), not `transform`. The
+   price card is centred on the photograph BY a transform at desktop width,
+   and the service tiles carry their tilt in one; an entrance written on
+   `transform` would overwrite either at the moment it ran. translate and
+   scale compose with transform instead of replacing it.
+
+   Fill-mode `both`: the element holds the first keyframe (hidden) during its
+   delay and the last (visible) forever after. The end state is exactly the
+   page as authored, so nothing here is ever required to read it — this
+   section cannot strand content, only delay its arrival by under a second.
+   ========================================================================== */
+:root { --ms-duration-arrive: 560ms; }
+
+@keyframes ms-arrive-text {
+  from { opacity: 0; translate: 0 0.75rem; }
+  to   { opacity: 1; translate: 0 0; }
+}
+
+@keyframes ms-arrive-surface {
+  from { opacity: 0; translate: 0 1rem; scale: 0.98; }
+  to   { opacity: 1; translate: 0 0; scale: 1; }
+}
+
+html.ms-enter .ms-hero__heading,
+html.ms-enter .ms-hero__lead,
+html.ms-enter .ms-hero__stat,
+html.ms-enter .ms-page-head__title,
+html.ms-enter .ms-page-head__lead {
+  animation: ms-arrive-text var(--ms-duration-arrive) var(--ms-ease-entrance) both;
+}
+
+html.ms-enter .ms-hero__inner,
+html.ms-enter .ms-hero__media,
+html.ms-enter .ms-quote-start,
+html.ms-enter .ms-arrive {
+  animation: ms-arrive-surface var(--ms-duration-arrive) var(--ms-ease-entrance) both;
+}
+
+/* The stagger. Short steps: past about 300ms of total spread a sequence stops
+   reading as one thing arriving and starts reading as a page loading slowly.
+   The hero PANEL arrives at 0ms with its heading — the review caught the
+   first version painting an empty white box for one beat before anything
+   in it; a stage without its players is the loading read this exists to
+   avoid. The last element lands at about 820ms. */
+html.ms-enter .ms-hero__lead,
+html.ms-enter .ms-page-head__lead { animation-delay: 70ms; }
+html.ms-enter .ms-hero__media { animation-delay: 100ms; }
+html.ms-enter .ms-hero__stat { animation-delay: 140ms; }
+html.ms-enter .ms-quote-start,
+html.ms-enter .ms-arrive { animation-delay: 180ms; }
+html.ms-enter .ms-arrive--late { animation-delay: 260ms; }
+
+/* --------------------------------------------------------------------------
+   The duck blows bubbles.
+
+   Once, on arrival, four small soap bubbles rise out of the logo badge and
+   fade — about two seconds, then still. Again whenever the pointer visits the
+   logo (assets/js/ui.js restarts the run with .is-bubbling). It is the brand
+   mark doing the one thing a rubber duck in a bath does, drawn in the wordmark
+   blue with a white glint; the whole thing is aria-hidden because it says
+   nothing.
+
+   Under five seconds and over by itself, so it needs no pause control; under
+   reduced motion the class that starts it is never added, and the guard below
+   covers a preference changed mid-visit. The badge's overflow is visible for
+   this — the artwork is contained at 88% and never needed clipping.
+   -------------------------------------------------------------------------- */
+.ms-logo__bubbles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ms-logo__bubbles i {
+  position: absolute;
+  left: 58%;
+  top: 16%;
+  width: max(0.3rem, 11%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  /* Wordmark blue, not the wordmark cyan: a soap bubble is a clear film with a
+     glint, and a thin blue-grey ring with a white highlight reads as one. The
+     cyan read as a tinted disc — and tripped the gate's cyan-accent tell. */
+  border: 1px solid rgba(60, 111, 146, 0.55);
+  background:
+    radial-gradient(circle at 32% 30%, rgba(255, 255, 255, 0.95) 0 22%, rgba(255, 255, 255, 0) 26%),
+    radial-gradient(circle, rgba(60, 111, 146, 0.1) 0 58%, rgba(60, 111, 146, 0) 72%);
+  opacity: 0;
+  --ms-bubble-x: 0.25rem;
+  --ms-bubble-rise: -1.9rem;
+  --ms-bubble-delay: 300ms;
+}
+.ms-logo__bubbles i:nth-child(2) { left: 70%; top: 26%; width: max(0.3rem, 8%); --ms-bubble-x: 0.55rem; --ms-bubble-rise: -1.5rem; --ms-bubble-delay: 520ms; }
+.ms-logo__bubbles i:nth-child(3) { left: 46%; top: 8%; width: max(0.3rem, 10%); --ms-bubble-x: -0.2rem; --ms-bubble-rise: -2.2rem; --ms-bubble-delay: 760ms; }
+.ms-logo__bubbles i:nth-child(4) { left: 76%; top: 12%; width: max(0.3rem, 6%); --ms-bubble-x: 0.4rem; --ms-bubble-rise: -1.7rem; --ms-bubble-delay: 980ms; }
+
+@keyframes ms-bubble {
+  0%   { opacity: 0; translate: 0 0.2rem; scale: 0.5; }
+  18%  { opacity: 0.95; scale: 1; }
+  80%  { opacity: 0.8; }
+  100% { opacity: 0; translate: var(--ms-bubble-x) var(--ms-bubble-rise); scale: 1.05; }
+}
+
+/* :not(.ms-entered) retires the arrival run once it has played, so that a
+   later hover run (same keyframes, restarted by the class toggle in ui.js)
+   can start from rest instead of finding the animation already finished. */
+html.ms-enter:not(.ms-entered) .ms-logo__bubbles i,
+.ms-logo__bubbles.is-bubbling i {
+  animation: ms-bubble 1.9s var(--ms-ease) var(--ms-bubble-delay) both;
+}
+
+/* The belt to boot.js's braces: the preference flipped after the class was
+   added. Everything arrives at once, and the duck keeps its bubbles to itself. */
+@media (prefers-reduced-motion: reduce) {
+  html.ms-enter .ms-hero__heading,
+  html.ms-enter .ms-hero__lead,
+  html.ms-enter .ms-hero__stat,
+  html.ms-enter .ms-page-head__title,
+  html.ms-enter .ms-page-head__lead,
+  html.ms-enter .ms-hero__inner,
+  html.ms-enter .ms-hero__media,
+  html.ms-enter .ms-quote-start,
+  html.ms-enter .ms-arrive,
+  html.ms-enter .ms-logo__bubbles i,
+  .ms-logo__bubbles.is-bubbling i {
+    animation: none;
+  }
+}

@@ -25,6 +25,29 @@ const basisEl = document.getElementById('quote-start-basis');
 
 const money = (n) => `$${Math.round(n).toLocaleString('en-CA')}`;
 
+// A figure that changes under the visitor's eye settles into place instead of
+// snapping: a 360ms rise-and-fade on the number itself, on the entrance curve,
+// nothing else. Motion that explains a state change — the price moved because
+// you changed something — not decoration. Web Animations rather than a class
+// and a stylesheet rule, so there is no state that could leave the figure
+// hidden: an engine without it simply shows the new number. Honours reduced
+// motion the same way ui.js does.
+const settleMotion = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+  ? window.matchMedia('(prefers-reduced-motion: reduce)')
+  : { matches: true };
+
+function settle (el) {
+  if (settleMotion.matches || typeof el.animate !== 'function') return;
+  el.animate(
+    [{ opacity: 0.25, transform: 'translateY(0.3em)' }, { opacity: 1, transform: 'none' }],
+    { duration: 360, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
+  );
+}
+
+// The last figure shown, so the settle runs on a CHANGE and not on the first
+// render — the card arriving with its number is the entrance's job.
+let lastAmount = null;
+
 let pricing = null;
 
 function render () {
@@ -59,7 +82,10 @@ function render () {
     return;
   }
 
-  amountEl.textContent = money(estimate.total);
+  const amount = money(estimate.total);
+  amountEl.textContent = amount;
+  if (lastAmount !== null && lastAmount !== amount) settle(amountEl);
+  lastAmount = amount;
   unitEl.textContent = `${estimate.unit} visit`;
   basisEl.textContent =
     `Based on about ${sqFt.toLocaleString('en-CA')} sq ft, before add-ons and travel.`;

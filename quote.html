@@ -21,6 +21,7 @@
   <link rel="icon" href="assets/img/duck.webp" type="image/webp">
   <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/mobile.css" media="screen and (max-width: 767px)">
+  <script src="assets/js/boot.js"></script>
 </head>
 <body>
   <a class="ms-skip-link" href="#main">Skip to content</a>
@@ -36,6 +37,7 @@
             sizes="96px"
             width="220" height="220"
             alt="">
+          <span class="ms-logo__bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
         </span>
         <img
           class="ms-logo__word"
@@ -83,7 +85,7 @@
     <section class="ms-section" aria-label="Your details">
       <div class="ms-container">
         <div class="ms-info-grid">
-          <form class="ms-quote-form" id="quote-form" novalidate>
+          <form class="ms-quote-form ms-arrive" id="quote-form" novalidate>
 
             <fieldset class="ms-service-panel ms-quote-step" id="quote-step-1">
               <legend class="ms-quote-step__legend"><span class="ms-card__num" aria-hidden="true">1</span> Service</legend>
@@ -245,7 +247,7 @@
             </fieldset>
           </form>
 
-          <aside class="ms-quote-summary" id="quote-summary" aria-labelledby="quote-summary-heading">
+          <aside class="ms-quote-summary ms-arrive ms-arrive--late" id="quote-summary" aria-labelledby="quote-summary-heading">
             <h2 id="quote-summary-heading" class="ms-quote-summary__heading">Your estimate</h2>
             <!-- Not a live region: this panel re-renders on every keystroke,
                  so announcing it would repeat the whole price table per

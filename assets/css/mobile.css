@@ -507,6 +507,18 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
 
 .ms-jump ul::-webkit-scrollbar { display: none; }
 
+/* The section after the jump row keeps a full section gap above it, and the
+   row itself is not content, so step 3's last line to "Regular Cleaning"
+   measured 156px of nothing — past the 128px a phone allows. The row is the
+   seam; the panel below it sits one tight step under it. */
+.ms-jump + .ms-section { padding-top: var(--ms-space-4); }
+
+/* The table label's qualifier ("· worked out for you") wrapped to an orphan
+   "for you" beside the uppercase label. On a phone it takes its own line,
+   without the separator that only made sense inline. */
+.ms-pricecard__title span { display: block; }
+.ms-pricecard__title span::before { content: none; }
+
 /* space-3 rather than space-4: four chips at 16px of side padding measured
    388px of content against 342px of screen. Trimming 4px a side gives back
    32px, so on a normal phone the row is now a nudge from fitting rather than

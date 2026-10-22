@@ -21,6 +21,7 @@
   <link rel="icon" href="assets/img/duck.webp" type="image/webp">
   <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/mobile.css" media="screen and (max-width: 767px)">
+  <script src="assets/js/boot.js"></script>
   <!-- The rate card, machine-readable, beside the page that publishes it for
        people. Same rule as the visible copy: tests/copy-rules.test.js parses
        this block and fails the build if any figure disagrees with
@@ -79,6 +80,7 @@
             sizes="96px"
             width="220" height="220"
             alt="">
+          <span class="ms-logo__bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
         </span>
         <img
           class="ms-logo__word"
@@ -176,7 +178,7 @@
     <!-- The three rules every number on this page follows. Stated once, up
          front, so the rates, the examples and the fee tables below read as
          one system rather than three lists. -->
-    <section class="ms-section ms-section--tight" aria-labelledby="how-heading">
+    <section class="ms-section ms-section--tight ms-arrive ms-arrive--late" aria-labelledby="how-heading">
       <div class="ms-container">
         <h2 id="how-heading" class="ms-how__eyebrow">How the price is worked out</h2>
         <ol class="ms-how">
@@ -214,7 +216,7 @@
           <li><a href="#regular-heading">Regular</a></li>
           <li><a href="#deep-heading">Deep</a></li>
           <li><a href="#moveinout-heading">Move-in / out</a></li>
-          <li><a href="#postreno-heading">Post-reno</a></li>
+          <li><a href="#postreno-heading">Post-renovation</a></li>
           <li><a href="#fees-heading">Add-ons &amp; fees</a></li>
         </ul>
       </div>
@@ -293,7 +295,7 @@
               <h2 id="moveinout-heading" class="ms-service-panel__title">Move-In / Move-Out Cleaning</h2>
               <p class="ms-card__price"><span class="ms-card__price-amt">$0.65</span><span class="ms-card__price-unit">/ sq ft · full day</span></p>
             </div>
-            <p class="ms-service-panel__lead">Designed to leave a property exceptionally clean and ready for a new occupant or buyer.</p>
+            <p class="ms-service-panel__lead">Designed to leave an empty property clean to the last corner, ready for a new occupant or buyer.</p>
             <p class="ms-service-panel__sub">Everything in Deep, plus</p>
             <ul class="ms-check-list">
               <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5 8 14.5 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Detailed cleaning of empty rooms</li>
@@ -356,7 +358,7 @@
          was included; the two pages each ended by linking to the other.
          Two panels, not one ledger: add-ons are chosen, the minimum and travel
          are not, and the split says so. -->
-    <section class="ms-section ms-section--duck" aria-labelledby="fees-heading">
+    <section class="ms-section" aria-labelledby="fees-heading">
       <div class="ms-container">
         <div class="ms-section__head">
           <h2 id="fees-heading" class="ms-section-heading">Add-ons, minimum &amp; travel</h2>

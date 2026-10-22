@@ -46,6 +46,29 @@ const REASON_COPY = {
 
 const money = (n) => `$${Math.round(n).toLocaleString('en-CA')}`;
 
+// A figure that changes under the visitor's eye settles into place instead of
+// snapping: a 360ms rise-and-fade on the number itself, on the entrance curve,
+// nothing else. Motion that explains a state change — the price moved because
+// you changed something — not decoration. Web Animations rather than a class
+// and a stylesheet rule, so there is no state that could leave the figure
+// hidden: an engine without it simply shows the new number. Honours reduced
+// motion the same way ui.js does.
+const settleMotion = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+  ? window.matchMedia('(prefers-reduced-motion: reduce)')
+  : { matches: true };
+
+function settle (el) {
+  if (settleMotion.matches || typeof el.animate !== 'function') return;
+  el.animate(
+    [{ opacity: 0.25, transform: 'translateY(0.3em)' }, { opacity: 1, transform: 'none' }],
+    { duration: 360, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
+  );
+}
+
+// The last total shown. Null whenever the panel is not showing a price, so
+// a price that reappears settles even if it is the same figure as before.
+let lastTotal = null;
+
 // "a, b" reads as a broken sentence in prose — the list here is spoken aloud
 // by a screen reader and read as a sentence by everyone else, so it needs the
 // conjunction. No Oxford comma at two items; one at three or more.
@@ -248,6 +271,7 @@ function ctaRow ({ whatsAppHref, whatsAppLabel }) {
 // half-filled form and a firm, bookable total, so every missing answer is
 // named plainly rather than the price simply not showing up.
 function renderIncomplete (missing) {
+  lastTotal = null;
   summaryBody.innerHTML = '';
 
   const heading = document.createElement('p');
@@ -295,7 +319,9 @@ function renderPriced (result, ctx) {
   for (const item of result.lineItems) {
     const tr = document.createElement('tr');
     const tdLabel = document.createElement('td');
-    tdLabel.textContent = item.label;
+    // "1400 sq ft" broke as "1400 sq / ft" in the phone summary; the figure
+    // and its unit are one token. Display only — the message keeps plain spaces.
+    tdLabel.textContent = item.label.replace(/(\d) sq ft/g, '$1\u00a0sq\u00a0ft');
     const tdAmt = document.createElement('td');
     // A floor reads "From $75" on its own row, so the line the customer can
     // point at carries the caveat — not just a footnote under the total.
@@ -318,12 +344,18 @@ function renderPriced (result, ctx) {
   // No accessible handle distinguishes "the running total" from any other
   // table cell — a minimal test hook for the e2e suite (tests/e2e).
   totalAmt.dataset.testid = 'quote-total';
+  // Decided here, run below: a Web Animation on an element that is not yet in
+  // the document never plays (measured: zero animations on the figure), so
+  // the settle waits until the table has been appended.
+  const totalChanged = lastTotal !== null && lastTotal !== result.total;
+  lastTotal = result.total;
   totalRow.append(totalLabel, totalAmt);
   tbody.appendChild(totalRow);
 
   table.appendChild(tbody);
   wrap.appendChild(table);
   summaryBody.appendChild(wrap);
+  if (totalChanged) settle(totalAmt);
 
   summaryBody.appendChild(noteEl(`This is a ${result.unit} visit.`));
 
@@ -355,6 +387,7 @@ function renderPriced (result, ctx) {
 }
 
 function renderQuoteOnly (reasons, ctx) {
+  lastTotal = null;
   summaryBody.innerHTML = '';
 
   const heading = document.createElement('p');

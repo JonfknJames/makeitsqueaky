@@ -305,6 +305,33 @@
   }
 
   // ------------------------------------------------------------------------
+  // The duck blows bubbles.
+  //
+  // The arrival run is pure CSS (html.ms-enter, added by boot.js before first
+  // paint). This block does two small things around it. First, when the last
+  // bubble of that run finishes, it retires the run with html.ms-entered so
+  // the rule that started it stops matching — otherwise a later hover run,
+  // which uses the same keyframes, would find the animation already finished
+  // and nothing would move. Second, it restarts the run when the pointer
+  // visits the logo: remove the class, force one style read so the removal
+  // lands, add it back. The reflow is the point, not a side effect.
+  // ------------------------------------------------------------------------
+  const logo = document.querySelector('.ms-logo');
+  const bubbles = logo && logo.querySelector('.ms-logo__bubbles');
+
+  if (bubbles && bubbles.lastElementChild) {
+    bubbles.lastElementChild.addEventListener('animationend', () => {
+      root.classList.add('ms-entered');
+    });
+
+    logo.addEventListener('pointerenter', () => {
+      bubbles.classList.remove('is-bubbling');
+      void bubbles.offsetWidth;
+      bubbles.classList.add('is-bubbling');
+    });
+  }
+
+  // ------------------------------------------------------------------------
   // A visitor who turns reduced motion ON mid-visit gets it honoured now,
   // not on their next page load. Removing the class re-shows anything the
   // observer has not reached; the CSS block guarded by the same preference
