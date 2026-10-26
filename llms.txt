@@ -8,7 +8,7 @@ Services: Regular Cleaning (upkeep for a home already in good order); Deep Clean
 
 How a quote works: the quote form asks for the service, the postal code, the approximate square footage (or estimates it from home type, bedrooms and bathrooms), any add-ons, and three questions about the home — heavy grime or buildup, more pet hair than usual, heavy construction residue — then sends the request to Tiffany on WhatsApp. No price is shown on the site: Tiffany quotes every job herself and comes back to the customer. Nothing is booked or paid for on the site.
 
-Booking terms: no deposit is taken today and there is no cancellation charge today. When online booking opens, a 50% deposit for full-day cleans and a 48-hour cancellation window take effect.
+Booking terms: no deposit is taken and there is no cancellation charge. Nothing is booked or paid for on the site; the customer arranges the day with Tiffany directly.
 
 Contact: phone/text +1 (416) 564-2125, email tiffanypoerazoff10@gmail.com.
 
@@ -18,4 +18,4 @@ Contact: phone/text +1 (416) 564-2125, email tiffanypoerazoff10@gmail.com.
 - [Get a quote](https://makeitsqueaky.com/quote.html): Describe the home — service, postal code, square footage or a bedroom/bathroom estimate, add-ons, a few condition questions — and send it to Tiffany.
 - [Services](https://makeitsqueaky.com/services.html): What each of the four cleans includes, the add-ons, the service area, and the booking terms.
 - [About](https://makeitsqueaky.com/about.html): Background on Tiffany and how the business operates, then how to reach her.
-- [Booking terms](https://makeitsqueaky.com/services.html#terms-heading): Service area, deposit and cancellation — what applies today and what changes when online booking opens.
+- [Booking terms](https://makeitsqueaky.com/services.html#terms-heading): Service area, and what applies to a booking: no deposit, no cancellation charge.
