@@ -1,25 +1,21 @@
 # Make it Squeaky
 
-> Residential cleaning in Toronto, run by Tiffany. Over a decade of professional cleaning experience, one set of hands on every job — no crews, no subcontractors. Regular, deep, move-in/move-out, and post-renovation cleaning, priced instantly from square footage.
+> Residential cleaning in the City of Toronto, run by Tiffany. Over a decade of professional cleaning experience, one set of hands on every job — no crews, no subcontractors. Regular, deep, move-in/move-out and post-renovation cleaning, each job quoted personally.
 
-Service area: City of Toronto (every postal code starting with M) at no travel fee. Travel fees beyond it: inner GTA $35 (postal codes starting L3, L4 or L5); outer GTA $60 (L1, L6 or L7). The fee is derived from the postal code and added after the minimum job price, never absorbed by it.
+Service area: the City of Toronto (every postal code starting with M). Just outside the city, in the GTA, is by request — Tiffany sometimes travels for a fee agreed with the customer beforehand.
 
-Services and rates, per square foot, CAD: Regular Cleaning $0.25 (half-day); Deep Cleaning $0.40 (full-day); Move-In / Move-Out Cleaning $0.65 (full-day); Post-Renovation Cleaning $0.75 (full-day). Quoted by approximate square footage, or estimated from home type, bedrooms and bathrooms if the exact figure isn't known. Minimum job price $180 — small jobs are floored at the minimum, not billed at the raw rate.
+Services: Regular Cleaning (upkeep for a home already in good order); Deep Cleaning (everything in Regular, plus detailed scrubbing, baseboards, trim, soap scum and buildup); Move-In / Move-Out Cleaning (everything in Deep, plus closets, shelves, sills and tracks, for an empty property); Post-Renovation Cleaning (fine construction dust and light residue after the trades have gone). Add-ons available on any clean: inside oven, inside refrigerator, interior windows, inside cabinets and drawers, wall washing, inside kitchen appliances.
 
-Add-ons: inside oven $50 and inside refrigerator $50 are fixed. Interior windows are $10 per window. Inside cabinets and drawers and wall washing start from $75 each, and inside kitchen appliances start from $25 per appliance — those three are starting prices, confirmed after a look. Heavy grime or excessive buildup, heavy pet hair, and heavy construction residue are not priced automatically; Tiffany confirms these in person so the price is right the first time.
+How a quote works: the quote form asks for the service, the postal code, the approximate square footage (or estimates it from home type, bedrooms and bathrooms), any add-ons, and three questions about the home — heavy grime or buildup, more pet hair than usual, heavy construction residue — then sends the request to Tiffany on WhatsApp. No price is shown on the site: Tiffany quotes every job herself and comes back to the customer. Nothing is booked or paid for on the site.
 
-No online payment in this phase — quotes are followed up by phone or message. No deposit is taken today and there is no cancellation charge today; a 50% deposit for full-day services and a 48-hour cancellation window take effect only when online booking opens.
+Booking terms: no deposit is taken today and there is no cancellation charge today. When online booking opens, a 50% deposit for full-day cleans and a 48-hour cancellation window take effect.
 
 Contact: phone/text +1 (416) 564-2125, email tiffanypoerazoff10@gmail.com.
 
 ## Key Pages
 
-- [Home](https://makeitsqueaky.com/): Overview of the business, service list, and the fastest path to a quote.
-- [Get Your Price](https://makeitsqueaky.com/quote.html): Instant quote calculator — service type, postal code, square footage (or a bedroom/bathroom estimate), add-ons, and a few condition questions produce a live price.
-- [Pricing](https://makeitsqueaky.com/pricing.html): Services and pricing on one page — a quick estimator (service and home size give a starting price), how the price is worked out, what's included in each of the four cleaning types with its per-square-foot rate and typical prices for common home sizes, then add-on prices, the minimum job, travel fees, and the booking terms.
-- [About](https://makeitsqueaky.com/about.html): Background on Tiffany and how the business operates, then how to reach her — phone, email, service area, and a link to start a quote online.
-- [Booking terms](https://makeitsqueaky.com/pricing.html#terms-heading): Deposit and cancellation, on the pricing page — what applies today and what changes when online booking opens.
-
-## Data
-
-- [Rate card (JSON)](https://makeitsqueaky.com/data/pricing.json): The machine-readable source every published price on the site is checked against — rates, add-ons, minimum, travel zones by postal prefix, and the square-footage estimator.
+- [Home](https://makeitsqueaky.com/): Overview of the business, the four cleans, and the start of a quote.
+- [Get a quote](https://makeitsqueaky.com/quote.html): Describe the home — service, postal code, square footage or a bedroom/bathroom estimate, add-ons, a few condition questions — and send it to Tiffany.
+- [Services](https://makeitsqueaky.com/services.html): What each of the four cleans includes, the add-ons, the service area, and the booking terms.
+- [About](https://makeitsqueaky.com/about.html): Background on Tiffany and how the business operates, then how to reach her.
+- [Booking terms](https://makeitsqueaky.com/services.html#terms-heading): Service area, deposit and cancellation — what applies today and what changes when online booking opens.

@@ -127,7 +127,7 @@
   // pages need no markup change and cannot drift out of sync with each other.
   // The exclusions matter: the quote summary re-renders its notes on every
   // keystroke, and a fresh element carrying the hidden state would flicker the
-  // customer's own price at them while they type.
+  // customer's own request at them while they type.
   // ------------------------------------------------------------------------
   // This list is markup, and markup moves. Measured across all eight pages
   // before this edit: pricing, policies and 404 marked ZERO elements, and
@@ -152,9 +152,7 @@
     '.ms-services__note',
     '.ms-prose',
     // Added: the block components the current markup is actually built from.
-    '.ms-service-panel', // services + policies — 8 blocks that never moved
-    '.ms-rates', // pricing: the four-rate band
-    '.ms-pricecard', // pricing: add-ons / minimum panels
+    '.ms-service-panel', // services: the four panels, the add-ons, area and terms
     '.ms-cta-panel', // the closing gold band, incl. 404
     '.ms-portrait', // about: Tiffany's photo
   ].join(',');
@@ -271,7 +269,7 @@
   //
   // There was one here: the photo and the quote card tracked the pointer by
   // different amounts to fake depth. It was removed because it was disruptive
-  // in use — the card carries the price and two selects the visitor is
+  // in use — the card carries two selects and a button the visitor is
   // actively reading and clicking, and moving a control while someone is
   // trying to aim at it makes the page feel unstable rather than deep.
   //

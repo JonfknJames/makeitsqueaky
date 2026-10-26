@@ -1,17 +1,17 @@
-// assets/js/quote-form.js — DOM wiring only. All pricing logic lives in the
-// pure modules (quote.js, area.js, estimator.js). This file never does
-// arithmetic on a price — it reads the form, calls the engine, and renders
-// whatever the engine returns.
-import { quote } from './quote.js';
-import { travelZone } from './area.js';
+// assets/js/quote-form.js — DOM wiring for the quote request.
+//
+// The form collects what Tiffany needs to quote a job — service, where, how
+// big, extras, and three questions about the home's condition — and hands it
+// to her on WhatsApp, written out. It shows NO price: Tiffany quotes every
+// job personally (her decision, 2026-10-26, recorded in PRODUCT.md), and the
+// rate card is hers, not the browser's. Nothing in this file, or in anything
+// the browser downloads, knows what a clean costs.
+//
+// Pure helpers do the two pieces of real logic: area.js places the postal
+// code, estimator.js turns room counts into square footage. This file reads
+// the form, calls them, and renders.
+import { serviceArea } from './area.js';
 import { estimateSqFt, decodeSize } from './estimator.js';
-
-const SERVICE_LABELS = {
-  regular: 'Regular Cleaning',
-  deep: 'Deep Cleaning',
-  moveInOut: 'Move-In / Move-Out Cleaning',
-  postReno: 'Post-Renovation Cleaning',
-};
 
 const HOME_TYPE_LABELS = {
   condo: 'condo/apartment',
@@ -19,71 +19,11 @@ const HOME_TYPE_LABELS = {
   house: 'house',
 };
 
-// Plain-language, non-judgemental explanations for every reason the engine
-// can hand back. Never surfaces the internal reason key or her internal rate
-// floor to the customer — see tests/copy-rules.test.js.
-// Each condition line names the answer that caused it and where to change
-// it. "Homes that need a deeper reset get a quick look" left the visitor to
-// work out which of their answers had withdrawn the price, and that changing
-// it would bring the price back.
-const REASON_COPY = {
-  exceedsMaxSqFt: 'This home is larger than we can price automatically for this service — Tiffany will confirm the details with you directly.',
-  exceedsMaxAddOnUnits: 'That is more add-on work than we can price automatically — Tiffany will confirm the details with you directly.',
-  heavyGrime: 'You answered Yes to heavy grime or buildup. Tiffany prices that after a quick look, so the price is right the first time. If that isn\'t right, change it in step 5.',
-  heavyPetHair: 'You answered Yes to heavier pet hair, so Tiffany prices this after a quick look. If that isn\'t right, change it in step 5.',
-  heavyConstructionResidue: 'You answered Yes to heavy construction residue, which varies a lot from job to job, so Tiffany confirms the price after a look. If that isn\'t right, change it in step 5.',
-  // cabinets / wallWashing / appliances deliberately absent. They carry floor
-  // prices on the rate card ($75+, $75+, $25+ each), so they no longer
-  // suppress the price — they make it a "from" figure instead. See
-  // quote.js's `from` flag and renderPriced() below.
-  unknownZone: "This postal code isn't in our mapped service area yet — Tiffany will confirm travel and pricing with you personally.",
-  invalidFormat: "We couldn't read that postal code — Tiffany will confirm travel and pricing with you personally.",
-  // The browser never asks the engine to price an undecided prefix (see
-  // updatePostalStatus), so this line is for the Phase 2 server, which prices
-  // whatever it is sent and needs a sentence for every verdict.
-  incompletePostalCode: 'We need a little more of that postal code to place the travel zone — Tiffany will confirm travel and pricing with you personally.',
-};
-
-const money = (n) => `$${Math.round(n).toLocaleString('en-CA')}`;
-
-// A figure that changes under the visitor's eye settles into place instead of
-// snapping: a 360ms rise-and-fade on the number itself, on the entrance curve,
-// nothing else. Motion that explains a state change — the price moved because
-// you changed something — not decoration. Web Animations rather than a class
-// and a stylesheet rule, so there is no state that could leave the figure
-// hidden: an engine without it simply shows the new number. Honours reduced
-// motion the same way ui.js does.
-const settleMotion = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-  ? window.matchMedia('(prefers-reduced-motion: reduce)')
-  : { matches: true };
-
-function settle (el) {
-  if (settleMotion.matches || typeof el.animate !== 'function') return;
-  el.animate(
-    [{ opacity: 0.25, transform: 'translateY(0.3em)' }, { opacity: 1, transform: 'none' }],
-    { duration: 360, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
-  );
-}
-
-// The last total shown. Null whenever the panel is not showing a price, so
-// a price that reappears settles even if it is the same figure as before.
-let lastTotal = null;
-
-// "a, b" reads as a broken sentence in prose — the list here is spoken aloud
-// by a screen reader and read as a sentence by everyone else, so it needs the
-// conjunction. No Oxford comma at two items; one at three or more.
-function listSentence (items) {
-  if (items.length <= 1) return items[0] ?? '';
-  if (items.length === 2) return `${items[0]} and ${items[1]}`;
-  return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
-}
-
 // Elements (all present in quote.html — see markup for ids).
 const form = document.getElementById('quote-form');
 const summaryBody = document.getElementById('quote-summary-body');
 
 const postalInput = document.getElementById('quote-postal');
-const postalStatus = document.getElementById('postal-status');
 const postalStatusText = document.getElementById('postal-status-text');
 
 const sqftInput = document.getElementById('quote-sqft');
@@ -100,19 +40,15 @@ const windowsCount = document.getElementById('addon-windows-count');
 const appliancesToggle = document.getElementById('addon-appliances');
 const appliancesCount = document.getElementById('addon-appliances-count');
 
-// The summary re-renders on every keystroke, so the summary panel itself is
-// NOT a live region — announcing the whole price table per character is
-// unusable with a screen reader. One short debounced sentence goes here
-// instead, once the typing settles.
+// The summary re-renders on every keystroke, so the panel itself is NOT a
+// live region — announcing the whole thing per character is unusable with a
+// screen reader. One short debounced sentence goes here instead.
 const liveRegion = document.getElementById('quote-live');
 
-// The phone price bar (quote.html, mobile.css). The estimate panel sits
-// several screens below the last question at phone width, so the bar mirrors
-// the panel's one-line state and jumps to it. It is hidden while the panel
-// itself is on screen: it must never cover the thing it points at, nor the
-// footer beneath. site.css keeps it display:none at desktop width, so on a
-// wide screen these calls update text nobody is shown — cheap, and simpler
-// than branching on viewport width in two places.
+// The phone bar (quote.html, mobile.css). The summary panel sits several
+// screens below the last question at phone width, so the bar mirrors its
+// one-line state and jumps to it. Hidden while the panel itself is on screen.
+// site.css keeps it display:none at desktop width.
 const bar = document.getElementById('quote-bar');
 const barLabel = document.getElementById('quote-bar-label');
 const barValue = document.getElementById('quote-bar-value');
@@ -126,8 +62,7 @@ function setBar (label, value) {
 
 // Rect maths on a rAF-throttled scroll handler, not IntersectionObserver —
 // the same reasoning as the reveal in ui.js: measured on WebKit, the observer
-// reported elements squarely in view as not intersecting. A control that
-// decides what the visitor can see has to be right on every engine.
+// reported elements squarely in view as not intersecting.
 let barFrame = 0;
 function syncBar () {
   if (!bar || !summaryPanel) return;
@@ -138,9 +73,9 @@ function scheduleBarSync () {
   if (barFrame) return;
   barFrame = window.requestAnimationFrame(() => { barFrame = 0; syncBar(); });
 }
+
 const ANNOUNCE_DELAY_MS = 700;
 let announceTimer = null;
-
 function announce (text) {
   if (!liveRegion) return;
   if (announceTimer !== null) window.clearTimeout(announceTimer);
@@ -149,79 +84,76 @@ function announce (text) {
 
 if (form) form.addEventListener('submit', (e) => e.preventDefault());
 
+let catalog = null;
+
+// "a, b" reads as a broken sentence; the list is spoken by a screen reader
+// and read as a sentence by everyone else, so it needs the conjunction.
+function listSentence (items) {
+  if (items.length <= 1) return items[0] ?? '';
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+}
+
 function readAddOns () {
-  return {
-    oven: document.getElementById('addon-oven').checked,
-    fridge: document.getElementById('addon-fridge').checked,
-    interiorWindows: windowsToggle.checked ? (Number(windowsCount.value) || 0) : 0,
-    cabinets: document.getElementById('addon-cabinets').checked,
-    wallWashing: document.getElementById('addon-wallwashing').checked,
-    // Priced per appliance ($25+ each), so this is a count like windows, not
-    // a boolean. Sending `true` here would multiply the floor by 1 and quietly
-    // under-bill a four-appliance kitchen.
-    appliances: appliancesToggle.checked ? (Number(appliancesCount.value) || 0) : 0,
-  };
+  const chosen = [];
+  if (document.getElementById('addon-oven').checked) chosen.push(catalog.addOns.oven.label);
+  if (document.getElementById('addon-fridge').checked) chosen.push(catalog.addOns.fridge.label);
+  const windows = windowsToggle.checked ? (Number(windowsCount.value) || 0) : 0;
+  if (windows > 0) chosen.push(`${catalog.addOns.interiorWindows.label} × ${windows}`);
+  if (document.getElementById('addon-cabinets').checked) chosen.push(catalog.addOns.cabinets.label);
+  if (document.getElementById('addon-wallwashing').checked) chosen.push(catalog.addOns.wallWashing.label);
+  const appliances = appliancesToggle.checked ? (Number(appliancesCount.value) || 0) : 0;
+  if (appliances > 0) chosen.push(`${catalog.addOns.appliances.label} × ${appliances}`);
+  return chosen;
 }
 
-// Every condition question is asked so that "yes" means the flag applies:
-// heavy grime, more pet hair than usual, recent construction. The grime
-// question used to be the odd one out — "has the home been professionally
-// cleaned recently?", with "No / not sure" as the trigger — and it withdrew
-// the price from most first-time customers, who honestly answer No to that
-// without living in a grimy home. It now asks about the grime itself, which
-// is what the flag was always for, and the inverted mapping that once lived
-// here is gone with it. Keep the questions phrased this way: a single
-// inverted one is exactly the kind of thing a later edit gets backwards.
-//
-// An UNANSWERED condition question is not a "no". Until all three are
-// answered we cannot tell a clean home from one that costs her a twelve-hour
-// day, so nothing bookable renders — see renderIncomplete().
+// Every condition question is asked so that "yes" means the thing is there.
+// An UNANSWERED question is not a "no": until all three are answered the
+// request is not ready, and the summary says which are missing.
 function readConditions () {
-  const flags = [];
+  const answers = [];
   let unanswered = 0;
-  for (const flag of ['heavyGrime', 'heavyPetHair', 'heavyConstructionResidue']) {
-    const checked = form.querySelector(`input[name="condition-${flag}"]:checked`);
+  for (const [key, cfg] of Object.entries(catalog.conditions)) {
+    const checked = form.querySelector(`input[name="condition-${key}"]:checked`);
     if (!checked) { unanswered += 1; continue; }
-    if (checked.value === 'yes') flags.push(flag);
+    answers.push({ label: cfg.label, yes: checked.value === 'yes' });
   }
-  return { flags, unanswered };
+  return { answers, unanswered };
 }
 
-function summarizeAddOns (addOns) {
-  const parts = [];
-  if (addOns.oven) parts.push('inside oven');
-  if (addOns.fridge) parts.push('inside fridge');
-  if (addOns.interiorWindows > 0) parts.push(`${addOns.interiorWindows} interior window${addOns.interiorWindows === 1 ? '' : 's'}`);
-  // "(from $75)" rather than "(quote needed)" — the message Tiffany receives
-  // should say the same thing the customer was shown, or she opens a chat
-  // where the two of them believe different numbers were agreed.
-  if (addOns.cabinets) parts.push('inside cabinets and drawers (from $75)');
-  if (addOns.wallWashing) parts.push('wall washing (from $75)');
-  if (addOns.appliances > 0) parts.push(`${addOns.appliances} kitchen appliance${addOns.appliances === 1 ? '' : 's'} (from $25 each)`);
-  return parts.length ? parts.join(', ') : 'none';
+// What the square footage rests on, in the customer's words: typed, or
+// estimated from the home they described. Tiffany should know which.
+function describeSize (sqFt) {
+  const size = `${sqFt.toLocaleString('en-CA')} sq ft`;
+  if (!unsureToggle.checked) return size;
+  const beds = Number(bedroomsInput.value) || 0;
+  const baths = Number(bathroomsInput.value) || 0;
+  return `about ${size} (estimated: ${HOME_TYPE_LABELS[homeTypeSelect.value]}, ${beds} bedroom${beds === 1 ? '' : 's'}, ${baths} bathroom${baths === 1 ? '' : 's'})`;
 }
 
-function buildWhatsAppLink ({ service, sqFt, addOns, postalRaw, result, isQuoteOnly }) {
-  // "Arrange", not "book": the site gives a price and hands the visitor to
-  // Tiffany, who agrees the day with them. Nothing here books anything, and
-  // the booking terms on the pricing page say so.
+function areaSentence (area) {
+  if (area.status === 'served') return `${area.label}`;
+  if (area.status === 'byRequest') return `${area.label}, by request`;
+  return 'outside the usual area, asking anyway';
+}
+
+function buildWhatsAppLink ({ serviceLabel, sqFt, addOns, postal, area, conditions }) {
+  // "Quote", never "book": nothing here books anything. Tiffany reads this,
+  // works out the price, and agrees the day with the customer herself.
+  const yes = conditions.filter((c) => c.yes).map((c) => c.label.toLowerCase());
   const lines = [
-    `Hi Tiffany! I'd like ${isQuoteOnly ? 'a quote for' : 'to arrange'}:`,
-    `- Service: ${SERVICE_LABELS[service] || service}`,
-    `- Approx. size: ${sqFt} sq ft`,
-    `- Add-ons: ${summarizeAddOns(addOns)}`,
+    "Hi Tiffany! Could you quote this for me?",
+    `- Service: ${serviceLabel}`,
+    `- Home: ${describeSize(sqFt)}`,
+    `- Postal code: ${postal} (${areaSentence(area)})`,
+    `- Add-ons: ${addOns.length ? addOns.join(', ') : 'none'}`,
+    `- Worth mentioning: ${yes.length ? listSentence(yes) : 'nothing out of the ordinary'}`,
+    'Sent from makeitsqueaky.com',
   ];
-  if (postalRaw) lines.push(`- Postal code: ${postalRaw}`);
-  if (!isQuoteOnly && result) {
-    lines.push(result.isEstimate
-      ? `- Starting total: from ${money(result.total)} CAD (${result.unit} visit) — includes add-ons priced from a starting figure`
-      : `- Estimated total: ${money(result.total)} CAD (${result.unit} visit)`);
-  }
-  const text = lines.join('\n');
-  // minimal: Phase 1 has no backend and no mail account, so the lead goes to
-  // WhatsApp where Tiffany already runs her business. Phase 2 replaces this
-  // with a real booking POST. Upgrade path: swap this call for fetch('/api/book').
-  return `https://wa.me/14165642125?text=${encodeURIComponent(text)}`;
+  // minimal: no backend in this phase, so the request goes to WhatsApp, where
+  // Tiffany already runs her business. Upgrade path: a POST to /api/quote
+  // that stores the request and messages her.
+  return `https://wa.me/14165642125?text=${encodeURIComponent(lines.join('\n'))}`;
 }
 
 function noteEl (text) {
@@ -234,7 +166,7 @@ function noteEl (text) {
   return div;
 }
 
-function ctaRow ({ whatsAppHref, whatsAppLabel }) {
+function ctaRow (whatsAppHref) {
   const wrap = document.createElement('div');
   wrap.className = 'ms-quote-cta';
 
@@ -243,20 +175,17 @@ function ctaRow ({ whatsAppHref, whatsAppLabel }) {
   wa.href = whatsAppHref;
   wa.target = '_blank';
   wa.rel = 'noopener noreferrer';
-  wa.textContent = whatsAppLabel;
-  // It leaves the site for another app, in a new tab. Said for the screen
-  // reader, since the label already says WhatsApp for everyone else.
+  wa.textContent = 'Send to Tiffany on WhatsApp';
+  wa.dataset.testid = 'quote-send';
   const hint = document.createElement('span');
   hint.className = 'ms-visually-hidden';
   hint.textContent = ' (opens in a new tab)';
   wa.appendChild(hint);
   wrap.appendChild(wa);
 
-  // Fallback for desktop visitors without WhatsApp. There IS an email address
-  // now (it is on the contact page and in the footer), and this is still a
-  // phone link on purpose: someone who has just been shown a price is trying
-  // to book a date, and a text reaches Tiffany between jobs where an inbox
-  // does not. Email is for the enquiry that can wait; this button is not.
+  // For anyone without WhatsApp. A phone link on purpose: someone who has just
+  // described their home wants a quote, and a text reaches Tiffany between
+  // jobs where an inbox does not.
   const tel = document.createElement('a');
   tel.className = 'ms-btn ms-btn--ghost';
   tel.href = 'tel:+14165642125';
@@ -266,17 +195,16 @@ function ctaRow ({ whatsAppHref, whatsAppLabel }) {
   return wrap;
 }
 
-// The form is deliberately `novalidate` — the price is meant to appear as you
-// type, not on submit. That makes THIS the only thing standing between a
-// half-filled form and a firm, bookable total, so every missing answer is
-// named plainly rather than the price simply not showing up.
+// The form is `novalidate`: the summary builds as you type rather than on
+// submit, so THIS is what stands between a half-filled form and a request
+// that reaches Tiffany missing the one thing she needs. Every gap is named
+// and linked to its step.
 function renderIncomplete (missing) {
-  lastTotal = null;
   summaryBody.innerHTML = '';
 
   const heading = document.createElement('p');
   heading.className = 'ms-quote-outcome__heading';
-  heading.textContent = 'A few more answers and your price appears.';
+  heading.textContent = 'A few more answers and your request is ready.';
   heading.dataset.testid = 'quote-incomplete';
   summaryBody.appendChild(heading);
 
@@ -288,9 +216,6 @@ function renderIncomplete (missing) {
   textWrap.appendChild(introP);
   const ul = document.createElement('ul');
   ul.className = 'ms-quote-outcome__reasons';
-  // Each missing answer is a link to its step. On a phone the panel is
-  // several screens below the form, so a plain "(step 2)" sent the visitor
-  // scrolling back up to find a numeral; the link puts them on the field.
   for (const item of missing) {
     const li = document.createElement('li');
     const a = document.createElement('a');
@@ -303,172 +228,76 @@ function renderIncomplete (missing) {
   note.appendChild(textWrap);
   summaryBody.appendChild(note);
 
-  announce(`Your price isn't ready yet. Still needed: ${missing.map((m) => m.text).join('; ')}.`);
+  announce(`Your request isn't ready yet. Still needed: ${missing.map((m) => m.text).join('; ')}.`);
 }
 
-function renderPriced (result, ctx) {
+function row (dl, term, detail) {
+  const dt = document.createElement('dt');
+  dt.textContent = term;
+  const dd = document.createElement('dd');
+  dd.textContent = detail;
+  dl.append(dt, dd);
+}
+
+function renderReady (ctx) {
   summaryBody.innerHTML = '';
 
-  const wrap = document.createElement('div');
-  wrap.className = 'ms-table-wrap';
-  const table = document.createElement('table');
-  table.className = 'ms-table';
-  table.innerHTML = '<thead><tr><th scope="col">Item</th><th scope="col">Amount</th></tr></thead>';
-  const tbody = document.createElement('tbody');
+  const dl = document.createElement('dl');
+  dl.className = 'ms-request';
+  dl.dataset.testid = 'quote-request';
+  row(dl, 'Service', ctx.serviceLabel);
+  // "1,400 sq ft" is one token on a phone: the figure and its unit never part.
+  row(dl, 'Home', describeSize(ctx.sqFt).replace(/(\d) sq ft/g, (m, d) => d + '\u00a0sq\u00a0ft'));
+  row(dl, 'Postal code', `${ctx.postal} · ${ctx.area.status === 'served' ? ctx.area.label : ctx.area.status === 'byRequest' ? 'GTA, by request' : 'outside the usual area'}`);
+  row(dl, 'Add-ons', ctx.addOns.length ? ctx.addOns.join(', ') : 'None');
+  const yes = ctx.conditions.filter((c) => c.yes).map((c) => c.label);
+  row(dl, 'Worth mentioning', yes.length ? listSentence(yes) : 'Nothing out of the ordinary');
+  summaryBody.appendChild(dl);
 
-  for (const item of result.lineItems) {
-    const tr = document.createElement('tr');
-    const tdLabel = document.createElement('td');
-    // "1400 sq ft" broke as "1400 sq / ft" in the phone summary; the figure
-    // and its unit are one token. Display only — the message keeps plain spaces.
-    tdLabel.textContent = item.label.replace(/(\d) sq ft/g, '$1\u00a0sq\u00a0ft');
-    const tdAmt = document.createElement('td');
-    // A floor reads "From $75" on its own row, so the line the customer can
-    // point at carries the caveat — not just a footnote under the total.
-    tdAmt.textContent = item.from ? `From ${money(item.amount)}` : money(item.amount);
-    tr.append(tdLabel, tdAmt);
-    tbody.appendChild(tr);
-  }
+  summaryBody.appendChild(noteEl('Tiffany quotes every job herself. Nothing is booked or charged here — she comes back to you with a price, and you agree the day together.'));
 
-  const totalRow = document.createElement('tr');
-  totalRow.className = 'ms-quote-total-row';
-  const totalLabel = document.createElement('td');
-  totalLabel.textContent = result.isEstimate ? 'Starting total' : 'Total';
-  const totalAmt = document.createElement('td');
-  totalAmt.textContent = result.isEstimate
-    // No currency code on screen: every other price on the site is a bare
-    // dollar figure, and "CAD" appeared here alone. The message to Tiffany
-    // keeps it — a written record is where the currency earns its place.
-    ? `From ${money(result.total)}`
-    : money(result.total);
-  // No accessible handle distinguishes "the running total" from any other
-  // table cell — a minimal test hook for the e2e suite (tests/e2e).
-  totalAmt.dataset.testid = 'quote-total';
-  // Decided here, run below: a Web Animation on an element that is not yet in
-  // the document never plays (measured: zero animations on the figure), so
-  // the settle waits until the table has been appended.
-  const totalChanged = lastTotal !== null && lastTotal !== result.total;
-  lastTotal = result.total;
-  totalRow.append(totalLabel, totalAmt);
-  tbody.appendChild(totalRow);
+  summaryBody.appendChild(ctaRow(buildWhatsAppLink(ctx)));
 
-  table.appendChild(tbody);
-  wrap.appendChild(table);
-  summaryBody.appendChild(wrap);
-  if (totalChanged) settle(totalAmt);
-
-  summaryBody.appendChild(noteEl(`This is a ${result.unit} visit.`));
-
-  // Named, not vague. "Some items are estimates" leaves the customer to guess
-  // which ones, and a surprise on the invoice is how a good job turns into an
-  // argument. Sentence case: the first label keeps its capital, the rest
-  // drop theirs, so two items read as one sentence and not as a list of
-  // headings. "Starting figure", not "minimum" — the $180 minimum job is a
-  // different thing and sits two panels away.
-  if (result.isEstimate) {
-    const which = listSentence(result.fromPriced.map((label, i) =>
-      i === 0 ? label : label.charAt(0).toLowerCase() + label.slice(1)));
-    const note = noteEl(`${which} ${result.fromPriced.length === 1 ? 'is' : 'are'} priced from a starting figure — the total above can only go up from here, and Tiffany confirms the final amount after a look. Nothing is charged until you both agree.`);
-    note.dataset.testid = 'quote-from-notice';
-    summaryBody.appendChild(note);
-  }
-
-  // "Send", not "book" or "confirm": the button opens WhatsApp with the quote
-  // written out, and Tiffany agrees the day from there. The label says which
-  // app opens, because it leaves the site.
-  summaryBody.appendChild(ctaRow({
-    whatsAppHref: buildWhatsAppLink({ ...ctx, result, isQuoteOnly: false }),
-    whatsAppLabel: 'Send this quote to Tiffany on WhatsApp',
-  }));
-
-  announce(result.isEstimate
-    ? `Your starting price: from ${money(result.total)}, a ${result.unit} visit. Some items are priced from a starting figure.`
-    : `Your estimate: ${money(result.total)}, a ${result.unit} visit.`);
+  announce('Your request is ready. Send it to Tiffany on WhatsApp, or call or text her.');
 }
 
-function renderQuoteOnly (reasons, ctx) {
-  lastTotal = null;
-  summaryBody.innerHTML = '';
-
-  const heading = document.createElement('p');
-  heading.className = 'ms-quote-outcome__heading';
-  heading.textContent = 'We need a quick look before we can price this.';
-  // Minimal test hook for the e2e suite (tests/e2e) — this notice is what
-  // guards against ever surfacing a bookable price on a quote-only job.
-  heading.dataset.testid = 'quote-only-notice';
-  summaryBody.appendChild(heading);
-
-  const note = noteEl('');
-  note.querySelector('p').remove();
-  const textWrap = document.createElement('div');
-  const introP = document.createElement('p');
-  introP.innerHTML = '<strong>Why:</strong>';
-  textWrap.appendChild(introP);
-  const ul = document.createElement('ul');
-  ul.className = 'ms-quote-outcome__reasons';
-  for (const reason of reasons) {
-    const li = document.createElement('li');
-    li.textContent = REASON_COPY[reason] || 'This part of the job needs a quick look before it can be priced.';
-    ul.appendChild(li);
-  }
-  textWrap.appendChild(ul);
-  note.appendChild(textWrap);
-  summaryBody.appendChild(note);
-
-  summaryBody.appendChild(ctaRow({
-    whatsAppHref: buildWhatsAppLink({ ...ctx, result: null, isQuoteOnly: true }),
-    whatsAppLabel: 'Ask Tiffany for an exact quote on WhatsApp',
-  }));
-
-  announce('We need a quick look before we can price this. Ask Tiffany for an exact quote below, or change the answer that needs the look.');
-}
-
-let pricing = null;
-
-// Status line only. The travel FEE is derived inside quote() from the same
-// postal code — this function never hands a price to the engine, because the
-// Phase 2 server must not trust one from the client either.
+// Status line under the postal code. Three honest sentences, no fee.
 function updatePostalStatus (postalRaw) {
   if (!postalRaw.trim()) {
-    postalStatusText.textContent = "We'll let you know right away if a travel fee applies.";
-    return { complete: false };
+    postalStatusText.textContent = "We'll tell you right away whether you're in Tiffany's area.";
+    return { ok: false, area: null };
   }
 
-  const zone = travelZone(postalRaw, pricing);
+  const area = serviceArea(postalRaw, catalog);
 
-  // `complete` here means "enough to price", not "all six characters". The
-  // zone is settled by the first one or two characters (area.js), and the
-  // price shows the moment it is — the rest of the code is asked for, and
-  // reaches Tiffany with the lead, but no longer holds the number back.
-  if (zone.reason === 'invalidFormat') {
+  if (area.reason === 'invalidFormat') {
     postalStatusText.textContent = "That doesn't look like a Canadian postal code (e.g. M4B 1B3).";
-    return { complete: false };
+    return { ok: false, area };
   }
-
-  if (zone.reason === 'incompletePostalCode') {
-    postalStatusText.textContent = 'One more character and we can tell you about travel (e.g. L5B 3C2).';
-    return { complete: false };
+  if (area.reason === 'incompletePostalCode') {
+    postalStatusText.textContent = 'One more character and we can place it.';
+    return { ok: false, area };
   }
-
-  if (zone.reason === 'unknownZone') {
-    postalStatusText.textContent = `We don't have ${zone.normalized} mapped yet — Tiffany will confirm travel and pricing with you directly.`;
-    return { complete: true };
+  if (area.status === 'served') {
+    postalStatusText.textContent = `${area.label} — Tiffany's area.`;
+  } else if (area.status === 'byRequest') {
+    postalStatusText.textContent = 'Just outside Toronto. Tiffany sometimes travels into the GTA for a fee agreed beforehand — send the request and ask.';
+  } else {
+    postalStatusText.textContent = "That's outside the area Tiffany usually covers. You can still send the request and ask.";
   }
-
-  postalStatusText.textContent = zone.fee > 0
-    ? `${zone.label} — ${money(zone.fee)} travel.`
-    : `${zone.label} — no travel fee.`;
-  return { complete: true };
+  return { ok: true, area };
 }
 
 function updateEstimate () {
   const homeType = homeTypeSelect.value;
   const bedrooms = bedroomsInput.value;
   const bathrooms = bathroomsInput.value;
-  const est = estimateSqFt({ homeType, bedrooms, bathrooms }, pricing);
+  const est = estimateSqFt({ homeType, bedrooms, bathrooms }, catalog);
   const rounded = Math.round(est);
   sqftInput.value = String(rounded);
-  estimateNoteText.textContent = `Estimated at ${rounded} sq ft for a ${HOME_TYPE_LABELS[homeType]} with ${bedrooms || 0} bedroom(s) and ${bathrooms || 0} bathroom(s) — adjust the square footage above any time if you know the exact number.`;
+  const beds = Number(bedrooms) || 0;
+  const baths = Number(bathrooms) || 0;
+  estimateNoteText.textContent = `Estimated at ${rounded} sq ft for a ${HOME_TYPE_LABELS[homeType]} with ${beds} bedroom${beds === 1 ? '' : 's'} and ${baths} bathroom${baths === 1 ? '' : 's'} — adjust the square footage above any time if you know the exact number.`;
   estimateNote.hidden = false;
 }
 
@@ -484,8 +313,8 @@ function recompute () {
   const conditions = readConditions();
 
   const missing = [];
-  if (!service) missing.push({ text: 'Choose a service (step 1)', href: '#quote-step-1' });
-  if (!postal.complete) missing.push({ text: 'Your postal code (step 2)', href: '#quote-step-2' });
+  if (!service || !catalog.services[service]) missing.push({ text: 'Choose a service (step 1)', href: '#quote-step-1' });
+  if (!postal.ok) missing.push({ text: 'Your postal code (step 2)', href: '#quote-step-2' });
   if (sqFt <= 0) missing.push({ text: 'Approximate square footage (step 3)', href: '#quote-step-3' });
   if (conditions.unanswered > 0) {
     missing.push({
@@ -502,27 +331,20 @@ function recompute () {
     return;
   }
 
-  const result = quote(
-    { service, sqFt, addOns, conditionFlags: conditions.flags, postalCode: postalRaw },
-    pricing,
-  );
-
-  const ctx = { service, sqFt, addOns, postalRaw };
-
-  if (result.quoteOnly) {
-    renderQuoteOnly(result.reasons, ctx);
-    setBar('Your price', 'Needs a quick look');
-  } else {
-    renderPriced(result, ctx);
-    setBar(result.isEstimate ? 'From' : 'Your price', money(result.total));
-  }
+  renderReady({
+    serviceLabel: catalog.services[service].label,
+    sqFt,
+    addOns,
+    postal: postal.area.normalized,
+    area: postal.area,
+    conditions: conditions.answers,
+  });
+  setBar('Your request', 'Ready to send');
 }
 
-// Deep-linked from the home page's price preview, which posts both halves of
-// what it priced: ?service=deep&size=condo|2|1. Carrying only the service
-// would make the customer describe the same home twice and would silently
-// discard the number they were just shown — the two pages would be pricing
-// different houses within one click of each other.
+// Deep-linked from the home page's card, which posts both halves of what the
+// visitor chose: ?service=deep&size=condo|2|1. Carrying only the service would
+// make them describe the same home twice.
 function applyQuery () {
   const params = new URLSearchParams(window.location.search);
 
@@ -533,19 +355,14 @@ function applyQuery () {
   }
 
   const size = decodeSize(params.get('size'));
-  // Unrecognised home type: leave the form alone rather than half-fill it.
-  // decodeSize already refuses malformed tokens; this refuses well-formed ones
-  // naming a home type the rate card has since dropped.
-  if (!size || !pricing.sqFtEstimator[size.homeType]) return;
+  if (!size || !catalog.sqFtEstimator[size.homeType]) return;
 
   homeTypeSelect.value = size.homeType;
   bedroomsInput.value = String(size.bedrooms);
   bathroomsInput.value = String(size.bathrooms);
 
-  // Opened, not hidden. The square footage is an ESTIMATE the customer should
-  // see the basis for and be able to correct — arriving with a number in the
-  // box and no explanation of where it came from is how a wrong figure goes
-  // unchallenged all the way to a booking.
+  // Opened, not hidden: the square footage is an ESTIMATE the customer should
+  // see the basis for and be able to correct.
   unsureToggle.checked = true;
   estimatorPanel.hidden = false;
   updateEstimate();
@@ -568,23 +385,20 @@ function wireForm () {
   });
 
   for (const el of [homeTypeSelect, bedroomsInput, bathroomsInput]) {
-    el.addEventListener('input', () => {
-      if (!unsureToggle.checked) return;
-      updateEstimate();
-      recompute();
-    });
-    el.addEventListener('change', () => {
-      if (!unsureToggle.checked) return;
-      updateEstimate();
-      recompute();
-    });
+    for (const evt of ['input', 'change']) {
+      el.addEventListener(evt, () => {
+        if (!unsureToggle.checked) return;
+        updateEstimate();
+        recompute();
+      });
+    }
   }
 
   applyQuery();
 
   // Both counted add-ons behave identically: ticking the box enables the
-  // spinner and seeds it with 1 (a ticked box with a 0 count prices as
-  // nothing, which looks broken), unticking resets it to 0.
+  // spinner and seeds it with 1 (a ticked box with a 0 count means nothing),
+  // unticking resets it to 0.
   for (const [toggle, count] of [[windowsToggle, windowsCount], [appliancesToggle, appliancesCount]]) {
     toggle.addEventListener('change', () => {
       count.disabled = !toggle.checked;
@@ -601,12 +415,12 @@ async function init () {
   try {
     // Resolved against THIS module's URL, not the site root — a root-absolute
     // path breaks the moment the site is served from a subpath.
-    const res = await fetch(new URL('../../data/pricing.json', import.meta.url));
-    if (!res.ok) throw new Error(`pricing fetch failed: ${res.status}`);
-    pricing = await res.json();
+    const res = await fetch(new URL('../../data/catalog.json', import.meta.url));
+    if (!res.ok) throw new Error(`catalog fetch failed: ${res.status}`);
+    catalog = await res.json();
   } catch (err) {
     summaryBody.innerHTML = '';
-    summaryBody.appendChild(noteEl('Pricing is temporarily unavailable. Please call or text (416) 564-2125 for a price.'));
+    summaryBody.appendChild(noteEl('The form is temporarily unavailable. Please call or text (416) 564-2125 and Tiffany will quote it with you.'));
     return;
   }
   wireForm();

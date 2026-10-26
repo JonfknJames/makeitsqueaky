@@ -1,20 +1,23 @@
-// PURE MODULE. Same constraints as quote.js — imported by the Phase 2 Worker.
-
-// minimal: zones resolve on a 1–2 character postal prefix, not geocoding.
-// Ceiling: 'L4' spans south Vaughan (a short hop) and Newmarket (a day trip),
-// so a handful of addresses are mispriced. Upgrade path: swap this lookup for
-// a distance matrix keyed on the full FSA if travel fees ever become material.
+// PURE MODULE. No DOM, no fetch, no node:* imports. Shared by the browser and,
+// in the server phase, by whatever receives the request.
 //
-// A PARTIAL postal code resolves too. The zone is fixed by the first one or
-// two characters, and the other four only ever confirm the format — so
-// insisting on all six before pricing held the number back for five
-// keystrokes to learn nothing. The price now appears on the first character
-// for a Toronto customer and the second in the 905, and it never moves once
-// shown: a zone cannot change by typing MORE of the same code. `complete`
-// says whether the whole code was given, for the caller that wants it (the
-// lead Tiffany receives), without gating the price on it.
-export function travelZone (postalCode, pricing) {
-  const miss = (reason) => ({ zone: null, fee: 0, label: null, normalized: null, complete: false, reason });
+// Where a postal code falls, in the business's own terms:
+//
+//   served     City of Toronto (M). Tiffany's area.
+//   byRequest  The GTA (L). Not promised — Tiffany sometimes travels for a fee
+//              agreed beforehand, so the request goes through and she decides.
+//   outside    A valid Canadian code anywhere else. The request still goes
+//              through; the status line says plainly it is outside her area.
+//
+// The zone is fixed by the first character or two, so a partial code resolves
+// as soon as it can and never changes as more of the same code arrives.
+// `complete` says whether all six characters were given, for the request
+// Tiffany receives, without gating anything on it.
+//
+// No money lives here. Fees, if any, are Tiffany's to name in the
+// conversation the request opens; the public catalog carries none.
+export function serviceArea (postalCode, catalog) {
+  const miss = (reason) => ({ status: null, zone: null, label: null, normalized: null, complete: false, reason });
 
   if (typeof postalCode !== 'string') return miss('invalidFormat');
 
@@ -26,12 +29,11 @@ export function travelZone (postalCode, pricing) {
   const normalized = cleaned.length > 3 ? `${cleaned.slice(0, 3)} ${cleaned.slice(3)}` : cleaned;
   const complete = cleaned.length === 6;
 
-  // Longest prefix wins, so 'L5' beats a bare 'L'. A zone prefix that the
-  // input has not reached yet ('L' against 'L5') is not a miss — it is the
-  // next keystroke's decision, and must not be reported as out of area.
+  // Longest prefix wins. A zone prefix the input has not reached yet is not a
+  // miss — it is the next keystroke's decision.
   let best = null;
   let undecided = false;
-  for (const [zone, cfg] of Object.entries(pricing.travelZones)) {
+  for (const [zone, cfg] of Object.entries(catalog.serviceArea)) {
     for (const prefix of cfg.prefixes) {
       if (cleaned.startsWith(prefix)) {
         if (!best || prefix.length > best.prefix.length) best = { zone, cfg, prefix };
@@ -41,11 +43,14 @@ export function travelZone (postalCode, pricing) {
     }
   }
 
-  if (!best) return { ...miss(undecided ? 'incompletePostalCode' : 'unknownZone'), normalized, complete };
+  if (!best) {
+    if (undecided) return { ...miss('incompletePostalCode'), normalized, complete };
+    return { status: 'outside', zone: null, label: null, normalized, complete, reason: null };
+  }
 
   return {
+    status: best.cfg.status,
     zone: best.zone,
-    fee: best.cfg.fee,
     label: best.cfg.label,
     normalized,
     complete,

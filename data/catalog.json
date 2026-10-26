@@ -1,0 +1,31 @@
+{
+  "version": "2026-10-26",
+  "services": {
+    "regular":   { "label": "Regular Cleaning" },
+    "deep":      { "label": "Deep Cleaning" },
+    "moveInOut": { "label": "Move-In / Move-Out Cleaning" },
+    "postReno":  { "label": "Post-Renovation Cleaning" }
+  },
+  "addOns": {
+    "oven":            { "label": "Inside oven" },
+    "fridge":          { "label": "Inside refrigerator" },
+    "interiorWindows": { "label": "Interior windows", "counted": true, "unitLabel": "window" },
+    "cabinets":        { "label": "Inside cabinets and drawers" },
+    "wallWashing":     { "label": "Wall washing" },
+    "appliances":      { "label": "Inside kitchen appliances", "counted": true, "unitLabel": "appliance" }
+  },
+  "conditions": {
+    "heavyGrime":               { "label": "Heavy grime or buildup",       "question": "Is there heavy grime or buildup to work through?" },
+    "heavyPetHair":             { "label": "More pet hair than usual",     "question": "Is there more pet hair to manage than in a typical home?" },
+    "heavyConstructionResidue": { "label": "Heavy construction residue",   "question": "Is there heavy construction residue, beyond the usual post-renovation dust?" }
+  },
+  "sqFtEstimator": {
+    "condo":     { "base": 400, "perBedroom": 250, "perBathroom": 50 },
+    "townhouse": { "base": 600, "perBedroom": 300, "perBathroom": 60 },
+    "house":     { "base": 800, "perBedroom": 350, "perBathroom": 70 }
+  },
+  "serviceArea": {
+    "toronto": { "label": "City of Toronto",       "prefixes": ["M"], "status": "served" },
+    "gta":     { "label": "Greater Toronto Area",  "prefixes": ["L"], "status": "byRequest" }
+  }
+}

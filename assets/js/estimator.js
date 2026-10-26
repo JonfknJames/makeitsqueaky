@@ -23,7 +23,7 @@ export function estimateSqFt ({ homeType, bedrooms, bathrooms }, pricing) {
  *
  * The token is the estimator's OWN inputs rather than a square footage,
  * so the shortlist on the home page cannot drift away from
- * pricing.json's sqFtEstimator — there is no second copy of the numbers to
+ * the catalog's sqFtEstimator — there is no second copy of the numbers to
  * keep in step. It lives here, beside the function it feeds, so both the home
  * page and the quote page read it the same way.
  *

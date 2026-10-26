@@ -221,10 +221,9 @@ input, textarea, select { caret-color: var(--ms-color-blue-dark); }
 a { text-underline-offset: 0.18em; text-decoration-thickness: 0.08em; }
 
 /* Prices and money columns align digit-over-digit. Nunito's default figures
-   are proportional, so "$0.25" and "$0.40" were sitting at different widths
+   are proportional, so two figures of the same length were sitting at different widths
    in a four-card row and in the quote table. */
-.ms-card__price, .ms-table td, .ms-quote-total-row, .ms-addon-row__price, .ms-stat__num,
-.ms-quote-start__amount {
+.ms-stat__num {
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
 }
@@ -908,56 +907,6 @@ button { font: inherit; }
   color: var(--ms-color-ink);
 }
 
-/* The price the card exists to produce.
-
-   Deliberately the SAME vocabulary as .ms-card__price on the service tiles and
-   the rate cards — display face, weight 800, blue-dark, with a small faint
-   unit beside it. Before this the site showed money three ways: big blue
-   numerals on cards, right-aligned cells in a table, and figures buried in
-   sentences inside note boxes. A visitor cannot tell that those are the same
-   kind of fact. One treatment for one kind of fact is the whole point.
-
-   The rule above it is a hairline, not a panel: the number is the answer to
-   the two questions directly above, so it has to read as attached to them
-   rather than as a separate box stacked on top. */
-.ms-quote-start__result {
-  border-top: 1px solid var(--ms-color-border);
-  padding-top: var(--ms-space-3);
-}
-
-.ms-quote-start__readout {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--ms-space-2);
-}
-
-.ms-quote-start__from {
-  font-size: var(--ms-text-xs);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ms-color-ink-faint);
-}
-
-.ms-quote-start__amount {
-  font-family: var(--ms-font-display);
-  font-size: var(--ms-text-xl);
-  font-weight: 800;
-  color: var(--ms-color-blue-dark);
-}
-
-.ms-quote-start__unit { font-size: var(--ms-text-xs); color: var(--ms-color-ink-faint); }
-
-/* What the number rests on, in the customer's own terms. A price with no
-   stated basis invites the reading that it is THE price; this line is what
-   makes "From" mean something specific. */
-.ms-quote-start__basis {
-  font-size: var(--ms-text-xs);
-  color: var(--ms-color-ink-soft);
-  line-height: var(--ms-leading-snug);
-  margin-top: var(--ms-space-2);
-}
 
 .ms-field {
   display: flex;
@@ -1186,21 +1135,6 @@ button { font: inherit; }
   min-height: calc(var(--ms-text-lg) * var(--ms-leading-tight) * 2);
 }
 
-.ms-card__price {
-  display: flex;
-  align-items: baseline;
-  gap: var(--ms-space-1);
-}
-.ms-card__price-amt {
-  font-family: var(--ms-font-display);
-  font-size: var(--ms-text-xl);
-  font-weight: 800;
-  color: var(--ms-color-blue-dark);
-}
-.ms-card__price-unit {
-  font-size: var(--ms-text-xs);
-  color: var(--ms-color-ink-faint);
-}
 
 .ms-card__desc {
   font-size: var(--ms-text-sm);
@@ -1707,43 +1641,12 @@ button { font: inherit; }
    two .ms-quote-summary-scoped rules — which is why a legend under a table
    looked different depending on which page you were on. */
 .ms-note + .ms-note,
-.ms-table-wrap + .ms-note {
-  margin-top: var(--ms-rhythm-tight);
-}
 
 
 /* The rates band that used to sit at the top of pricing.html is gone: the
    page merged into services.html on 2026-09-27, where each service panel
    already carries its rate and unit in its header. */
 
-/* Add-on / rate table, wrapped so the radius clips cleanly. */
-.ms-table-wrap {
-  background: var(--ms-color-surface);
-  border-radius: var(--ms-radius-lg);
-  box-shadow: var(--ms-shadow-raised-sm);
-  overflow: hidden;
-}
-
-.ms-table { width: 100%; border-collapse: collapse; }
-
-.ms-table th,
-.ms-table td {
-  text-align: left;
-  padding: var(--ms-space-4) var(--ms-space-5);
-  font-size: var(--ms-text-sm);
-  border-bottom: 1px solid var(--ms-color-border);
-}
-
-.ms-table th {
-  font-family: var(--ms-font-display);
-  font-weight: 800;
-  color: var(--ms-color-ink);
-  background: var(--ms-color-surface-base);
-}
-
-.ms-table td { color: var(--ms-color-ink-soft); }
-.ms-table tr:last-child td { border-bottom: none; }
-.ms-table td:last-child, .ms-table th:last-child { text-align: right; white-space: nowrap; }
 
 /* Stat — one small factual callout, no fabricated numbers.
 
@@ -2033,30 +1936,6 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
 .ms-option input { accent-color: var(--ms-color-blue-dark); width: 1.1rem; height: 1.1rem; }
 .ms-option__title { font-weight: 700; color: var(--ms-color-ink); font-size: var(--ms-text-sm); }
 
-/* The rate on a service option is the SAME component as on the rate cards,
-   the service tiles and the hero readout — .ms-card__price, display face,
-   weight 800, blue-dark, small faint unit. This was the last place on the
-   site that set a price as flat 13px body text, which left the one number
-   distinguishing these four choices as the least legible thing in the card,
-   on the page where the customer is actually choosing between them.
-
-   One step down in size (md, not xl) because it sits inside a two-up form
-   control rather than a card that leads with its price — same voice, quieter
-   register. Nothing here restyles .ms-card__price itself; the scale change is
-   scoped to .ms-option so the component stays one component. */
-.ms-option__meta {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--ms-space-2);
-  font-size: var(--ms-text-xs);
-  color: var(--ms-color-ink-soft);
-}
-.ms-option .ms-card__price-amt { font-size: var(--ms-text-md); }
-/* Carries a literal "·" rather than a ::before. Generated content is
-   announced by some screen readers, and the separator is decoration — the
-   same reason .ms-service-tile__more draws its chevron with borders. */
-.ms-option__unit { color: var(--ms-color-ink-faint); }
 
 .ms-option--compact { flex-direction: row; align-items: center; gap: var(--ms-space-2); padding: var(--ms-space-3) var(--ms-space-4); }
 .ms-option--compact span { font-size: var(--ms-text-sm); font-weight: 700; color: var(--ms-color-ink); }
@@ -2116,14 +1995,6 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
 }
 .ms-addon-row input[type="checkbox"] { accent-color: var(--ms-color-blue-dark); width: 1.1rem; height: 1.1rem; }
 .ms-addon-row__label { flex: 1; font-size: var(--ms-text-sm); font-weight: 700; color: var(--ms-color-ink); }
-.ms-addon-row__price { font-size: var(--ms-text-sm); color: var(--ms-color-blue-dark); font-weight: 700; white-space: nowrap; }
-.ms-addon-row__price--quoted {
-  color: var(--ms-color-ink-faint);
-  font-weight: 700;
-  font-size: var(--ms-text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
 
 .ms-addon-row--counted { cursor: default; }
 /* A counted row has two halves — the choice and the count. Side by side the
@@ -2175,12 +2046,6 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
 .ms-quote-outcome__reasons { margin: var(--ms-space-2) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--ms-space-1); }
 .ms-quote-outcome__reasons li { font-size: var(--ms-text-sm); color: var(--ms-color-ink-soft); line-height: var(--ms-leading-snug); }
 
-.ms-quote-total-row td {
-  font-weight: 800;
-  color: var(--ms-color-ink);
-  font-size: var(--ms-text-md);
-  border-top: 2px solid var(--ms-color-border-strong);
-}
 
 .ms-quote-cta { display: flex; flex-wrap: wrap; gap: var(--ms-space-3); margin-top: var(--ms-space-5); }
 /* nowrap — the "Or call/text (416) 564-2125" ghost button has a 12rem flex
@@ -2199,14 +2064,6 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
    so the number never splits. */
 .ms-quote-cta .ms-btn--accent { white-space: normal; text-align: center; }
 
-/* The estimate panel's table sits inside a raised panel, so it has no
-   shadow of its own at any width — a raised card inside a raised card is
-   the nested-card the design system forbids. Page-ground tint sets it in. */
-.ms-quote-summary .ms-table-wrap {
-  box-shadow: none;
-  background: var(--ms-color-surface-base);
-  border-radius: var(--ms-radius-md);
-}
 
 /* Note spacing moved out of here and up to the .ms-note block itself — the
    pricing page now stacks a note under a table in exactly the same way the
@@ -2390,44 +2247,15 @@ html.ms-motion [data-ms-reveal].is-revealed {
 }
 
 /* ==========================================================================
-   Price sheet (pricing.html) — one panel, grouped rows.
-
-   Replaces two sections that each had a 44px heading, a table at a different
-   width from the other, and a note box stranded underneath at 58ch. Three
-   headings competed with the page title while the least-consulted content on
-   the page — the minimum, travel and tax fine print — was set in the
-   second-largest type on screen.
-
-   The fix is hierarchy by SIZE rather than by separation: group labels are
-   eyebrows inside the panel, so the page reads title, then group, then row,
-   instead of three things all shouting at the same volume.
+   Side-by-side panels (services.html): the add-ons beside the things worth
+   mentioning, and the service area beside the two booking terms. Panels in a
+   row share a bottom edge — stretch, never start — so a set of two or three
+   never ends at two heights.
    ========================================================================== */
-/* TWO panels, side by side — replacing one eleven-row full-width ledger.
-
-   The ledger's real defect was measure, not styling. An eleven-row list given
-   the full 1200px container put "Inside oven" roughly 850px from "$50", so the
-   eye had to cross an empty white gap to join a label to its price. Every
-   other complaint about that block followed from the same cause: it was tall
-   because nothing sat beside anything, and its footnotes left a ragged empty
-   half because 58ch of prose cannot fill 900px.
-
-   Splitting also makes a distinction the eyebrows were only asserting: add-ons
-   are a menu the customer picks from, while the minimum, travel and tax are
-   arithmetic applied to them. Those are different kinds of fact and now look
-   it. Row measure drops to about 420px and the section's height roughly
-   halves, because six rows sit beside five instead of after them. */
 .ms-price-cols {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--ms-space-5);
-  /* stretch (the grid default), not start. With `start`, six add-on rows sat
-     beside five minimum/travel/tax rows and the right card simply stopped
-     71px short of the left one — two panels that present as one set, ending
-     at two different heights, read as an accident rather than a layout.
-     Stretching alone would swap that defect for a different one (a dead band
-     under the shorter card's last row); the flex + growing-table rules on
-     .ms-pricecard below are what turn the extra height into slightly taller
-     rows instead. The three rules are one decision. */
   align-items: stretch;
 }
 
@@ -2435,97 +2263,6 @@ html.ms-motion [data-ms-reveal].is-revealed {
   .ms-price-cols { grid-template-columns: 1fr 1fr; gap: var(--ms-space-6); }
 }
 
-.ms-pricecard {
-  background: var(--ms-color-surface);
-  border-radius: var(--ms-radius-lg);
-  box-shadow: var(--ms-shadow-raised-sm);
-  overflow: hidden;
-  /* The other two thirds of the equal-height decision on .ms-price-cols
-     above. The card is a column so the table (not the title) absorbs any
-     height the grid hands down, and a table stretched past its content
-     distributes the surplus across its ROWS — so the five-row card's rows
-     each run slightly taller than the six-row card's, and both bottom edges
-     land on the same line with no empty band under the last row. */
-  display: flex;
-  flex-direction: column;
-}
-
-.ms-pricecard .ms-table { flex: 1; }
-
-/* A real h2, sized like a label.
-   The section used to carry a centred 44px heading that competed with the page
-   title for the eye and won often enough to make the page feel like it started
-   twice. These panel titles ARE the section's headings — they keep the
-   document outline intact (h1 -> h2 -> rows) without a second display-scale
-   heading on the page. */
-.ms-pricecard__title {
-  margin: 0;
-  background: var(--ms-color-surface-base);
-  border-bottom: 1px solid var(--ms-color-border);
-  padding: var(--ms-space-4) var(--ms-space-5);
-  font-size: var(--ms-text-xs);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ms-color-ink);
-}
-
-/* The qualifier rides along at sentence case and lower contrast, so the label
-   can say what the group IS and what it costs the reader to care about,
-   without a second line or a second type size. */
-.ms-pricecard__title span {
-  text-transform: none;
-  letter-spacing: 0;
-  font-weight: 400; /* the quiet half of the label: body weight, faint ink */
-  color: var(--ms-color-ink-faint);
-}
-.ms-pricecard__title span::before { content: '\00a0\00a0·\00a0\00a0'; }
-
-.ms-pricecard .ms-table { width: 100%; }
-
-/* At phone width the panel is about 350px, and .ms-table's 24px side padding
-   took 48px of that before either column got any. With the amount column
-   holding a nowrap phrase, the label was left roughly 140px and "Inside
-   cabinets and drawers" broke across three lines. Tighter gutters here only —
-   the wide tables elsewhere keep the roomier setting. */
-@media (max-width: 30em) {
-  .ms-pricecard .ms-table th,
-  .ms-pricecard .ms-table td { padding: var(--ms-space-3) var(--ms-space-4); }
-  .ms-pricecard__title { padding: var(--ms-space-3) var(--ms-space-4); }
-}
-
-/* Three short notes as three columns.
-
-   They are peers — what "from" means, what cannot be priced from a form, and
-   what happens to small jobs — so three equal columns is an honest use of the
-   width rather than one narrow paragraph column leaving half the row empty.
-   Quieter than the rows above them: these are footnotes, and should read as
-   available rather than as demanding. */
-.ms-footnotes {
-  margin-top: var(--ms-space-6);
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--ms-space-4);
-}
-
-@media (min-width: 56em) {
-  .ms-footnotes { grid-template-columns: repeat(3, 1fr); gap: var(--ms-space-6); }
-}
-
-.ms-footnotes p {
-  margin: 0;
-  font-size: var(--ms-text-sm);
-  line-height: var(--ms-leading-snug);
-  color: var(--ms-color-ink-soft);
-  /* A gold hairline instead of a box. Three bordered callouts here would put
-     the page back to counting boxes; a rule carries the same "these belong
-     together as a set" signal at a fraction of the weight, and puts the one
-     accent colour somewhere other than a button. */
-  border-top: 2px solid var(--ms-color-gold);
-  padding-top: var(--ms-space-3);
-}
-
-.ms-footnotes strong { color: var(--ms-color-ink); display: block; }
 
 
 /* ==========================================================================
@@ -2599,111 +2336,61 @@ html.ms-motion [data-ms-reveal].is-revealed {
 .ms-jump { display: none; }
 
 /* ==========================================================================
-   Pricing page (pricing.html) — services and pricing as one system.
+   The quote request (quote.html, services.html).
 
-   Three additions, all built from existing components and tokens:
-   1. The estimator card, IN THE FLOW. .ms-quote-start is the hero's card and
-      at 64em it is absolutely positioned over the photograph; the --page
-      modifier puts it back in normal flow, at reading width, and swaps the
-      photo-edge radius/shadow for the ones content panels use. This block
-      sits after both the 64em layout rule and the reduced-motion restore,
-      so at equal specificity it wins on source order — keep it at the end.
-   2. .ms-how — the three rules every number on the page follows.
-   3. .ms-examples — worked example prices under each service panel, filled
-      by assets/js/service-examples.js. Rows are sunken wells, the same
-      lighting as inputs: a figure to read, not a control to press.
+   Prices are quoted personally (the client's decision, 2026-10-26), so the
+   summary panel is a REQUEST, not a bill: a handful of labelled facts Tiffany
+   reads back, not a column of figures to align. A definition list, with a
+   hairline between rows and none under the last.
    ========================================================================== */
-.ms-quote-start--page {
-  position: static;
-  transform: none;
-  width: auto;
-  max-width: 46rem;
-  margin-inline: auto;
-  padding: var(--ms-space-6);
-  gap: var(--ms-space-3);
-  border-radius: var(--ms-radius-lg);
-  box-shadow: var(--ms-shadow-raised-md);
-}
-.ms-quote-start--page .ms-quote-start__heading { font-size: var(--ms-text-xl); }
-
-.ms-quote-start__fields { display: grid; gap: var(--ms-space-3); }
-@media (min-width: 40em) {
-  .ms-quote-start__fields { grid-template-columns: 1fr 1fr; }
-}
-
-.ms-how__eyebrow {
-  font-size: var(--ms-text-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--ms-color-blue-dark);
-  text-align: center;
-  margin: 0 0 var(--ms-space-4);
-}
-.ms-how {
-  list-style: none;
-  margin: 0 auto;
-  padding: 0;
-  max-width: 64rem;
+.ms-request {
   display: grid;
-  gap: var(--ms-space-5);
-}
-@media (min-width: 48em) {
-  .ms-how { grid-template-columns: repeat(3, 1fr); gap: var(--ms-space-6); }
-}
-.ms-how__step { display: flex; flex-direction: column; gap: var(--ms-space-2); }
-.ms-how__title {
-  font-size: var(--ms-text-md);
-  font-weight: 800;
-  color: var(--ms-color-ink);
-  margin: 0;
-}
-.ms-how__text {
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--ms-space-4);
+  row-gap: 0;
+  margin: 0 0 var(--ms-space-4);
   font-size: var(--ms-text-sm);
+}
+.ms-request dt {
+  font-weight: 700;
+  color: var(--ms-color-ink);
+  padding-block: var(--ms-space-3);
+  border-bottom: 1px solid var(--ms-color-border);
+}
+.ms-request dd {
+  margin: 0;
   color: var(--ms-color-ink-soft);
   line-height: var(--ms-leading-snug);
-  margin: 0;
-  max-width: 34ch;
+  padding-block: var(--ms-space-3);
+  border-bottom: 1px solid var(--ms-color-border);
+  /* A long add-on list or an estimated-home line wraps; a postal code never
+     does. overflow-wrap only breaks a word that would not otherwise fit. */
+  overflow-wrap: anywhere;
 }
+.ms-request dt:last-of-type,
+.ms-request dd:last-of-type { border-bottom: 0; }
+.ms-request dt:first-of-type,
+.ms-request dd:first-of-type { padding-top: 0; }
 
-.ms-examples {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ms-space-4);
-  border-top: 1px solid var(--ms-color-border);
-  padding-top: var(--ms-space-4);
-}
-.ms-examples__list {
-  list-style: none;
+/* The line that closes each service panel: one link, label weight, so the
+   panel ends on the way forward rather than on its last tick. */
+.ms-service-panel__action {
   margin: 0;
-  padding: 0;
-  display: grid;
-  gap: var(--ms-space-2);
+  font-size: var(--ms-text-sm);
+  font-weight: 700;
 }
-@media (min-width: 48em) {
-  .ms-examples__list { grid-template-columns: repeat(3, 1fr); gap: var(--ms-space-3); }
-}
-.ms-examples__row {
-  display: grid;
-  gap: var(--ms-space-1);
-  padding: var(--ms-space-3) var(--ms-space-4);
-  border-radius: var(--ms-radius-md);
-  background: var(--ms-color-surface-base);
-  box-shadow: var(--ms-shadow-sunken);
-}
-.ms-examples__home { font-size: var(--ms-text-sm); font-weight: 700; color: var(--ms-color-ink); }
-.ms-examples__basis { font-size: var(--ms-text-xs); color: var(--ms-color-ink-faint); }
-.ms-examples__price {
-  font-family: var(--ms-font-display);
-  font-size: var(--ms-text-lg);
-  font-weight: 800;
-  color: var(--ms-color-blue);
-  line-height: var(--ms-leading-tight);
-}
-.ms-examples__note { font-size: var(--ms-text-sm); color: var(--ms-color-ink-soft); margin: 0; }
-/* The link is four words; on a phone it broke as "Get your exact / price."
-   under all four panels. A link is one thing, so it stays on one line. */
-.ms-examples__note a { white-space: nowrap; }
+/* The link is the ghost pill, so the panel ends on a control the eye
+   expects, not on a 15px underline under a 500px list. */
+.ms-service-panel__action { margin-top: var(--ms-space-2); }
+
+/* A note inside a panel qualifies the list above it, so it runs the list's
+   width. Half-width boxes pinned left under a two-column list left the
+   panel's right half empty (review, 2026-10-26). */
+.ms-service-panel .ms-note { max-width: none; }
+
+/* Three items in a two-column grid lay out as two and an orphan; a short
+   list stays one column at every width. */
+.ms-check-list.ms-check-list--single { grid-template-columns: 1fr; }
 
 /* ==========================================================================
    Arrival — the first viewport settles into place.
