@@ -2555,7 +2555,7 @@ html.ms-enter:not(.ms-entered) .ms-logo__bubbles i,
   gap: var(--ms-space-5);
 }
 @media (min-width: 64em) {
-  .ms-compare-grid { grid-template-columns: repeat(3, 1fr); }
+  .ms-compare-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 .ms-compare { margin: 0; }
