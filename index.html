@@ -241,6 +241,61 @@
         <p class="ms-services__note"><span class="ms-services__part">Serving the City of Toronto</span><span class="ms-services__sep" aria-hidden="true"> · </span><span class="ms-services__part">Just outside the city? <a href="about.html#contact-heading">Ask Tiffany</a></span></p>
       </div>
     </section>
+    <!-- Tiffany's own before-and-after photos (2026-10-31), the three pairs
+         shot from the same spot. Each frame is a native range input over two
+         photos; assets/js/compare.js moves the clip. Captions name the
+         subject only — the job, the home and the clean are not known. -->
+    <section class="ms-section ms-work" id="work" aria-labelledby="work-heading">
+      <div class="ms-container">
+        <div class="ms-section__head">
+          <h2 id="work-heading" class="ms-section-heading">Before and after</h2>
+          <p class="ms-section-lead">Tiffany's own photos: the same oven, stovetop and tub, before and after. Drag the handle.</p>
+        </div>
+        <div class="ms-compare-grid">
+          <figure class="ms-compare">
+            <div class="ms-compare__frame">
+              <img class="ms-compare__img ms-compare__img--after" src="assets/img/work/oven-after.webp" srcset="assets/img/work/oven-after.webp 800w, assets/img/work/oven-after@2x.webp 1400w" sizes="(min-width: 64em) 23rem, calc(100vw - 2rem)" width="800" height="600" alt="The same oven after the clean, racks and floor bright" loading="lazy" decoding="async">
+              <div class="ms-compare__before">
+                <img class="ms-compare__img" src="assets/img/work/oven-before.webp" srcset="assets/img/work/oven-before.webp 800w, assets/img/work/oven-before@2x.webp 1400w" sizes="(min-width: 64em) 23rem, calc(100vw - 2rem)" width="800" height="600" alt="An oven interior before the clean, with baked-on residue over the racks and floor" loading="lazy" decoding="async">
+              </div>
+              <input class="ms-compare__range" type="range" min="0" max="100" value="50" aria-label="Oven: slide to compare before and after">
+              <div class="ms-compare__divider" aria-hidden="true"><span class="ms-compare__knob"></span></div>
+              <span class="ms-compare__tag ms-compare__tag--before" aria-hidden="true">Before</span>
+              <span class="ms-compare__tag ms-compare__tag--after" aria-hidden="true">After</span>
+            </div>
+            <figcaption class="ms-compare__caption">Inside the oven</figcaption>
+          </figure>
+
+          <figure class="ms-compare">
+            <div class="ms-compare__frame">
+              <img class="ms-compare__img ms-compare__img--after" src="assets/img/work/stove-after.webp" srcset="assets/img/work/stove-after.webp 800w, assets/img/work/stove-after@2x.webp 1400w" sizes="(min-width: 64em) 23rem, calc(100vw - 2rem)" width="800" height="600" alt="The same stovetop after the clean, grates and burners wiped clean" loading="lazy" decoding="async">
+              <div class="ms-compare__before">
+                <img class="ms-compare__img" src="assets/img/work/stove-before.webp" srcset="assets/img/work/stove-before.webp 800w, assets/img/work/stove-before@2x.webp 1400w" sizes="(min-width: 64em) 23rem, calc(100vw - 2rem)" width="800" height="600" alt="A gas stovetop before the clean, with grease and crumbs under the grates" loading="lazy" decoding="async">
+              </div>
+              <input class="ms-compare__range" type="range" min="0" max="100" value="50" aria-label="Stovetop: slide to compare before and after">
+              <div class="ms-compare__divider" aria-hidden="true"><span class="ms-compare__knob"></span></div>
+              <span class="ms-compare__tag ms-compare__tag--before" aria-hidden="true">Before</span>
+              <span class="ms-compare__tag ms-compare__tag--after" aria-hidden="true">After</span>
+            </div>
+            <figcaption class="ms-compare__caption">Gas stovetop</figcaption>
+          </figure>
+
+          <figure class="ms-compare">
+            <div class="ms-compare__frame">
+              <img class="ms-compare__img ms-compare__img--after" src="assets/img/work/tub-after.webp" srcset="assets/img/work/tub-after.webp 800w, assets/img/work/tub-after@2x.webp 1400w" sizes="(min-width: 64em) 23rem, calc(100vw - 2rem)" width="800" height="600" alt="The same bathtub after the clean, white from edge to edge" loading="lazy" decoding="async">
+              <div class="ms-compare__before">
+                <img class="ms-compare__img" src="assets/img/work/tub-before.webp" srcset="assets/img/work/tub-before.webp 800w, assets/img/work/tub-before@2x.webp 1400w" sizes="(min-width: 64em) 23rem, calc(100vw - 2rem)" width="800" height="600" alt="A bathtub before the clean, with soap scum and a stained floor" loading="lazy" decoding="async">
+              </div>
+              <input class="ms-compare__range" type="range" min="0" max="100" value="50" aria-label="Bathtub: slide to compare before and after">
+              <div class="ms-compare__divider" aria-hidden="true"><span class="ms-compare__knob"></span></div>
+              <span class="ms-compare__tag ms-compare__tag--before" aria-hidden="true">Before</span>
+              <span class="ms-compare__tag ms-compare__tag--after" aria-hidden="true">After</span>
+            </div>
+            <figcaption class="ms-compare__caption">Bathtub and surround</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="ms-footer">
@@ -299,5 +354,6 @@
   </footer>
 
   <script type="module" src="assets/js/ui.js"></script>
+  <script type="module" src="assets/js/compare.js"></script>
 </body>
 </html>

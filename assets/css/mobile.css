@@ -600,3 +600,11 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
 
 /* The same "there is more this way" glyph the service tiles use. */
 .ms-quote-bar__value::after { content: '\00a0\203A'; }
+
+/* --------------------------------------------------------------------------
+   Before / After compare: one panel per row, the tiles' phone gap, and a
+   knob that stays the full 44px under a thumb.
+   -------------------------------------------------------------------------- */
+.ms-compare-grid { gap: var(--ms-space-4); }
+.ms-compare__caption { margin-top: var(--ms-space-2); }
+.ms-services + .ms-work { padding-top: 0; }

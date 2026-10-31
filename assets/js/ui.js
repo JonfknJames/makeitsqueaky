@@ -155,6 +155,7 @@
     '.ms-service-panel', // services: the four panels, the add-ons, area and terms
     '.ms-cta-panel', // the closing gold band, incl. 404
     '.ms-portrait', // about: Tiffany's photo
+    '.ms-compare', // home: the before/after sliders
   ].join(',');
 
   const EXCLUDE = '.ms-quote-summary, .ms-quote-form, .ms-hero';

@@ -82,6 +82,8 @@
   --ms-color-footer-border: #2A4C5C;
 
   --ms-color-focus: var(--ms-color-blue-dark);
+  --ms-color-scrim: rgba(22, 50, 63, 0.72);        /* ink over a photo: the Before / After tags */
+  --ms-color-ink-hairline: rgba(22, 50, 63, 0.18); /* a 1px ink edge on a light surface */
 
   /* Type — rounded/humanist warmth, not Inter, not a serif. Graceful-
      enhancement stack: if the visitor has a rounded system font installed
@@ -2537,3 +2539,153 @@ html.ms-enter:not(.ms-entered) .ms-logo__bubbles i,
     animation: none;
   }
 }
+
+/* ==========================================================================
+   Before / After compare — the home page's proof panels (2026-10-31).
+
+   A frame holds the after photo, the before photo clipped to --ms-pos from
+   the left, a divider with a knob, two corner tags, and a transparent native
+   range input over everything. The input is the only interactive element:
+   drag, tap, click-to-jump and arrow keys are the browser's. compare.js
+   copies its value into --ms-pos; without it the frame rests at 50/50.
+   ========================================================================== */
+.ms-compare-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ms-space-5);
+}
+@media (min-width: 64em) {
+  .ms-compare-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.ms-compare { margin: 0; }
+
+.ms-compare__frame {
+  --ms-pos: 50%;
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--ms-radius-lg);
+  /* Page ground, not card white: a frame whose lazy photos have not landed
+     yet reads as a soft placeholder, not a blank card with a gold button. */
+  background: var(--ms-color-surface-base);
+  box-shadow: var(--ms-shadow-raised-sm);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ms-compare__img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.ms-compare__before {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 calc(100% - var(--ms-pos)) 0 0);
+}
+
+/* The range covers the frame and is invisible; its thumb is tall and wide so
+   a press anywhere on the frame lands on the track and jumps the value. */
+.ms-compare__range {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: ew-resize;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  touch-action: pan-y;
+}
+.ms-compare__range::-webkit-slider-runnable-track { height: 100%; background: transparent; }
+.ms-compare__range::-webkit-slider-thumb { -webkit-appearance: none; width: 44px; height: 100%; background: transparent; }
+.ms-compare__range::-moz-range-track { height: 100%; background: transparent; }
+.ms-compare__range::-moz-range-thumb { width: 44px; height: 100%; border: 0; border-radius: 0; background: transparent; }
+
+.ms-compare__divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--ms-pos);
+  width: 2px;
+  transform: translateX(-50%);
+  background: var(--ms-color-surface);
+  box-shadow: 0 0 0 1px var(--ms-color-ink-hairline);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* The knob: gold like every press-me on the site, 44px, with two chevrons. */
+.ms-compare__knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  border-radius: var(--ms-radius-pill);
+  background: var(--ms-color-gold);
+  box-shadow: var(--ms-shadow-raised-sm);
+  transition: background var(--ms-duration-base) var(--ms-ease);
+}
+.ms-compare__knob::before,
+.ms-compare__knob::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid var(--ms-color-gold-ink);
+  border-left: 2px solid var(--ms-color-gold-ink);
+}
+.ms-compare__knob::before { left: 11px; transform: translateY(-50%) rotate(-45deg); }
+.ms-compare__knob::after { right: 11px; transform: translateY(-50%) rotate(135deg); }
+.ms-compare__frame:hover .ms-compare__knob { background: var(--ms-color-gold-hover); }
+.ms-compare__range:focus-visible + .ms-compare__divider .ms-compare__knob {
+  outline: 3px solid var(--ms-color-focus);
+  outline-offset: 2px;
+}
+
+.ms-compare__tag {
+  position: absolute;
+  top: var(--ms-space-3);
+  z-index: 1;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--ms-radius-pill);
+  background: var(--ms-color-scrim);
+  color: var(--ms-color-footer-ink);
+  font-size: var(--ms-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.ms-compare__tag--before { left: var(--ms-space-3); }
+.ms-compare__tag--after { right: var(--ms-space-3); }
+
+.ms-compare__caption {
+  margin-top: var(--ms-space-3);
+  text-align: center;
+  color: var(--ms-color-ink-soft);
+  font-size: var(--ms-text-sm);
+  font-weight: 400;
+}
+
+/* One rhythm unit at the seam: the services section above keeps its bottom
+   step, so this section brings no top step of its own. */
+.ms-services + .ms-work { padding-top: 0; }
+
+/* At either end the corner tag would sit over the other photo; fade it. */
+.ms-compare__tag { transition: opacity var(--ms-duration-base) var(--ms-ease); }
+.ms-compare__frame.is-at-start .ms-compare__tag--before,
+.ms-compare__frame.is-at-end .ms-compare__tag--after { opacity: 0; }
