@@ -99,9 +99,12 @@
     -apple-system, 'Segoe UI', Roboto, sans-serif;
   --ms-font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
-  --ms-text-xs: 0.8125rem;   /* 13px */
-  --ms-text-sm: 0.9375rem;   /* 15px */
-  --ms-text-base: 1rem;      /* 16px */
+  /* Five fixed sizes and three fluid ones. The 15px "small" and 13px
+     "fine print" steps were collapsed into one 14px step (2026-11-01): the
+     body copy had drifted down to 15px in a secondary grey, and the small
+     end of the scale carried two sizes doing one job. */
+  --ms-text-xs: 0.875rem;    /* 14px — notes, captions, fine print, uppercase eyebrows */
+  --ms-text-base: 1rem;      /* 16px — body, labels, buttons, nav */
   --ms-text-md: 1.125rem;    /* 18px */
   --ms-text-lg: 1.375rem;    /* 22px */
   --ms-text-xl: 1.75rem;     /* 28px */
@@ -404,11 +407,12 @@ button { font: inherit; }
    make it compete with the heading rather than support it. */
 .ms-section-lead {
   text-align: center;
-  color: var(--ms-color-ink-soft);
+  color: var(--ms-color-ink);
   max-width: 34rem;
   margin-inline: auto;
   font-size: var(--ms-text-md);
-  font-weight: 700;
+  /* Regular, in ink. Bold-and-grey sent two signals at once (2026-11-01). */
+  font-weight: 400;
   line-height: var(--ms-leading-snug);
 }
 
@@ -421,7 +425,7 @@ button { font: inherit; }
   justify-content: center;
   gap: var(--ms-space-2);
   font-family: var(--ms-font-body);
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-base);
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
@@ -655,7 +659,7 @@ button { font: inherit; }
   border: 1px solid transparent;
   padding: var(--ms-space-2);
   border-radius: var(--ms-radius-pill);
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-base);
   font-weight: 700;
   color: var(--ms-color-ink);
   min-height: 44px;
@@ -687,7 +691,7 @@ button { font: inherit; }
   padding: var(--ms-space-3) var(--ms-space-3);
   color: var(--ms-color-ink);
   text-decoration: none;
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-base);
   font-weight: 700;
   border-radius: var(--ms-radius-sm);
 }
@@ -751,7 +755,7 @@ button { font: inherit; }
    has real headroom, at 64em, alongside the rest of the desktop-only
    chrome (full inline nav list, wider gaps). */
 @media (min-width: 64em) {
-  .ms-header__cta { padding-inline: var(--ms-space-5); font-size: var(--ms-text-sm); }
+  .ms-header__cta { padding-inline: var(--ms-space-5); font-size: var(--ms-text-base); }
 }
 
 /* 48em: badge 3.75rem (60px) + 2x8px pill padding + 12px top offset = 88px
@@ -861,8 +865,8 @@ button { font: inherit; }
    weights where the type scale allows three. One job, one weight. */
 .ms-hero__lead {
   font-size: var(--ms-text-md);
-  font-weight: 700;
-  color: var(--ms-color-ink-soft);
+  font-weight: 400;
+  color: var(--ms-color-ink);
   max-width: 38rem;
 }
 
@@ -917,7 +921,7 @@ button { font: inherit; }
 }
 
 .ms-field label {
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-base);
   font-weight: 700;
   color: var(--ms-color-ink);
 }
@@ -940,7 +944,7 @@ button { font: inherit; }
 
 .ms-quote-start__note {
   font-size: var(--ms-text-xs);
-  color: var(--ms-color-ink-faint);
+  color: var(--ms-color-ink-soft);
 }
 
 @media (min-width: 64em) {
@@ -1139,8 +1143,8 @@ button { font: inherit; }
 
 
 .ms-card__desc {
-  font-size: var(--ms-text-sm);
-  color: var(--ms-color-ink-soft);
+  font-size: var(--ms-text-base);
+  color: var(--ms-color-ink);
   line-height: var(--ms-leading-normal);
 }
 
@@ -1170,10 +1174,6 @@ button { font: inherit; }
 /* One lead sentence, then the detail as ticks. Reuses .ms-check-list from
    services.html unchanged — the ticks are the same ticks, so the two pages
    read as one system. */
-.ms-service-tile .ms-card__desc {
-  color: var(--ms-color-ink);
-  font-weight: 700; /* the tile's lead sentence takes the lead weight, not a fourth one */
-}
 
 /* One column, always. .ms-check-list goes two-up at 48em because on
    services.html it sits in a full-width panel — but a service tile is about
@@ -1198,7 +1198,7 @@ button { font: inherit; }
   display: inline-flex;
   align-items: center;
   gap: var(--ms-space-2);
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-base);
   font-weight: 700;
   color: var(--ms-color-blue);
   transition: color var(--ms-duration-base) var(--ms-ease);
@@ -1222,7 +1222,7 @@ button { font: inherit; }
   /* A contained note, not a floating line — same raised-surface language
      as the tiles above it, so it reads as part of the block. */
   text-align: center;
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-base);
   color: var(--ms-color-ink-soft);
   /* Wide enough to hold the sentence on one line at desktop. At 34rem it
      wrapped with a lone "it." on the second line, which reads as a mistake. */
@@ -1336,7 +1336,7 @@ button { font: inherit; }
 /* The footer list items are a mix of links and plain lines (the service
    area is information, not a destination). Both need the same measure so
    the column reads as one list rather than two. */
-.ms-footer__col li { font-size: var(--ms-text-sm); line-height: var(--ms-leading-snug); }
+.ms-footer__col li { font-size: var(--ms-text-base); line-height: var(--ms-leading-snug); }
 
 .ms-footer__wordmark-text {
   font-family: var(--ms-font-display);
@@ -1346,7 +1346,7 @@ button { font: inherit; }
 }
 
 .ms-footer__tagline {
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-base);
   max-width: 24rem;
   /* Centred within its column now that the footer is centred — a max-width
      block with no auto margins would sit left inside a centred parent. */
@@ -1394,7 +1394,7 @@ button { font: inherit; }
 .ms-footer a {
   color: var(--ms-color-footer-ink-soft);
   text-decoration: none;
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-base);
   display: inline-flex;
   align-items: center;
   min-height: 24px;
@@ -1458,9 +1458,9 @@ button { font: inherit; }
      whole 68rem width is the "run-on" the client flagged. */
   max-width: 44rem;
   font-size: var(--ms-text-md);
-  font-weight: 700;   /* matches .ms-section-lead — same job, same weight */
+  font-weight: 400;   /* matches .ms-section-lead — same job, same weight */
   line-height: var(--ms-leading-snug);
-  color: var(--ms-color-ink-soft);
+  color: var(--ms-color-ink);
 }
 
 /* Call-to-action panel — the raised card the page hero used to borrow,
@@ -1562,7 +1562,7 @@ button { font: inherit; }
    here rather than assumed: 54ch x 10.8px = 583px / 7.97px = about 73
    characters, which is the range the rule actually means. */
 .ms-service-panel__lead {
-  color: var(--ms-color-ink-soft);
+  color: var(--ms-color-ink);
   font-size: var(--ms-text-md);
   max-width: 54ch;
 }
@@ -1572,7 +1572,7 @@ button { font: inherit; }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--ms-color-blue-dark);
+  color: var(--ms-color-ink-soft);
   margin-bottom: calc(-1 * var(--ms-space-2));
 }
 
@@ -1591,8 +1591,8 @@ button { font: inherit; }
   display: flex;
   align-items: flex-start;
   gap: var(--ms-space-2);
-  font-size: var(--ms-text-sm);
-  color: var(--ms-color-ink-soft);
+  font-size: var(--ms-text-base);
+  color: var(--ms-color-ink);
   line-height: var(--ms-leading-snug);
 }
 
@@ -1634,7 +1634,7 @@ button { font: inherit; }
 
 /* No max-width here — the cap lives on .ms-note itself so the box and its
    text end together. */
-.ms-note p { font-size: var(--ms-text-sm); color: var(--ms-color-ink-soft); line-height: var(--ms-leading-snug); }
+.ms-note p { font-size: var(--ms-text-base); color: var(--ms-color-ink-soft); line-height: var(--ms-leading-snug); }
 .ms-note strong { color: var(--ms-color-ink); }
 
 /* A note that follows the thing it explains is RELATED to it, so it sits one
@@ -1669,7 +1669,7 @@ button { font: inherit; }
   font-family: var(--ms-font-display);
   font-size: var(--ms-text-2xl);
   font-weight: 800;
-  color: var(--ms-color-blue-dark);
+  color: var(--ms-color-blue);
   position: relative;
   padding-bottom: var(--ms-space-2);
 }
@@ -1753,13 +1753,13 @@ button { font: inherit; }
   align-items: center;
   justify-content: center;
   gap: var(--ms-space-2);
-  color: var(--ms-color-ink-faint);
+  color: var(--ms-color-ink-soft);
   text-align: center;
   padding: var(--ms-space-5);
 }
 
 .ms-photo-slot svg { width: 2.5rem; height: 2.5rem; }
-.ms-photo-slot span { font-size: var(--ms-text-sm); font-weight: 700; }
+.ms-photo-slot span { font-size: var(--ms-text-base); font-weight: 700; }
 
 /* Closing/continuation sections that follow directly on the section above
    (a CTA panel, a photo banner) — tighter bottom rhythm than a normal
@@ -1821,7 +1821,7 @@ button { font: inherit; }
 }
 
 .ms-prose { display: flex; flex-direction: column; gap: var(--ms-space-4); }
-.ms-prose p { color: var(--ms-color-ink-soft); font-size: var(--ms-text-md); line-height: var(--ms-leading-normal); }
+.ms-prose p { color: var(--ms-color-ink); font-size: var(--ms-text-md); line-height: var(--ms-leading-normal); }
 
 /* A stat set into running prose needs more air than the paragraph gap gives
    it, or it reads as another paragraph that happens to start with a numeral.
@@ -1852,7 +1852,7 @@ button { font: inherit; }
 
 .ms-contact-list__item svg { flex: none; width: 1.5rem; height: 1.5rem; color: var(--ms-color-blue); margin-top: 0.15em; }
 .ms-contact-list__item h3 { font-family: var(--ms-font-display); font-size: var(--ms-text-md); font-weight: 800; color: var(--ms-color-ink); margin: 0 0 var(--ms-space-1); }
-.ms-contact-list__item p { font-size: var(--ms-text-sm); color: var(--ms-color-ink-soft); margin: 0; max-width: 58ch; }
+.ms-contact-list__item p { font-size: var(--ms-text-base); color: var(--ms-color-ink); margin: 0; max-width: 58ch; }
 .ms-contact-list__item a { font-weight: 700; }
 
 /* 404 page. */
@@ -1936,19 +1936,19 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
   background: var(--ms-color-gold-tint);
 }
 .ms-option input { accent-color: var(--ms-color-blue-dark); width: 1.1rem; height: 1.1rem; }
-.ms-option__title { font-weight: 700; color: var(--ms-color-ink); font-size: var(--ms-text-sm); }
+.ms-option__title { font-weight: 700; color: var(--ms-color-ink); font-size: var(--ms-text-base); }
 
 
 .ms-option--compact { flex-direction: row; align-items: center; gap: var(--ms-space-2); padding: var(--ms-space-3) var(--ms-space-4); }
-.ms-option--compact span { font-size: var(--ms-text-sm); font-weight: 700; color: var(--ms-color-ink); }
+.ms-option--compact span { font-size: var(--ms-text-base); font-weight: 700; color: var(--ms-color-ink); }
 
 .ms-toggle {
   display: flex;
   align-items: center;
   gap: var(--ms-space-2);
-  font-size: var(--ms-text-sm);
-  font-weight: 700;
-  color: var(--ms-color-ink-soft);
+  font-size: var(--ms-text-base);
+  font-weight: 400;
+  color: var(--ms-color-ink);
   cursor: pointer;
   margin-top: var(--ms-space-1);
 }
@@ -1996,7 +1996,7 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
   background: var(--ms-color-gold-tint);
 }
 .ms-addon-row input[type="checkbox"] { accent-color: var(--ms-color-blue-dark); width: 1.1rem; height: 1.1rem; }
-.ms-addon-row__label { flex: 1; font-size: var(--ms-text-sm); font-weight: 700; color: var(--ms-color-ink); }
+.ms-addon-row__label { flex: 1; font-size: var(--ms-text-base); font-weight: 700; color: var(--ms-color-ink); }
 
 .ms-addon-row--counted { cursor: default; }
 /* A counted row has two halves — the choice and the count. Side by side the
@@ -2010,7 +2010,7 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
 .ms-addon-row__count-label input {
   width: 4.5rem;
   font: inherit;
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-base);
   color: var(--ms-color-ink);
   background: var(--ms-color-surface);
   border: 1px solid var(--ms-color-border-strong);
@@ -2022,7 +2022,7 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
 
 .ms-condition-list { display: flex; flex-direction: column; gap: var(--ms-space-4); }
 .ms-condition-row { display: flex; flex-direction: column; gap: var(--ms-space-2); }
-.ms-condition-row__question { font-size: var(--ms-text-sm); font-weight: 700; color: var(--ms-color-ink); margin: 0; }
+.ms-condition-row__question { font-size: var(--ms-text-base); font-weight: 400; color: var(--ms-color-ink); margin: 0; } /* a question is body, the answers are the labels (2026-11-01) */
 .ms-condition-row__options { display: flex; gap: var(--ms-space-3); }
 
 /* Live summary sidebar. */
@@ -2036,7 +2036,7 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
   .ms-quote-summary { position: sticky; top: 7rem; }
 }
 .ms-quote-summary__heading { font-size: var(--ms-text-lg); color: var(--ms-color-ink); margin: 0 0 var(--ms-space-4); }
-.ms-quote-summary__empty { color: var(--ms-color-ink-soft); font-size: var(--ms-text-sm); margin: 0; }
+.ms-quote-summary__empty { color: var(--ms-color-ink-soft); font-size: var(--ms-text-base); margin: 0; }
 
 /* The phone price bar does not exist at desktop width, where the summary
    panel is sticky and always in view. Hidden here unconditionally; mobile.css
@@ -2046,7 +2046,7 @@ fieldset.ms-quote-step { border: 0; margin: 0; min-width: 0; }
 
 .ms-quote-outcome__heading { font-size: var(--ms-text-md); font-weight: 800; color: var(--ms-color-ink); margin: 0 0 var(--ms-space-3); }
 .ms-quote-outcome__reasons { margin: var(--ms-space-2) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--ms-space-1); }
-.ms-quote-outcome__reasons li { font-size: var(--ms-text-sm); color: var(--ms-color-ink-soft); line-height: var(--ms-leading-snug); }
+.ms-quote-outcome__reasons li { font-size: var(--ms-text-base); color: var(--ms-color-ink-soft); line-height: var(--ms-leading-snug); }
 
 
 .ms-quote-cta { display: flex; flex-wrap: wrap; gap: var(--ms-space-3); margin-top: var(--ms-space-5); }
@@ -2308,7 +2308,7 @@ html.ms-motion [data-ms-reveal].is-revealed {
 }
 
 .ms-cta-band__lead {
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-base);
   color: var(--ms-color-ink-soft);
   max-width: 46ch;
   margin: 0;
@@ -2351,7 +2351,7 @@ html.ms-motion [data-ms-reveal].is-revealed {
   column-gap: var(--ms-space-4);
   row-gap: 0;
   margin: 0 0 var(--ms-space-4);
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-base);
 }
 .ms-request dt {
   font-weight: 700;
@@ -2361,7 +2361,7 @@ html.ms-motion [data-ms-reveal].is-revealed {
 }
 .ms-request dd {
   margin: 0;
-  color: var(--ms-color-ink-soft);
+  color: var(--ms-color-ink);
   line-height: var(--ms-leading-snug);
   padding-block: var(--ms-space-3);
   border-bottom: 1px solid var(--ms-color-border);
@@ -2378,7 +2378,7 @@ html.ms-motion [data-ms-reveal].is-revealed {
    panel ends on the way forward rather than on its last tick. */
 .ms-service-panel__action {
   margin: 0;
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-base);
   font-weight: 700;
 }
 /* The link is the ghost pill, so the panel ends on a control the eye
@@ -2677,7 +2677,7 @@ html.ms-enter:not(.ms-entered) .ms-logo__bubbles i,
   margin-top: var(--ms-space-3);
   text-align: center;
   color: var(--ms-color-ink-soft);
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-xs);
   font-weight: 400;
 }
 

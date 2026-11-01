@@ -46,8 +46,6 @@
    1440px canvas and is a third of a phone screen spent on nothing.
    -------------------------------------------------------------------------- */
 :root {
-  --ms-text-xs: 0.875rem;    /* 13 -> 14px  */
-  --ms-text-sm: 0.9375rem;   /* 15px, unchanged — already fine */
   --ms-text-lg: 1.25rem;     /* 22 -> 20px  */
   --ms-text-xl: 1.5rem;      /* 28 -> 24px  */
 
@@ -415,7 +413,6 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
 .ms-hero__heading { font-size: clamp(2.125rem, 8vw, 2.5rem); }
 
 .ms-hero__copy { display: flex; flex-direction: column; }
-.ms-hero__lead { font-size: var(--ms-text-base); }
 
 /* --------------------------------------------------------------------------
    2. The tap target that survived pass one.
@@ -525,7 +522,7 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
      A white pill on the page ground is the control's whole shape. */
   font-size: var(--ms-text-xs);
   font-weight: 700;
-  color: var(--ms-color-blue-dark);
+  color: var(--ms-color-blue);
   text-decoration: none;
 }
 
@@ -540,7 +537,6 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
 }
 
 .ms-service-panel { padding: var(--ms-space-5) var(--ms-space-4); }
-.ms-service-panel__lead { font-size: var(--ms-text-sm); }
 .ms-service-list { gap: var(--ms-space-4); }
 
 /* The decorative banner is aria-hidden and carries no information. At 16:9 it
@@ -584,16 +580,16 @@ body { padding-top: calc(6rem + var(--ms-safe-top)); }
 .ms-quote-bar[hidden] { display: none; }
 
 .ms-quote-bar__label {
-  font-size: var(--ms-text-sm);
+  font-size: var(--ms-text-base);
   font-weight: 700;
-  color: var(--ms-color-ink-soft);
+  color: var(--ms-color-ink);
 }
 
 .ms-quote-bar__value {
   font-family: var(--ms-font-display);
   font-size: var(--ms-text-md);
   font-weight: 800;
-  color: var(--ms-color-blue-dark);
+  color: var(--ms-color-ink);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
